@@ -429,6 +429,7 @@ public class RunnerBuilder {
     }
 
     Optional<WebSocketService> webSocketService = Optional.empty();
+    Optional<SubscriptionManager> maybeSubscriptionManager = Optional.empty();
     if (webSocketConfiguration.isEnabled()) {
       final Map<String, JsonRpcMethod> webSocketsJsonRpcMethods =
           jsonRpcMethods(
@@ -452,6 +453,7 @@ public class RunnerBuilder {
 
       final SubscriptionManager subscriptionManager =
           createSubscriptionManager(vertx, transactionPool);
+      maybeSubscriptionManager = Optional.of(subscriptionManager);
 
       createLogsSubscriptionService(context.getBlockchain(), subscriptionManager);
 
@@ -479,6 +481,7 @@ public class RunnerBuilder {
         graphQLHttpService,
         webSocketService,
         metricsService,
+        maybeSubscriptionManager,
         besuController,
         dataDir);
   }

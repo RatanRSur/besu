@@ -29,7 +29,7 @@ abstract class AbstractSubscriptionMethod implements JsonRpcMethod {
     this.mapper = mapper;
   }
 
-  SubscriptionManager subscriptionManager() {
+  SubscriptionManager getSubscriptionManager() {
     return subscriptionManager;
   }
 

@@ -18,6 +18,7 @@ import org.hyperledger.besu.controller.BesuController;
 import org.hyperledger.besu.ethereum.api.graphql.GraphQLHttpService;
 import org.hyperledger.besu.ethereum.api.jsonrpc.JsonRpcHttpService;
 import org.hyperledger.besu.ethereum.api.jsonrpc.websocket.WebSocketService;
+import org.hyperledger.besu.ethereum.api.jsonrpc.websocket.subscription.SubscriptionManager;
 import org.hyperledger.besu.ethereum.p2p.network.NetworkRunner;
 import org.hyperledger.besu.ethereum.p2p.peers.EnodeURL;
 import org.hyperledger.besu.metrics.prometheus.MetricsService;
@@ -53,6 +54,7 @@ public class Runner implements AutoCloseable {
   private final Optional<GraphQLHttpService> graphQLHttp;
   private final Optional<WebSocketService> websocketRpc;
   private final Optional<MetricsService> metrics;
+  private final Optional<SubscriptionManager> subscriptionManager;
 
   private final BesuController<?> besuController;
   private final Path dataDir;
@@ -65,6 +67,7 @@ public class Runner implements AutoCloseable {
       final Optional<GraphQLHttpService> graphQLHttp,
       final Optional<WebSocketService> websocketRpc,
       final Optional<MetricsService> metrics,
+      final Optional<SubscriptionManager> subscriptionManager,
       final BesuController<?> besuController,
       final Path dataDir) {
     this.vertx = vertx;
@@ -76,6 +79,7 @@ public class Runner implements AutoCloseable {
     this.metrics = metrics;
     this.besuController = besuController;
     this.dataDir = dataDir;
+    this.subscriptionManager = subscriptionManager;
   }
 
   public void start() {
@@ -243,6 +247,10 @@ public class Runner implements AutoCloseable {
     } else {
       return Optional.empty();
     }
+  }
+
+  public Optional<SubscriptionManager> getSubscriptionManager() {
+    return subscriptionManager;
   }
 
   @VisibleForTesting

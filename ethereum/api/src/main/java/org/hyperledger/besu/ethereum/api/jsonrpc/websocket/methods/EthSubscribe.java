@@ -42,7 +42,7 @@ public class EthSubscribe extends AbstractSubscriptionMethod {
   public JsonRpcResponse response(final JsonRpcRequest request) {
     try {
       final SubscribeRequest subscribeRequest = getMapper().mapSubscribeRequest(request);
-      final Long subscriptionId = subscriptionManager().subscribe(subscribeRequest);
+      final Long subscriptionId = getSubscriptionManager().subscribe(subscribeRequest);
 
       return new JsonRpcSuccessResponse(request.getId(), Quantity.create(subscriptionId));
     } catch (final InvalidSubscriptionRequestException isEx) {

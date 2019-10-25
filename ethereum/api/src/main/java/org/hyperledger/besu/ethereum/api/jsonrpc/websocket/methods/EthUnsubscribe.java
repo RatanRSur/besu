@@ -42,7 +42,7 @@ public class EthUnsubscribe extends AbstractSubscriptionMethod {
   public JsonRpcResponse response(final JsonRpcRequest request) {
     try {
       final UnsubscribeRequest unsubscribeRequest = getMapper().mapUnsubscribeRequest(request);
-      final boolean unsubscribed = subscriptionManager().unsubscribe(unsubscribeRequest);
+      final boolean unsubscribed = getSubscriptionManager().unsubscribe(unsubscribeRequest);
 
       return new JsonRpcSuccessResponse(request.getId(), unsubscribed);
     } catch (final InvalidSubscriptionRequestException isEx) {
