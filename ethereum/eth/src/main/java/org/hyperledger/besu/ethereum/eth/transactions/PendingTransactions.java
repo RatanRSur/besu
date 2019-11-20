@@ -15,6 +15,7 @@
 package org.hyperledger.besu.ethereum.eth.transactions;
 
 import static java.util.Comparator.comparing;
+import static org.apache.logging.log4j.LogManager.getLogger;
 
 import org.hyperledger.besu.ethereum.core.AccountTransactionOrder;
 import org.hyperledger.besu.ethereum.core.Address;
@@ -45,6 +46,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.Logger;
+
 /**
  * Holds the current set of pending transactions with the ability to iterate them based on priority
  * for mining or look-up by hash.
@@ -53,6 +56,7 @@ import java.util.stream.Collectors;
  */
 public class PendingTransactions {
 
+  private static final Logger LOG = getLogger();
   private final int maxTransactionRetentionHours;
   private final Clock clock;
 
@@ -72,6 +76,7 @@ public class PendingTransactions {
       Subscribers.create();
 
   private final LabelledMetric<Counter> transactionRemovedCounter;
+  private final Counter transactionDroppedCounter;
   private final Counter localTransactionAddedCounter;
   private final Counter remoteTransactionAddedCounter;
 
@@ -101,6 +106,12 @@ public class PendingTransactions {
             "Count of transactions removed from the transaction pool",
             "source",
             "operation");
+
+    transactionDroppedCounter =
+        metricsSystem.createCounter(
+            BesuMetricCategory.TRANSACTION_POOL,
+            "transactions_dropped_total",
+            "Count of transactions dropped from the transaction pool");
   }
 
   public void evictOldTransactions() {
@@ -225,6 +236,7 @@ public class PendingTransactions {
       if (pendingTransactions.size() > maxPendingTransactions) {
         final TransactionInfo toRemove = prioritizedTransactions.last();
         doRemoveTransaction(toRemove.getTransaction(), false);
+        transactionDroppedCounter.inc();
         droppedTransaction = Optional.of(toRemove.getTransaction());
       }
     }
@@ -284,6 +296,7 @@ public class PendingTransactions {
   }
 
   private void notifyTransactionDropped(final Transaction transaction) {
+    LOG.warn("Transaction Dropped");
     transactionDroppedListeners.forEach(listener -> listener.onTransactionDropped(transaction));
   }
 
