@@ -47,17 +47,17 @@ public class RocksDBKeyValueStorageFactory implements KeyValueStorageFactory {
   private static final int DEFAULT_VERSION = 1;
   private static final Set<Integer> SUPPORTED_VERSIONS = Set.of(0, 1);
   private static final String NAME = "rocksdb";
-  private final RocksDBMetricsFactory rocksDBMetricsFactory;
+  protected final RocksDBMetricsFactory rocksDBMetricsFactory;
 
   private int defaultVersion;
   private Integer databaseVersion;
   private Boolean isSegmentIsolationSupported;
   private SegmentedKeyValueStorage<?> segmentedStorage;
   private KeyValueStorage unsegmentedStorage;
-  private RocksDBConfiguration rocksDBConfiguration;
+  protected RocksDBConfiguration rocksDBConfiguration;
 
   private final Supplier<RocksDBFactoryConfiguration> configuration;
-  private final List<SegmentIdentifier> segments;
+  protected final List<SegmentIdentifier> segments;
 
   RocksDBKeyValueStorageFactory(
       final Supplier<RocksDBFactoryConfiguration> configuration,
