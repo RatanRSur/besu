@@ -14,8 +14,8 @@
  */
 package org.hyperledger.besu.ethereum.eth.sync;
 
-import static java.util.concurrent.SafeFuture.completedFuture;
 import static org.hyperledger.besu.util.FutureUtils.exceptionallyCompose;
+import static org.hyperledger.besu.util.SafeFuture.completedFuture;
 
 import org.hyperledger.besu.ethereum.eth.manager.EthScheduler;
 import org.hyperledger.besu.ethereum.eth.manager.exceptions.EthTaskException;
@@ -34,11 +34,11 @@ import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.SafeFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hyperledger.besu.util.SafeFuture;
 
 public class PipelineChainDownloader implements ChainDownloader {
   private static final Logger LOG = LogManager.getLogger();
@@ -149,7 +149,7 @@ public class PipelineChainDownloader implements ChainDownloader {
     }
   }
 
-  private synchronized CompletionStage<Void> startDownloadForSyncTarget(final SyncTarget target) {
+  private synchronized SafeFuture<Void> startDownloadForSyncTarget(final SyncTarget target) {
     if (cancelled.get()) {
       return SafeFuture.failedFuture(new CancellationException("Chain download was cancelled"));
     }

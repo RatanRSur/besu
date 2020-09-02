@@ -24,11 +24,11 @@ import org.hyperledger.besu.util.ExceptionUtils;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +39,7 @@ import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hyperledger.besu.util.SafeFuture;
 
 public class EthScheduler {
   private static final Logger LOG = LogManager.getLogger();
@@ -148,7 +149,7 @@ public class EthScheduler {
     return SafeFuture.supplyAsync(computation, computationExecutor);
   }
 
-  public SafeFuture<Void> scheduleFutureTask(final Runnable command, final Duration duration) {
+  public CompletionStage<Void> scheduleFutureTask(final Runnable command, final Duration duration) {
     final SafeFuture<Void> promise = new SafeFuture<>();
     final ScheduledFuture<?> scheduledFuture =
         scheduler.schedule(
