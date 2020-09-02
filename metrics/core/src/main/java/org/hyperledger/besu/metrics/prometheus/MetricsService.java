@@ -15,9 +15,9 @@
 package org.hyperledger.besu.metrics.prometheus;
 
 import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.util.SafeFuture;
 
 import java.util.Optional;
-import java.util.concurrent.SafeFuture;
 
 import io.vertx.core.Vertx;
 

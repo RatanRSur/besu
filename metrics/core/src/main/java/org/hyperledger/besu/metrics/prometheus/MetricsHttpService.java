@@ -18,6 +18,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.Streams.stream;
 
 import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.util.SafeFuture;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,7 +29,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.SafeFuture;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
