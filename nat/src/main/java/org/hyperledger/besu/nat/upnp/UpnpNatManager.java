@@ -23,6 +23,7 @@ import org.hyperledger.besu.nat.core.domain.NatPortMapping;
 import org.hyperledger.besu.nat.core.domain.NatServiceType;
 import org.hyperledger.besu.nat.core.domain.NetworkProtocol;
 import org.hyperledger.besu.nat.core.exception.NatInitializationException;
+import org.hyperledger.besu.util.SafeFuture;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +36,6 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.annotations.VisibleForTesting;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hyperledger.besu.util.SafeFuture;
 import org.jupnp.UpnpService;
 import org.jupnp.UpnpServiceImpl;
 import org.jupnp.model.action.ActionInvocation;

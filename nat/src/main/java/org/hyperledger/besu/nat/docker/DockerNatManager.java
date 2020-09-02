@@ -22,6 +22,7 @@ import org.hyperledger.besu.nat.core.domain.NatPortMapping;
 import org.hyperledger.besu.nat.core.domain.NatServiceType;
 import org.hyperledger.besu.nat.core.domain.NetworkProtocol;
 import org.hyperledger.besu.nat.core.exception.NatInitializationException;
+import org.hyperledger.besu.util.SafeFuture;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hyperledger.besu.util.SafeFuture;
 
 /**
  * This class describes the behaviour of the Docker NAT manager. Docker Nat manager add support for

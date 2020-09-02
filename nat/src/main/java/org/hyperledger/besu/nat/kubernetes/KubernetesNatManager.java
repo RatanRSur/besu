@@ -24,11 +24,11 @@ import org.hyperledger.besu.nat.core.domain.NetworkProtocol;
 import org.hyperledger.besu.nat.core.exception.NatInitializationException;
 import org.hyperledger.besu.nat.kubernetes.service.KubernetesServiceType;
 import org.hyperledger.besu.nat.kubernetes.service.LoadBalancerBasedDetector;
+import org.hyperledger.besu.util.SafeFuture;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.SafeFuture;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -41,7 +41,6 @@ import io.kubernetes.client.util.KubeConfig;
 import io.kubernetes.client.util.authenticators.GCPAuthenticator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hyperledger.besu.util.SafeFuture;
 
 /**
  * This class describes the behaviour of the Kubernetes NAT manager. Kubernetes Nat manager add
