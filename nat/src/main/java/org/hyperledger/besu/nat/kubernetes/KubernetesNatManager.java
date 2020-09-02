@@ -41,6 +41,7 @@ import io.kubernetes.client.util.KubeConfig;
 import io.kubernetes.client.util.authenticators.GCPAuthenticator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hyperledger.besu.util.SafeFuture;
 
 /**
  * This class describes the behaviour of the Kubernetes NAT manager. Kubernetes Nat manager add

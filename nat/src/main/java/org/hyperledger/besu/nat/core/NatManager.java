@@ -19,6 +19,7 @@ import org.hyperledger.besu.nat.core.domain.NatPortMapping;
 import org.hyperledger.besu.nat.core.domain.NatServiceType;
 import org.hyperledger.besu.nat.core.domain.NetworkProtocol;
 import org.hyperledger.besu.nat.core.exception.NatInitializationException;
+import org.hyperledger.besu.util.SafeFuture;
 
 import java.util.List;
 import java.util.concurrent.SafeFuture;

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
 
+import org.hyperledger.besu.util.SafeFuture;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
