@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package tech.pegasys.teku.infrastructure.async;
+package org.hyperledger.besu.util;
 
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;

@@ -14,15 +14,21 @@
  */
 package org.hyperledger.besu.util;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class FutureUtils {
+  private static final Logger LOG = LogManager.getLogger();
 
   /**
    * Returns a new CompletionStage that, when the provided stage completes exceptionally, is
@@ -119,5 +125,52 @@ public class FutureUtils {
           }
           return null;
         });
+  }
+
+  static void runWithFixedDelay(
+      AsyncRunner runner,
+      ExceptionThrowingRunnable runnable,
+      Cancellable task,
+      long delayAmount,
+      TimeUnit delayUnit,
+      Consumer<Throwable> exceptionHandler) {
+
+    runner
+        .runAfterDelay(
+            () -> {
+              if (!task.isCancelled()) {
+                try {
+                  runnable.run();
+                } catch (Throwable throwable) {
+                  try {
+                    exceptionHandler.accept(throwable);
+                  } catch (Exception e) {
+                    LOG.warn("Exception in exception handler", e);
+                  }
+                } finally {
+                  runWithFixedDelay(
+                      runner, runnable, task, delayAmount, delayUnit, exceptionHandler);
+                }
+              }
+            },
+            delayAmount,
+            delayUnit)
+        .finish(() -> {}, exceptionHandler);
+  }
+
+  static Cancellable createCancellable() {
+    return new Cancellable() {
+      private volatile boolean cancelled;
+
+      @Override
+      public void cancel() {
+        cancelled = true;
+      }
+
+      @Override
+      public boolean isCancelled() {
+        return cancelled;
+      }
+    };
   }
 }
