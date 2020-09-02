@@ -28,7 +28,7 @@ import org.hyperledger.besu.ethereum.eth.manager.RespondingEthPeer;
 import org.hyperledger.besu.ethereum.mainnet.MainnetProtocolSchedule;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.Test;
@@ -60,7 +60,7 @@ public class RequiredBlocksPeerValidatorTest extends AbstractPeerBlockValidatorT
     final RespondingEthPeer peer =
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, requiredBlockNumber);
 
-    final CompletableFuture<Boolean> result =
+    final SafeFuture<Boolean> result =
         validator.validatePeer(ethProtocolManager.ethContext(), peer.getEthPeer());
 
     assertThat(result).isNotDone();
@@ -92,7 +92,7 @@ public class RequiredBlocksPeerValidatorTest extends AbstractPeerBlockValidatorT
     final RespondingEthPeer peer =
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, requiredBlockNumber);
 
-    final CompletableFuture<Boolean> result =
+    final SafeFuture<Boolean> result =
         validator.validatePeer(ethProtocolManager.ethContext(), peer.getEthPeer());
 
     assertThat(result).isNotDone();

@@ -24,7 +24,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
 
 import com.google.common.collect.Lists;
@@ -84,7 +84,7 @@ class TlsEnabledHttpServerFactory {
 
       final HttpServer mockOrionHttpServer = vertx.createHttpServer(web3HttpServerOptions);
 
-      final CompletableFuture<Boolean> serverConfigured = new CompletableFuture<>();
+      final SafeFuture<Boolean> serverConfigured = new SafeFuture<>();
       mockOrionHttpServer.requestHandler(router).listen(result -> serverConfigured.complete(true));
 
       serverConfigured.get();

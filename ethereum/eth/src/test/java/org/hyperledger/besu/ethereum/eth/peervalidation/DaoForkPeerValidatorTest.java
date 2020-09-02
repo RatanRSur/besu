@@ -26,7 +26,7 @@ import org.hyperledger.besu.ethereum.mainnet.MainnetBlockHeaderValidator;
 import org.hyperledger.besu.ethereum.mainnet.MainnetProtocolSchedule;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.tuweni.bytes.Bytes;
@@ -58,7 +58,7 @@ public class DaoForkPeerValidatorTest extends AbstractPeerBlockValidatorTest {
     final RespondingEthPeer peer =
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, daoBlockNumber);
 
-    final CompletableFuture<Boolean> result =
+    final SafeFuture<Boolean> result =
         validator.validatePeer(ethProtocolManager.ethContext(), peer.getEthPeer());
 
     assertThat(result).isNotDone();
@@ -86,7 +86,7 @@ public class DaoForkPeerValidatorTest extends AbstractPeerBlockValidatorTest {
     final RespondingEthPeer peer =
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, daoBlockNumber);
 
-    final CompletableFuture<Boolean> result =
+    final SafeFuture<Boolean> result =
         validator.validatePeer(ethProtocolManager.ethContext(), peer.getEthPeer());
 
     assertThat(result).isNotDone();

@@ -27,7 +27,7 @@ import org.hyperledger.besu.testutil.MockExecutorService;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -45,8 +45,8 @@ public class AbstractEthTaskTest {
 
   @Test
   public void shouldCancelAllIncompleteSubtasksWhenMultipleIncomplete() {
-    final CompletableFuture<Void> subtask1 = new CompletableFuture<>();
-    final CompletableFuture<Void> subtask2 = new CompletableFuture<>();
+    final SafeFuture<Void> subtask1 = new SafeFuture<>();
+    final SafeFuture<Void> subtask2 = new SafeFuture<>();
     final EthTaskWithMultipleSubtasks task =
         new EthTaskWithMultipleSubtasks(Arrays.asList(subtask1, subtask2));
 
@@ -59,9 +59,9 @@ public class AbstractEthTaskTest {
 
   @Test
   public void shouldAnyCancelIncompleteSubtasksWhenMultiple() {
-    final CompletableFuture<Void> subtask1 = new CompletableFuture<>();
-    final CompletableFuture<Void> subtask2 = new CompletableFuture<>();
-    final CompletableFuture<Void> subtask3 = new CompletableFuture<>();
+    final SafeFuture<Void> subtask1 = new SafeFuture<>();
+    final SafeFuture<Void> subtask2 = new SafeFuture<>();
+    final SafeFuture<Void> subtask3 = new SafeFuture<>();
     final EthTaskWithMultipleSubtasks task =
         new EthTaskWithMultipleSubtasks(Arrays.asList(subtask1, subtask2, subtask3));
 
@@ -78,12 +78,12 @@ public class AbstractEthTaskTest {
   @Test
   public void shouldCompleteWhenCancelNotCalled() {
     final AtomicBoolean done = new AtomicBoolean(false);
-    final CompletableFuture<Void> subtask1 = new CompletableFuture<>();
-    final CompletableFuture<Void> subtask2 = new CompletableFuture<>();
+    final SafeFuture<Void> subtask1 = new SafeFuture<>();
+    final SafeFuture<Void> subtask2 = new SafeFuture<>();
     final EthTaskWithMultipleSubtasks task =
         new EthTaskWithMultipleSubtasks(Arrays.asList(subtask1, subtask2));
 
-    final CompletableFuture<Void> future = task.run();
+    final SafeFuture<Void> future = task.run();
     subtask1.complete(null);
     subtask2.complete(null);
     task.cancel();
@@ -157,24 +157,23 @@ public class AbstractEthTaskTest {
 
   private class EthTaskWithMultipleSubtasks extends AbstractEthTask<Void> {
 
-    private final List<CompletableFuture<?>> subtasks;
+    private final List<SafeFuture<?>> subtasks;
 
-    private EthTaskWithMultipleSubtasks(final List<CompletableFuture<?>> subtasks) {
+    private EthTaskWithMultipleSubtasks(final List<SafeFuture<?>> subtasks) {
       super(new NoOpMetricsSystem());
       this.subtasks = subtasks;
     }
 
     @Override
     protected void executeTask() {
-      final List<CompletableFuture<?>> completedSubTasks = Lists.newArrayList();
-      for (final CompletableFuture<?> subtask : subtasks) {
-        final CompletableFuture<?> completedSubTask = executeSubTask(() -> subtask);
+      final List<SafeFuture<?>> completedSubTasks = Lists.newArrayList();
+      for (final SafeFuture<?> subtask : subtasks) {
+        final SafeFuture<?> completedSubTask = executeSubTask(() -> subtask);
         completedSubTasks.add(completedSubTask);
       }
 
-      final CompletableFuture<?> executedAllSubtasks =
-          CompletableFuture.allOf(
-              completedSubTasks.toArray(new CompletableFuture<?>[completedSubTasks.size()]));
+      final SafeFuture<?> executedAllSubtasks =
+          SafeFuture.allOf(completedSubTasks.toArray(new SafeFuture<?>[completedSubTasks.size()]));
       executedAllSubtasks.whenComplete(
           (r, t) -> {
             result.complete(null);

@@ -24,7 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
@@ -37,14 +37,14 @@ public class FutureUtilsTest {
 
   @Test
   public void shouldCreateExceptionallyCompletedFuture() {
-    final CompletableFuture<Void> future = CompletableFuture.failedFuture(ERROR);
+    final SafeFuture<Void> future = SafeFuture.failedFuture(ERROR);
     assertCompletedExceptionally(future, ERROR);
   }
 
   @Test
   public void shouldPropagateSuccessfulResult() {
-    final CompletableFuture<String> input = new CompletableFuture<>();
-    final CompletableFuture<String> output = new CompletableFuture<>();
+    final SafeFuture<String> input = new SafeFuture<>();
+    final SafeFuture<String> output = new SafeFuture<>();
     propagateResult(input, output);
     assertThat(output).isNotDone();
 
@@ -55,8 +55,8 @@ public class FutureUtilsTest {
 
   @Test
   public void shouldPropagateSuccessfulNullResult() {
-    final CompletableFuture<String> input = new CompletableFuture<>();
-    final CompletableFuture<String> output = new CompletableFuture<>();
+    final SafeFuture<String> input = new SafeFuture<>();
+    final SafeFuture<String> output = new SafeFuture<>();
     propagateResult(input, output);
     assertThat(output).isNotDone();
 
@@ -67,8 +67,8 @@ public class FutureUtilsTest {
 
   @Test
   public void shouldPropagateExceptionalResult() {
-    final CompletableFuture<String> input = new CompletableFuture<>();
-    final CompletableFuture<String> output = new CompletableFuture<>();
+    final SafeFuture<String> input = new SafeFuture<>();
+    final SafeFuture<String> output = new SafeFuture<>();
     propagateResult(input, output);
     assertThat(output).isNotDone();
 
@@ -80,8 +80,8 @@ public class FutureUtilsTest {
   @Test
   @SuppressWarnings("unchecked")
   public void shouldPropagateCancellation() {
-    final CompletableFuture<String> input = new CompletableFuture<>();
-    final CompletableFuture<String> output = mock(CompletableFuture.class);
+    final SafeFuture<String> input = new SafeFuture<>();
+    final SafeFuture<String> output = mock(SafeFuture.class);
     propagateCancellation(input, output);
 
     input.cancel(true);
@@ -91,8 +91,8 @@ public class FutureUtilsTest {
 
   @Test
   public void shouldNotPropagateExceptionsOtherThanCancellationWhenPropagatingCancellation() {
-    final CompletableFuture<String> input = new CompletableFuture<>();
-    final CompletableFuture<String> output = new CompletableFuture<>();
+    final SafeFuture<String> input = new SafeFuture<>();
+    final SafeFuture<String> output = new SafeFuture<>();
     propagateCancellation(input, output);
     assertThat(output).isNotDone();
 
@@ -102,8 +102,8 @@ public class FutureUtilsTest {
 
   @Test
   public void shouldNotPropagateResultsWhenPropagatingCancellation() {
-    final CompletableFuture<String> input = new CompletableFuture<>();
-    final CompletableFuture<String> output = new CompletableFuture<>();
+    final SafeFuture<String> input = new SafeFuture<>();
+    final SafeFuture<String> output = new SafeFuture<>();
     propagateCancellation(input, output);
     assertThat(output).isNotDone();
 
@@ -114,11 +114,11 @@ public class FutureUtilsTest {
   @Test
   public void shouldComposeExceptionallyWhenErrorOccurs() {
     final Function<Throwable, CompletionStage<String>> errorHandler = mockFunction();
-    final CompletableFuture<String> input = new CompletableFuture<>();
-    final CompletableFuture<String> afterException = new CompletableFuture<>();
+    final SafeFuture<String> input = new SafeFuture<>();
+    final SafeFuture<String> afterException = new SafeFuture<>();
     when(errorHandler.apply(ERROR)).thenReturn(afterException);
 
-    final CompletableFuture<String> result = exceptionallyCompose(input, errorHandler);
+    final SafeFuture<String> result = exceptionallyCompose(input, errorHandler);
 
     verifyZeroInteractions(errorHandler);
     assertThat(result).isNotDone();
@@ -136,11 +136,11 @@ public class FutureUtilsTest {
   public void shouldComposeExceptionallyWhenErrorOccursAndComposedFutureFails() {
     final RuntimeException secondError = new RuntimeException("Again?");
     final Function<Throwable, CompletionStage<String>> errorHandler = mockFunction();
-    final CompletableFuture<String> input = new CompletableFuture<>();
-    final CompletableFuture<String> afterException = new CompletableFuture<>();
+    final SafeFuture<String> input = new SafeFuture<>();
+    final SafeFuture<String> afterException = new SafeFuture<>();
     when(errorHandler.apply(ERROR)).thenReturn(afterException);
 
-    final CompletableFuture<String> result = exceptionallyCompose(input, errorHandler);
+    final SafeFuture<String> result = exceptionallyCompose(input, errorHandler);
 
     verifyZeroInteractions(errorHandler);
     assertThat(result).isNotDone();
@@ -157,11 +157,11 @@ public class FutureUtilsTest {
   @Test
   public void shouldComposeExceptionallyWhenErrorOccursAndErrorHandlerThrowsException() {
     final Function<Throwable, CompletionStage<String>> errorHandler = mockFunction();
-    final CompletableFuture<String> input = new CompletableFuture<>();
+    final SafeFuture<String> input = new SafeFuture<>();
     final IllegalStateException thrownException = new IllegalStateException("Oops");
     when(errorHandler.apply(ERROR)).thenThrow(thrownException);
 
-    final CompletableFuture<String> result = exceptionallyCompose(input, errorHandler);
+    final SafeFuture<String> result = exceptionallyCompose(input, errorHandler);
 
     verifyZeroInteractions(errorHandler);
     assertThat(result).isNotDone();
@@ -176,11 +176,11 @@ public class FutureUtilsTest {
   @Test
   public void shouldNotCallErrorHandlerWhenFutureCompletesSuccessfully() {
     final Function<Throwable, CompletionStage<String>> errorHandler = mockFunction();
-    final CompletableFuture<String> input = new CompletableFuture<>();
-    final CompletableFuture<String> afterException = new CompletableFuture<>();
+    final SafeFuture<String> input = new SafeFuture<>();
+    final SafeFuture<String> afterException = new SafeFuture<>();
     when(errorHandler.apply(ERROR)).thenReturn(afterException);
 
-    final CompletableFuture<String> result = exceptionallyCompose(input, errorHandler);
+    final SafeFuture<String> result = exceptionallyCompose(input, errorHandler);
 
     verifyZeroInteractions(errorHandler);
     assertThat(result).isNotDone();
@@ -191,7 +191,7 @@ public class FutureUtilsTest {
   }
 
   private void assertCompletedExceptionally(
-      final CompletableFuture<?> future, final RuntimeException expectedError) {
+      final SafeFuture<?> future, final RuntimeException expectedError) {
     assertThat(future).isCompletedExceptionally();
     assertThatThrownBy(future::get)
         .isInstanceOf(ExecutionException.class)

@@ -28,7 +28,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,8 +64,7 @@ abstract class AbstractPeerBlockValidator implements PeerValidator {
   }
 
   @Override
-  public CompletableFuture<Boolean> validatePeer(
-      final EthContext ethContext, final EthPeer ethPeer) {
+  public SafeFuture<Boolean> validatePeer(final EthContext ethContext, final EthPeer ethPeer) {
     final AbstractPeerTask<List<BlockHeader>> getHeaderTask =
         GetHeadersFromPeerByNumberTask.forSingleNumber(
                 protocolSchedule, ethContext, blockNumber, metricsSystem)

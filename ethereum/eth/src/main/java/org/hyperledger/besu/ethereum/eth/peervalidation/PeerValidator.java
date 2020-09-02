@@ -19,7 +19,7 @@ import org.hyperledger.besu.ethereum.eth.manager.EthPeer;
 import org.hyperledger.besu.ethereum.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 
 import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 public interface PeerValidator {
 
@@ -47,7 +47,7 @@ public interface PeerValidator {
    * @param ethPeer The peer to be validated.
    * @return True if the peer is valid, false otherwise.
    */
-  CompletableFuture<Boolean> validatePeer(final EthContext ethContext, final EthPeer ethPeer);
+  SafeFuture<Boolean> validatePeer(final EthContext ethContext, final EthPeer ethPeer);
 
   /**
    * Reason the peer will disconnect when the validator fail.

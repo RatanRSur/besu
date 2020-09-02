@@ -27,7 +27,7 @@ import org.hyperledger.besu.ethereum.p2p.rlpx.wire.Message;
 import java.io.Closeable;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -66,7 +66,7 @@ public interface P2PNetwork extends Closeable {
    * @param peer Peer to connect to.
    * @return Future of the established {@link PeerConnection}
    */
-  CompletableFuture<PeerConnection> connect(Peer peer);
+  SafeFuture<PeerConnection> connect(Peer peer);
 
   /**
    * Subscribe a {@link Consumer} to all incoming {@link Message} of a given sub-protocol. Calling

@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -85,7 +85,7 @@ public class DownloadHeaderSequenceTaskTest extends RetryingMessageTaskTest<List
             maxRetries,
             validationPolicy,
             metricsSystem);
-    final CompletableFuture<List<BlockHeader>> future = task.run();
+    final SafeFuture<List<BlockHeader>> future = task.run();
 
     // Respond with only the reference header
     final RespondingEthPeer.Responder responder =
@@ -115,7 +115,7 @@ public class DownloadHeaderSequenceTaskTest extends RetryingMessageTaskTest<List
             maxRetries,
             validationPolicy,
             metricsSystem);
-    final CompletableFuture<List<BlockHeader>> future = task.run();
+    final SafeFuture<List<BlockHeader>> future = task.run();
 
     // Filter response to include only reference header and previous header
     final RespondingEthPeer.Responder fullResponder =

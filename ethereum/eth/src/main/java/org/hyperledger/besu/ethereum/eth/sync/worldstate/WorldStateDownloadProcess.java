@@ -31,7 +31,7 @@ import org.hyperledger.besu.services.tasks.Task;
 import org.hyperledger.besu.util.ExceptionUtils;
 
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -95,9 +95,9 @@ public class WorldStateDownloadProcess {
     return new Builder();
   }
 
-  public CompletableFuture<Void> start(final EthScheduler ethScheduler) {
-    final CompletableFuture<Void> fetchDataFuture = ethScheduler.startPipeline(fetchDataPipeline);
-    final CompletableFuture<Void> completionFuture = ethScheduler.startPipeline(completionPipeline);
+  public SafeFuture<Void> start(final EthScheduler ethScheduler) {
+    final SafeFuture<Void> fetchDataFuture = ethScheduler.startPipeline(fetchDataPipeline);
+    final SafeFuture<Void> completionFuture = ethScheduler.startPipeline(completionPipeline);
 
     fetchDataFuture.whenComplete(
         (result, error) -> {

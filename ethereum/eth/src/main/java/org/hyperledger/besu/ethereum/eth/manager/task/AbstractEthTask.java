@@ -23,7 +23,7 @@ import org.hyperledger.besu.plugin.services.metrics.OperationTimer;
 
 import java.util.Collection;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -37,9 +37,9 @@ public abstract class AbstractEthTask<T> implements EthTask<T> {
 
   private double taskTimeInSec = -1.0D;
   private final OperationTimer taskTimer;
-  protected final CompletableFuture<T> result = new CompletableFuture<>();
+  protected final SafeFuture<T> result = new SafeFuture<>();
   private final AtomicBoolean started = new AtomicBoolean(false);
-  private final Collection<CompletableFuture<?>> subTaskFutures = new ConcurrentLinkedDeque<>();
+  private final Collection<SafeFuture<?>> subTaskFutures = new ConcurrentLinkedDeque<>();
 
   protected AbstractEthTask(final MetricsSystem metricsSystem) {
     this.taskTimer = buildOperationTimer(metricsSystem, getClass().getSimpleName());
@@ -70,7 +70,7 @@ public abstract class AbstractEthTask<T> implements EthTask<T> {
   }
 
   @Override
-  public final CompletableFuture<T> run() {
+  public final SafeFuture<T> run() {
     if (!result.isDone() && started.compareAndSet(false, true)) {
       executeTaskTimed();
       result.whenComplete((r, t) -> cleanup());
@@ -79,7 +79,7 @@ public abstract class AbstractEthTask<T> implements EthTask<T> {
   }
 
   @Override
-  public final CompletableFuture<T> runAsync(final ExecutorService executor) {
+  public final SafeFuture<T> runAsync(final ExecutorService executor) {
     if (!result.isDone() && started.compareAndSet(false, true)) {
       executor.execute(this::executeTaskTimed);
       result.whenComplete((r, t) -> cleanup());
@@ -110,19 +110,18 @@ public abstract class AbstractEthTask<T> implements EthTask<T> {
    * Utility for executing completable futures that handles cleanup if this EthTask is cancelled.
    *
    * @param subTask a subTask to execute
-   * @param <S> the type of data returned from the CompletableFuture
+   * @param <S> the type of data returned from the SafeFuture
    * @return The completableFuture that was executed
    */
-  protected final <S> CompletableFuture<S> executeSubTask(
-      final Supplier<CompletableFuture<S>> subTask) {
+  protected final <S> SafeFuture<S> executeSubTask(final Supplier<SafeFuture<S>> subTask) {
     synchronized (result) {
       if (!isCancelled()) {
-        final CompletableFuture<S> subTaskFuture = subTask.get();
+        final SafeFuture<S> subTaskFuture = subTask.get();
         subTaskFutures.add(subTaskFuture);
         subTaskFuture.whenComplete((r, t) -> subTaskFutures.remove(subTaskFuture));
         return subTaskFuture;
       } else {
-        return CompletableFuture.failedFuture(new CancellationException());
+        return SafeFuture.failedFuture(new CancellationException());
       }
     }
   }
@@ -132,11 +131,11 @@ public abstract class AbstractEthTask<T> implements EthTask<T> {
    *
    * @param scheduler the scheduler that will run worker task
    * @param subTask a subTask to execute
-   * @param <S> the type of data returned from the CompletableFuture
+   * @param <S> the type of data returned from the SafeFuture
    * @return The completableFuture that was executed
    */
-  protected final <S> CompletableFuture<S> executeWorkerSubTask(
-      final EthScheduler scheduler, final Supplier<CompletableFuture<S>> subTask) {
+  protected final <S> SafeFuture<S> executeWorkerSubTask(
+      final EthScheduler scheduler, final Supplier<SafeFuture<S>> subTask) {
     return executeSubTask(() -> scheduler.scheduleSyncWorkerTask(subTask));
   }
 
@@ -159,7 +158,7 @@ public abstract class AbstractEthTask<T> implements EthTask<T> {
 
   /** Cleanup any resources when task completes. */
   protected void cleanup() {
-    for (final CompletableFuture<?> subTaskFuture : subTaskFutures) {
+    for (final SafeFuture<?> subTaskFuture : subTaskFutures) {
       subTaskFuture.cancel(false);
     }
   }

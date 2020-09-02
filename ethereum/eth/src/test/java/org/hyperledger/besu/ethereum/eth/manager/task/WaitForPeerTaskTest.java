@@ -22,7 +22,7 @@ import org.hyperledger.besu.ethereum.eth.manager.EthProtocolManagerTestUtil;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -45,7 +45,7 @@ public class WaitForPeerTaskTest {
     // Execute task and wait for response
     final AtomicBoolean successful = new AtomicBoolean(false);
     final EthTask<Void> task = WaitForPeerTask.create(ethContext, metricsSystem);
-    final CompletableFuture<Void> future = task.run();
+    final SafeFuture<Void> future = task.run();
     future.whenComplete(
         (result, error) -> {
           if (error == null) {
@@ -60,7 +60,7 @@ public class WaitForPeerTaskTest {
   public void doesNotCompleteWhenNoPeerConnects() throws ExecutionException, InterruptedException {
     final AtomicBoolean successful = new AtomicBoolean(false);
     final EthTask<Void> task = WaitForPeerTask.create(ethContext, metricsSystem);
-    final CompletableFuture<Void> future = task.run();
+    final SafeFuture<Void> future = task.run();
     future.whenComplete(
         (result, error) -> {
           if (error == null) {
@@ -75,7 +75,7 @@ public class WaitForPeerTaskTest {
   public void cancel() throws ExecutionException, InterruptedException {
     // Execute task
     final EthTask<Void> task = WaitForPeerTask.create(ethContext, metricsSystem);
-    final CompletableFuture<Void> future = task.run();
+    final SafeFuture<Void> future = task.run();
 
     assertThat(future.isDone()).isFalse();
     task.cancel();

@@ -30,7 +30,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;
@@ -74,7 +74,7 @@ public class PersistBlockTask extends AbstractEthTask<Block> {
         protocolSchedule, protocolContext, ethContext, block, headerValidationMode, metricsSystem);
   }
 
-  public static Supplier<CompletableFuture<List<Block>>> forSequentialBlocks(
+  public static Supplier<SafeFuture<List<Block>>> forSequentialBlocks(
       final ProtocolSchedule protocolSchedule,
       final ProtocolContext protocolContext,
       final EthContext ethContext,
@@ -85,7 +85,7 @@ public class PersistBlockTask extends AbstractEthTask<Block> {
     return () -> {
       final List<Block> successfulImports = new ArrayList<>();
       final Iterator<Block> blockIterator = blocks.iterator();
-      CompletableFuture<Block> future =
+      SafeFuture<Block> future =
           importBlockAndAddToList(
               protocolSchedule,
               protocolContext,
@@ -112,7 +112,7 @@ public class PersistBlockTask extends AbstractEthTask<Block> {
     };
   }
 
-  private static CompletableFuture<Block> importBlockAndAddToList(
+  private static SafeFuture<Block> importBlockAndAddToList(
       final ProtocolSchedule protocolSchedule,
       final ProtocolContext protocolContext,
       final EthContext ethContext,
@@ -136,7 +136,7 @@ public class PersistBlockTask extends AbstractEthTask<Block> {
             });
   }
 
-  public static Supplier<CompletableFuture<List<Block>>> forUnorderedBlocks(
+  public static Supplier<SafeFuture<List<Block>>> forUnorderedBlocks(
       final ProtocolSchedule protocolSchedule,
       final ProtocolContext protocolContext,
       final EthContext ethContext,
@@ -145,7 +145,7 @@ public class PersistBlockTask extends AbstractEthTask<Block> {
       final MetricsSystem metricsSystem) {
     checkArgument(!blocks.isEmpty(), "No blocks to import provided");
     return () -> {
-      final CompletableFuture<List<Block>> finalResult = new CompletableFuture<>();
+      final SafeFuture<List<Block>> finalResult = new SafeFuture<>();
       final List<Block> successfulImports = new ArrayList<>();
       final Iterator<PersistBlockTask> tasks =
           blocks.stream()
@@ -160,7 +160,7 @@ public class PersistBlockTask extends AbstractEthTask<Block> {
                           metricsSystem))
               .iterator();
 
-      CompletableFuture<Block> future = tasks.next().run();
+      SafeFuture<Block> future = tasks.next().run();
       while (tasks.hasNext()) {
         final PersistBlockTask task = tasks.next();
         future =

@@ -52,7 +52,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import com.google.common.io.Files;
 import com.google.common.io.MoreFiles;
@@ -146,7 +146,7 @@ public class WorldStateDownloaderBenchmark {
 
   @Benchmark
   public Optional<Bytes> downloadWorldState() {
-    final CompletableFuture<Void> result = worldStateDownloader.run(blockHeader);
+    final SafeFuture<Void> result = worldStateDownloader.run(blockHeader);
     if (result.isDone()) {
       throw new IllegalStateException("World state download was already complete");
     }

@@ -55,7 +55,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalLong;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -310,7 +310,7 @@ public class DefaultP2PNetwork implements P2PNetwork {
   }
 
   @Override
-  public CompletableFuture<PeerConnection> connect(final Peer peer) {
+  public SafeFuture<PeerConnection> connect(final Peer peer) {
     return rlpxAgent.connect(peer);
   }
 

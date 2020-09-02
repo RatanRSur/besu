@@ -15,7 +15,7 @@
 package org.hyperledger.besu.enclave;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
 
 import io.vertx.core.http.HttpClient;
@@ -56,7 +56,7 @@ public class VertxRequestTransmitter implements RequestTransmitter {
       final String endpoint,
       final ResponseBodyHandler<T> responseHandler) {
     try {
-      final CompletableFuture<T> result = new CompletableFuture<>();
+      final SafeFuture<T> result = new SafeFuture<>();
       final HttpClientRequest request =
           client
               .request(method, endpoint)
@@ -84,7 +84,7 @@ public class VertxRequestTransmitter implements RequestTransmitter {
   private <T> void handleResponse(
       final HttpClientResponse response,
       final ResponseBodyHandler<T> responseHandler,
-      final CompletableFuture<T> future) {
+      final SafeFuture<T> future) {
     response.bodyHandler(
         responseBody -> {
           try {

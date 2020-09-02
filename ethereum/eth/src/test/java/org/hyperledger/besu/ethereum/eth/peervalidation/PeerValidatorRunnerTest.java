@@ -29,7 +29,7 @@ import org.hyperledger.besu.ethereum.eth.manager.EthProtocolManagerTestUtil;
 import org.hyperledger.besu.ethereum.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 
 import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import org.junit.Test;
 
@@ -118,7 +118,7 @@ public class PeerValidatorRunnerTest {
 
     when(validator.canBeValidated(eq(peer))).thenReturn(true);
     when(validator.validatePeer(eq(ethProtocolManager.ethContext()), eq(peer)))
-        .thenReturn(CompletableFuture.completedFuture(false));
+        .thenReturn(SafeFuture.completedFuture(false));
     when(validator.nextValidationCheckTimeout(eq(peer))).thenReturn(Duration.ofSeconds(30));
 
     assertThat(peer.isFullyValidated()).isFalse();
@@ -151,7 +151,7 @@ public class PeerValidatorRunnerTest {
 
     when(validator.canBeValidated(eq(peer))).thenReturn(true);
     when(validator.validatePeer(eq(ethProtocolManager.ethContext()), eq(peer)))
-        .thenReturn(CompletableFuture.completedFuture(true));
+        .thenReturn(SafeFuture.completedFuture(true));
     when(validator.nextValidationCheckTimeout(eq(peer))).thenReturn(Duration.ofSeconds(30));
 
     final PeerValidatorRunner runner =

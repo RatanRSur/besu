@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import org.apache.tuweni.bytes.Bytes;
 
@@ -56,8 +56,7 @@ public class RetryingGetNodeDataFromPeerTask extends AbstractRetryingPeerTask<Ma
   }
 
   @Override
-  protected CompletableFuture<Map<Hash, Bytes>> executePeerTask(
-      final Optional<EthPeer> assignedPeer) {
+  protected SafeFuture<Map<Hash, Bytes>> executePeerTask(final Optional<EthPeer> assignedPeer) {
     final GetNodeDataFromPeerTask task =
         GetNodeDataFromPeerTask.forHashes(ethContext, hashes, pivotBlockNumber, metricsSystem);
     assignedPeer.ifPresent(task::assignPeer);

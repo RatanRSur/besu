@@ -18,16 +18,16 @@ import org.hyperledger.besu.ethereum.p2p.peers.Peer;
 import org.hyperledger.besu.ethereum.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import org.apache.tuweni.bytes.Bytes;
 
 public abstract class RlpxConnection {
 
   private final long initiatedAt;
-  protected final CompletableFuture<PeerConnection> future;
+  protected final SafeFuture<PeerConnection> future;
 
-  private RlpxConnection(final CompletableFuture<PeerConnection> future) {
+  private RlpxConnection(final SafeFuture<PeerConnection> future) {
     this.future = future;
     this.initiatedAt = System.currentTimeMillis();
   }
@@ -37,7 +37,7 @@ public abstract class RlpxConnection {
   }
 
   public static RlpxConnection outboundConnection(
-      final Peer peer, final CompletableFuture<PeerConnection> future) {
+      final Peer peer, final SafeFuture<PeerConnection> future) {
     return new LocallyInitiatedRlpxConnection(peer, future);
   }
 
@@ -51,7 +51,7 @@ public abstract class RlpxConnection {
 
   public abstract PeerConnection getPeerConnection() throws ConnectionNotEstablishedException;
 
-  public CompletableFuture<PeerConnection> getFuture() {
+  public SafeFuture<PeerConnection> getFuture() {
     return future;
   }
 
@@ -88,7 +88,7 @@ public abstract class RlpxConnection {
     private final PeerConnection peerConnection;
 
     private RemotelyInitiatedRlpxConnection(final PeerConnection peerConnection) {
-      super(CompletableFuture.completedFuture(peerConnection));
+      super(SafeFuture.completedFuture(peerConnection));
       this.peerConnection = peerConnection;
     }
 
@@ -150,7 +150,7 @@ public abstract class RlpxConnection {
     private final Peer peer;
 
     private LocallyInitiatedRlpxConnection(
-        final Peer peer, final CompletableFuture<PeerConnection> future) {
+        final Peer peer, final SafeFuture<PeerConnection> future) {
       super(future);
       this.peer = peer;
     }

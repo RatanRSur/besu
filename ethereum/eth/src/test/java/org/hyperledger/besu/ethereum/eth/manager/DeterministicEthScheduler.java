@@ -20,7 +20,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -86,7 +86,7 @@ public class DeterministicEthScheduler extends EthScheduler {
   }
 
   @Override
-  public <T> void failAfterTimeout(final CompletableFuture<T> promise, final Duration timeout) {
+  public <T> void failAfterTimeout(final SafeFuture<T> promise, final Duration timeout) {
     final PendingTimeout<T> pendingTimeout = new PendingTimeout<>(promise, timeout);
     if (timeoutPolicy.shouldTimeout()) {
       pendingTimeout.expire();
@@ -115,10 +115,10 @@ public class DeterministicEthScheduler extends EthScheduler {
   }
 
   private static class PendingTimeout<T> {
-    final CompletableFuture<T> promise;
+    final SafeFuture<T> promise;
     final Duration timeout;
 
-    private PendingTimeout(final CompletableFuture<T> promise, final Duration timeout) {
+    private PendingTimeout(final SafeFuture<T> promise, final Duration timeout) {
       this.promise = promise;
       this.timeout = timeout;
     }

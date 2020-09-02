@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.ethereum.eth.sync;
 
-import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.SafeFuture.completedFuture;
 
 import org.hyperledger.besu.ethereum.ProtocolContext;
 import org.hyperledger.besu.ethereum.eth.manager.EthContext;
@@ -27,7 +27,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.time.Duration;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,14 +55,13 @@ public abstract class SyncTargetManager {
     this.metricsSystem = metricsSystem;
   }
 
-  public CompletableFuture<SyncTarget> findSyncTarget(
-      final Optional<SyncTarget> currentSyncTarget) {
+  public SafeFuture<SyncTarget> findSyncTarget(final Optional<SyncTarget> currentSyncTarget) {
     return currentSyncTarget
-        .map(CompletableFuture::completedFuture) // Return an existing sync target if present
+        .map(SafeFuture::completedFuture) // Return an existing sync target if present
         .orElseGet(this::selectNewSyncTarget);
   }
 
-  private CompletableFuture<SyncTarget> selectNewSyncTarget() {
+  private SafeFuture<SyncTarget> selectNewSyncTarget() {
     return selectBestAvailableSyncTarget()
         .thenCompose(
             maybeBestPeer -> {
@@ -98,7 +97,7 @@ public abstract class SyncTargetManager {
                     .thenCompose(
                         syncTarget ->
                             finalizeSelectedSyncTarget(syncTarget)
-                                .map(CompletableFuture::completedFuture)
+                                .map(SafeFuture::completedFuture)
                                 .orElseGet(this::waitForPeerAndThenSetSyncTarget));
               } else {
                 return waitForPeerAndThenSetSyncTarget();
@@ -110,13 +109,13 @@ public abstract class SyncTargetManager {
     return Optional.of(syncTarget);
   }
 
-  protected abstract CompletableFuture<Optional<EthPeer>> selectBestAvailableSyncTarget();
+  protected abstract SafeFuture<Optional<EthPeer>> selectBestAvailableSyncTarget();
 
-  private CompletableFuture<SyncTarget> waitForPeerAndThenSetSyncTarget() {
+  private SafeFuture<SyncTarget> waitForPeerAndThenSetSyncTarget() {
     return waitForNewPeer().handle((r, t) -> r).thenCompose((r) -> selectNewSyncTarget());
   }
 
-  private CompletableFuture<?> waitForNewPeer() {
+  private SafeFuture<?> waitForNewPeer() {
     return ethContext
         .getScheduler()
         .timeout(WaitForPeerTask.create(ethContext, metricsSystem), Duration.ofSeconds(5));

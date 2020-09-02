@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.services.pipeline;
 
-import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.SafeFuture.completedFuture;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.function.Function;
 
 import org.junit.Test;
@@ -31,15 +31,14 @@ import org.junit.Test;
 public class AsyncOperationProcessorTest {
 
   @SuppressWarnings("unchecked")
-  private final ReadPipe<CompletableFuture<String>> readPipe = mock(ReadPipe.class);
+  private final ReadPipe<SafeFuture<String>> readPipe = mock(ReadPipe.class);
 
   @SuppressWarnings("unchecked")
   private final WritePipe<String> writePipe = mock(WritePipe.class);
 
   @Test
   public void shouldImmediatelyOutputTasksThatAreAlreadyCompleteEvenIfOutputPipeIsFull() {
-    final AsyncOperationProcessor<CompletableFuture<String>, String> processor =
-        createProcessor(false);
+    final AsyncOperationProcessor<SafeFuture<String>, String> processor = createProcessor(false);
     when(writePipe.hasRemainingCapacity()).thenReturn(false);
     when(readPipe.get()).thenReturn(completedFuture("a"));
 
@@ -49,12 +48,11 @@ public class AsyncOperationProcessorTest {
 
   @Test
   public void shouldNotExceedConcurrentJobLimit() {
-    final AsyncOperationProcessor<CompletableFuture<String>, String> processor =
-        createProcessor(false);
-    final CompletableFuture<String> task1 = new CompletableFuture<>();
-    final CompletableFuture<String> task2 = new CompletableFuture<>();
-    final CompletableFuture<String> task3 = new CompletableFuture<>();
-    final CompletableFuture<String> task4 = new CompletableFuture<>();
+    final AsyncOperationProcessor<SafeFuture<String>, String> processor = createProcessor(false);
+    final SafeFuture<String> task1 = new SafeFuture<>();
+    final SafeFuture<String> task2 = new SafeFuture<>();
+    final SafeFuture<String> task3 = new SafeFuture<>();
+    final SafeFuture<String> task4 = new SafeFuture<>();
     when(readPipe.get()).thenReturn(task1).thenReturn(task2).thenReturn(task3).thenReturn(task4);
 
     // 3 tasks started
@@ -80,10 +78,9 @@ public class AsyncOperationProcessorTest {
 
   @Test
   public void shouldOutputRemainingInProgressTasksWhenFinalizing() {
-    final AsyncOperationProcessor<CompletableFuture<String>, String> processor =
-        createProcessor(false);
-    final CompletableFuture<String> task1 = new CompletableFuture<>();
-    final CompletableFuture<String> task2 = new CompletableFuture<>();
+    final AsyncOperationProcessor<SafeFuture<String>, String> processor = createProcessor(false);
+    final SafeFuture<String> task1 = new SafeFuture<>();
+    final SafeFuture<String> task2 = new SafeFuture<>();
     when(readPipe.get()).thenReturn(task1).thenReturn(task2);
 
     // Start the two tasks
@@ -103,10 +100,9 @@ public class AsyncOperationProcessorTest {
 
   @Test
   public void shouldCancelInProgressTasksWhenAborted() {
-    final AsyncOperationProcessor<CompletableFuture<String>, String> processor =
-        createProcessor(false);
-    final CompletableFuture<String> task1 = new CompletableFuture<>();
-    final CompletableFuture<String> task2 = new CompletableFuture<>();
+    final AsyncOperationProcessor<SafeFuture<String>, String> processor = createProcessor(false);
+    final SafeFuture<String> task1 = new SafeFuture<>();
+    final SafeFuture<String> task2 = new SafeFuture<>();
     when(readPipe.get()).thenReturn(task1).thenReturn(task2);
 
     processor.processNextInput(readPipe, writePipe);
@@ -121,10 +117,9 @@ public class AsyncOperationProcessorTest {
   @Test
   public void shouldInterruptThreadWhenFutureCompletes() {
     // Ensures that if we're waiting for the next input we wake up and output completed tasks
-    final AsyncOperationProcessor<CompletableFuture<String>, String> processor =
-        createProcessor(false);
+    final AsyncOperationProcessor<SafeFuture<String>, String> processor = createProcessor(false);
 
-    final CompletableFuture<String> task1 = new CompletableFuture<>();
+    final SafeFuture<String> task1 = new SafeFuture<>();
     when(readPipe.get()).thenReturn(task1);
 
     // Start the two tasks
@@ -137,12 +132,11 @@ public class AsyncOperationProcessorTest {
 
   @Test
   public void shouldPreserveOrderWhenRequested() {
-    final AsyncOperationProcessor<CompletableFuture<String>, String> processor =
-        createProcessor(true);
-    final CompletableFuture<String> task1 = new CompletableFuture<>();
-    final CompletableFuture<String> task2 = new CompletableFuture<>();
-    final CompletableFuture<String> task3 = new CompletableFuture<>();
-    final CompletableFuture<String> task4 = new CompletableFuture<>();
+    final AsyncOperationProcessor<SafeFuture<String>, String> processor = createProcessor(true);
+    final SafeFuture<String> task1 = new SafeFuture<>();
+    final SafeFuture<String> task2 = new SafeFuture<>();
+    final SafeFuture<String> task3 = new SafeFuture<>();
+    final SafeFuture<String> task4 = new SafeFuture<>();
     when(readPipe.get()).thenReturn(task1).thenReturn(task2).thenReturn(task3).thenReturn(task4);
 
     // 3 tasks started
@@ -183,9 +177,8 @@ public class AsyncOperationProcessorTest {
 
   @Test
   public void shouldThrowExceptionWhenFutureCompletesExceptionally() {
-    final AsyncOperationProcessor<CompletableFuture<String>, String> processor =
-        createProcessor(false);
-    final CompletableFuture<String> task1 = new CompletableFuture<>();
+    final AsyncOperationProcessor<SafeFuture<String>, String> processor = createProcessor(false);
+    final SafeFuture<String> task1 = new SafeFuture<>();
     when(readPipe.get()).thenReturn(task1);
 
     processor.processNextInput(readPipe, writePipe);
@@ -197,7 +190,7 @@ public class AsyncOperationProcessorTest {
         .hasRootCause(exception);
   }
 
-  private AsyncOperationProcessor<CompletableFuture<String>, String> createProcessor(
+  private AsyncOperationProcessor<SafeFuture<String>, String> createProcessor(
       final boolean preserveOrder) {
     return new AsyncOperationProcessor<>(Function.identity(), 3, preserveOrder);
   }

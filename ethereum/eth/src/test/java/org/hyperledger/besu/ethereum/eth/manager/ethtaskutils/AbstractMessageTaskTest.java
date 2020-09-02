@@ -43,7 +43,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.testutil.TestClock;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -137,7 +137,7 @@ public abstract class AbstractMessageTaskTest<T, R> {
     final AtomicReference<R> actualResult = new AtomicReference<>();
     final AtomicBoolean done = new AtomicBoolean(false);
     final EthTask<R> task = createTask(requestedData);
-    final CompletableFuture<R> future = task.run();
+    final SafeFuture<R> future = task.run();
     respondingPeer.respondWhile(responder, () -> !future.isDone());
     future.whenComplete(
         (result, error) -> {
@@ -160,7 +160,7 @@ public abstract class AbstractMessageTaskTest<T, R> {
     // Execute task and wait for response
     final AtomicBoolean done = new AtomicBoolean(false);
     final EthTask<R> task = createTask(requestedData);
-    final CompletableFuture<R> future = task.run();
+    final SafeFuture<R> future = task.run();
     future.whenComplete(
         (response, error) -> {
           done.compareAndSet(false, true);
@@ -178,7 +178,7 @@ public abstract class AbstractMessageTaskTest<T, R> {
 
     // Execute task
     final EthTask<R> task = createTask(requestedData);
-    final CompletableFuture<R> future = task.run();
+    final SafeFuture<R> future = task.run();
 
     assertThat(future.isDone()).isFalse();
     task.cancel();

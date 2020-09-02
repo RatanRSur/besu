@@ -27,7 +27,7 @@ import java.time.Clock;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
@@ -44,8 +44,8 @@ class WorldDownloadState {
   private final Clock clock;
   private final Set<EthTask<?>> outstandingRequests =
       Collections.newSetFromMap(new ConcurrentHashMap<>());
-  private final CompletableFuture<Void> internalFuture;
-  private final CompletableFuture<Void> downloadFuture;
+  private final SafeFuture<Void> internalFuture;
+  private final SafeFuture<Void> downloadFuture;
   // Volatile so monitoring can access it without having to synchronize.
   private volatile int requestsSinceLastProgress = 0;
   private final long minMillisBeforeStalling;
@@ -64,8 +64,8 @@ class WorldDownloadState {
     this.pendingRequests = pendingRequests;
     this.maxRequestsWithoutProgress = maxRequestsWithoutProgress;
     this.clock = clock;
-    this.internalFuture = new CompletableFuture<>();
-    this.downloadFuture = new CompletableFuture<>();
+    this.internalFuture = new SafeFuture<>();
+    this.downloadFuture = new SafeFuture<>();
     this.internalFuture.whenComplete(this::cleanup);
     this.downloadFuture.exceptionally(
         error -> {
@@ -117,7 +117,7 @@ class WorldDownloadState {
     return outstandingRequests.size();
   }
 
-  public CompletableFuture<Void> getDownloadFuture() {
+  public SafeFuture<Void> getDownloadFuture() {
     return downloadFuture;
   }
 
@@ -215,10 +215,10 @@ class WorldDownloadState {
     notifyAll();
   }
 
-  public CompletableFuture<Void> startDownload(
+  public SafeFuture<Void> startDownload(
       final WorldStateDownloadProcess worldStateDownloadProcess, final EthScheduler ethScheduler) {
     this.worldStateDownloadProcess = worldStateDownloadProcess;
-    final CompletableFuture<Void> processFuture = worldStateDownloadProcess.start(ethScheduler);
+    final SafeFuture<Void> processFuture = worldStateDownloadProcess.start(ethScheduler);
 
     processFuture.whenComplete(
         (result, error) -> {

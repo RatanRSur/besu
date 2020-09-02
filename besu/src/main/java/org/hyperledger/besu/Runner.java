@@ -37,7 +37,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -173,8 +173,7 @@ public class Runner implements AutoCloseable {
     awaitStop();
   }
 
-  private void waitForServiceToStop(
-      final String serviceName, final CompletableFuture<?> stopFuture) {
+  private void waitForServiceToStop(final String serviceName, final SafeFuture<?> stopFuture) {
     try {
       stopFuture.get(30, TimeUnit.SECONDS);
     } catch (final InterruptedException e) {
@@ -196,8 +195,7 @@ public class Runner implements AutoCloseable {
     }
   }
 
-  private void waitForServiceToStart(
-      final String serviceName, final CompletableFuture<?> startFuture) {
+  private void waitForServiceToStart(final String serviceName, final SafeFuture<?> startFuture) {
     do {
       try {
         startFuture.get(60, TimeUnit.SECONDS);

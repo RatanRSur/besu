@@ -32,7 +32,7 @@ import org.hyperledger.besu.services.tasks.Task;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.function.BiFunction;
 
 import com.google.common.collect.ImmutableMap;
@@ -58,7 +58,7 @@ public class RequestDataStepTest {
   private final WorldDownloadState downloadState = mock(WorldDownloadState.class);
   private final BlockHeader blockHeader =
       new BlockHeaderTestFixture().number(BLOCK_NUMBER).buildHeader();
-  private final CompletableFuture<Map<Hash, Bytes>> getDataFuture = new CompletableFuture<>();
+  private final SafeFuture<Map<Hash, Bytes>> getDataFuture = new SafeFuture<>();
 
   private final RequestDataStep requestDataStep = new RequestDataStep(getNodeDataTaskFactory);
 
@@ -76,7 +76,7 @@ public class RequestDataStepTest {
 
     when(getNodeDataTaskFactory.apply(asList(HASH1, HASH2), BLOCK_NUMBER)).thenReturn(ethTask);
 
-    final CompletableFuture<List<Task<NodeDataRequest>>> result =
+    final SafeFuture<List<Task<NodeDataRequest>>> result =
         requestDataStep.requestData(tasks, blockHeader, downloadState);
 
     assertThat(result).isNotDone();
@@ -100,7 +100,7 @@ public class RequestDataStepTest {
 
     when(getNodeDataTaskFactory.apply(singletonList(HASH1), BLOCK_NUMBER)).thenReturn(ethTask);
 
-    final CompletableFuture<List<Task<NodeDataRequest>>> result =
+    final SafeFuture<List<Task<NodeDataRequest>>> result =
         requestDataStep.requestData(tasks, blockHeader, downloadState);
 
     assertThat(result).isNotDone();
@@ -120,7 +120,7 @@ public class RequestDataStepTest {
 
     when(getNodeDataTaskFactory.apply(singletonList(HASH1), BLOCK_NUMBER)).thenReturn(ethTask);
 
-    final CompletableFuture<List<Task<NodeDataRequest>>> result =
+    final SafeFuture<List<Task<NodeDataRequest>>> result =
         requestDataStep.requestData(tasks, blockHeader, downloadState);
 
     assertThat(result).isNotDone();

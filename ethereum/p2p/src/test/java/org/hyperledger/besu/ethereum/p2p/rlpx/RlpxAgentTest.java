@@ -54,7 +54,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -90,12 +90,12 @@ public class RlpxAgentTest {
   @Test
   public void start() {
     // Initial call to start should work
-    final CompletableFuture<Integer> future = agent.start();
+    final SafeFuture<Integer> future = agent.start();
     assertThat(future).isDone();
     assertThat(future).isNotCompletedExceptionally();
 
     // Subsequent call to start should fail
-    final CompletableFuture<Integer> future2 = agent.start();
+    final SafeFuture<Integer> future2 = agent.start();
     assertThat(future2).isDone();
     assertThat(future2).isCompletedExceptionally();
     assertThatThrownBy(future2::get)
@@ -106,7 +106,7 @@ public class RlpxAgentTest {
   @Test
   public void stop() throws ExecutionException, InterruptedException {
     // Cannot stop before starting
-    final CompletableFuture<Void> future = agent.stop();
+    final SafeFuture<Void> future = agent.stop();
     assertThat(future).isDone();
     assertThat(future).isCompletedExceptionally();
     assertThatThrownBy(future::get)
@@ -116,14 +116,14 @@ public class RlpxAgentTest {
     // Stop after starting should succeed
     startAgent();
     final MockPeerConnection connection = (MockPeerConnection) agent.connect(createPeer()).get();
-    final CompletableFuture<Void> future2 = agent.stop();
+    final SafeFuture<Void> future2 = agent.stop();
     assertThat(future2).isDone();
     assertThat(future2).isNotCompletedExceptionally();
     // Check peer was disconnected
     assertThat(connection.getDisconnectReason()).contains(DisconnectReason.CLIENT_QUITTING);
 
     // Cannot stop again
-    final CompletableFuture<Void> future3 = agent.stop();
+    final SafeFuture<Void> future3 = agent.stop();
     assertThat(future3).isDone();
     assertThat(future3).isCompletedExceptionally();
     assertThatThrownBy(future3::get)
@@ -135,7 +135,7 @@ public class RlpxAgentTest {
   public void connect_succeeds() {
     startAgent();
     final Peer peer = createPeer();
-    final CompletableFuture<PeerConnection> connection = agent.connect(peer);
+    final SafeFuture<PeerConnection> connection = agent.connect(peer);
 
     assertThat(connection).isDone();
     assertThat(connection).isNotCompletedExceptionally();
@@ -148,7 +148,7 @@ public class RlpxAgentTest {
     connectionInitializer.setAutocompleteConnections(false);
     startAgent();
     final Peer peer = createPeer();
-    final CompletableFuture<PeerConnection> connection = agent.connect(peer);
+    final SafeFuture<PeerConnection> connection = agent.connect(peer);
 
     // Fail connection
     connection.completeExceptionally(new RuntimeException("whoopsies"));
@@ -161,7 +161,7 @@ public class RlpxAgentTest {
     startAgent();
     final DiscoveryPeer peer = DiscoveryPeer.fromEnode(enode());
     assertThat(peer.getLastAttemptedConnection()).isEqualTo(0);
-    final CompletableFuture<PeerConnection> connection = agent.connect(peer);
+    final SafeFuture<PeerConnection> connection = agent.connect(peer);
 
     assertThat(connection).isDone();
     assertThat(connection).isNotCompletedExceptionally();
@@ -175,8 +175,7 @@ public class RlpxAgentTest {
     final PeerConnection connection = connection(peer);
     connectionInitializer.simulateIncomingConnection(connection);
 
-    final Optional<CompletableFuture<PeerConnection>> trackedConnection =
-        agent.getPeerConnection(peer);
+    final Optional<SafeFuture<PeerConnection>> trackedConnection = agent.getPeerConnection(peer);
     assertThat(trackedConnection).isNotEmpty();
     assertThat(trackedConnection.get()).isCompletedWithValue(connection);
   }
@@ -185,7 +184,7 @@ public class RlpxAgentTest {
   public void connect_failsIfAgentIsNotReady() {
     // Don't start agent or set localNode
     final Peer peer = createPeer();
-    final CompletableFuture<PeerConnection> connection = agent.connect(peer);
+    final SafeFuture<PeerConnection> connection = agent.connect(peer);
 
     assertThat(connection).isDone();
     assertThat(connection).isCompletedExceptionally();
@@ -212,7 +211,7 @@ public class RlpxAgentTest {
   public void connect_failsIfPeerIsNotListening() {
     startAgent();
     final Peer peer = DefaultPeer.fromEnodeURL(enodeBuilder().disableListening().build());
-    final CompletableFuture<PeerConnection> connection = agent.connect(peer);
+    final SafeFuture<PeerConnection> connection = agent.connect(peer);
 
     assertThat(connection).isDone();
     assertThat(connection).isCompletedExceptionally();
@@ -227,8 +226,8 @@ public class RlpxAgentTest {
   public void connect_doesNotCreateDuplicateConnections() {
     startAgent();
     final Peer peer = createPeer();
-    final CompletableFuture<PeerConnection> connection1 = agent.connect(peer);
-    final CompletableFuture<PeerConnection> connection2 = agent.connect(peer);
+    final SafeFuture<PeerConnection> connection1 = agent.connect(peer);
+    final SafeFuture<PeerConnection> connection2 = agent.connect(peer);
 
     assertThat(connection2).isDone();
     assertThat(connection2).isNotCompletedExceptionally();
@@ -246,7 +245,7 @@ public class RlpxAgentTest {
     startAgent(localNodeId);
 
     final Peer peer = createPeer(remoteNodeId);
-    final CompletableFuture<PeerConnection> existingConnection = agent.connect(peer);
+    final SafeFuture<PeerConnection> existingConnection = agent.connect(peer);
     final MockPeerConnection incomingConnection = connection(peer);
     connectionInitializer.simulateIncomingConnection(incomingConnection);
 
@@ -267,7 +266,7 @@ public class RlpxAgentTest {
     startAgent(localNodeId);
 
     final Peer peer = createPeer(remoteNodeId);
-    final CompletableFuture<PeerConnection> existingConnection = agent.connect(peer);
+    final SafeFuture<PeerConnection> existingConnection = agent.connect(peer);
     final PeerConnection incomingConnection = connection(peer);
     connectionInitializer.simulateIncomingConnection(incomingConnection);
 
@@ -286,7 +285,7 @@ public class RlpxAgentTest {
     agent.connect(createPeer());
 
     final Peer peer = createPeer();
-    final CompletableFuture<PeerConnection> connection = agent.connect(peer);
+    final SafeFuture<PeerConnection> connection = agent.connect(peer);
 
     assertThat(connection).isDone();
     assertThat(connection).isCompletedExceptionally();
@@ -410,7 +409,7 @@ public class RlpxAgentTest {
     // Subsequent local connection should be permitted up to maxPeers
     for (int i = 0; i < (maxPeers - maxRemotePeers); i++) {
       final Peer peer = createPeer();
-      final CompletableFuture<PeerConnection> connection = agent.connect(peer);
+      final SafeFuture<PeerConnection> connection = agent.connect(peer);
       assertThat(connection).isDone();
       assertThat(connection).isNotCompletedExceptionally();
       assertThat(agent.getPeerConnection(peer)).contains(connection);
@@ -445,7 +444,7 @@ public class RlpxAgentTest {
     // Connect max peers locally
     for (int i = 0; i < maxPeers; i++) {
       final Peer peer = createPeer();
-      final CompletableFuture<PeerConnection> connection = agent.connect(peer);
+      final SafeFuture<PeerConnection> connection = agent.connect(peer);
       assertThat(connection).isDone();
       assertThat(connection).isNotCompletedExceptionally();
       assertThat(agent.getPeerConnection(peer)).contains(connection);
@@ -478,7 +477,7 @@ public class RlpxAgentTest {
     // Connect max local peers
     for (int i = 0; i < maxPeers; i++) {
       final Peer peer = createPeer();
-      final CompletableFuture<PeerConnection> connection = agent.connect(peer);
+      final SafeFuture<PeerConnection> connection = agent.connect(peer);
       assertThat(connection).isDone();
       assertThat(connection).isNotCompletedExceptionally();
       assertThat(agent.getPeerConnection(peer)).contains(connection);
@@ -530,14 +529,14 @@ public class RlpxAgentTest {
 
     // Saturate connections
     startAgentWithMaxPeers(1);
-    final CompletableFuture<PeerConnection> existingConnectionFuture = agent.connect(createPeer());
+    final SafeFuture<PeerConnection> existingConnectionFuture = agent.connect(createPeer());
     connectionInitializer.completePendingFutures();
     final MockPeerConnection existingConnection =
         (MockPeerConnection) existingConnectionFuture.get();
 
     final Peer peer = createPeer();
     when(peerPrivileges.canExceedConnectionLimits(peer)).thenReturn(true);
-    final CompletableFuture<PeerConnection> connection = agent.connect(peer);
+    final SafeFuture<PeerConnection> connection = agent.connect(peer);
     connectionInitializer.completePendingFutures();
 
     assertThat(connection).isDone();
@@ -563,11 +562,11 @@ public class RlpxAgentTest {
     when(peerPrivileges.canExceedConnectionLimits(peerB)).thenReturn(true);
 
     // Saturate connections
-    final CompletableFuture<PeerConnection> existingConnection = agent.connect(peerA);
+    final SafeFuture<PeerConnection> existingConnection = agent.connect(peerA);
     connectionInitializer.completePendingFutures();
 
     // Create new connection
-    final CompletableFuture<PeerConnection> connection = agent.connect(peerB);
+    final SafeFuture<PeerConnection> connection = agent.connect(peerB);
     connectionInitializer.completePendingFutures();
 
     assertThat(connection).isDone();
@@ -645,7 +644,7 @@ public class RlpxAgentTest {
     startAgentWithMaxPeers(1);
 
     // Add existing peer
-    final CompletableFuture<PeerConnection> existingConnection = agent.connect(peerA);
+    final SafeFuture<PeerConnection> existingConnection = agent.connect(peerA);
     assertThat(agent.getConnectionCount()).isEqualTo(1);
 
     // Simulate incoming connection
@@ -670,7 +669,7 @@ public class RlpxAgentTest {
             eq(localNode.getPeer()),
             eq(peer),
             eq(PeerPermissions.Action.RLPX_ALLOW_NEW_OUTBOUND_CONNECTION));
-    final CompletableFuture<PeerConnection> connection = agent.connect(peer);
+    final SafeFuture<PeerConnection> connection = agent.connect(peer);
 
     assertThat(connection).isDone();
     assertThat(connection).isCompletedExceptionally();
@@ -714,7 +713,7 @@ public class RlpxAgentTest {
   public void disconnect() throws ExecutionException, InterruptedException {
     startAgent();
     final Peer peer = spy(createPeer());
-    final CompletableFuture<PeerConnection> future = agent.connect(peer);
+    final SafeFuture<PeerConnection> future = agent.connect(peer);
     final MockPeerConnection connection = (MockPeerConnection) future.get();
 
     // Sanity check connection was established
@@ -977,7 +976,7 @@ public class RlpxAgentTest {
     startAgent();
 
     final Peer peer = createPeer();
-    final CompletableFuture<PeerConnection> future = agent.connect(peer);
+    final SafeFuture<PeerConnection> future = agent.connect(peer);
     assertThat(future).isNotDone();
 
     assertThat(agent.getPeerConnection(peer)).contains(future);
@@ -988,7 +987,7 @@ public class RlpxAgentTest {
     startAgent();
 
     final Peer peer = createPeer();
-    final CompletableFuture<PeerConnection> future = agent.connect(peer);
+    final SafeFuture<PeerConnection> future = agent.connect(peer);
     assertThat(future).isDone();
 
     assertThat(agent.getPeerConnection(peer)).contains(future);

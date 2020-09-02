@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -73,17 +73,16 @@ public class MockPeerDiscoveryAgent extends PeerDiscoveryAgent {
   }
 
   @Override
-  protected CompletableFuture<InetSocketAddress> listenForConnections() {
+  protected SafeFuture<InetSocketAddress> listenForConnections() {
     isRunning = true;
     // Skip network setup for tests
     InetSocketAddress address = new InetSocketAddress(config.getBindHost(), config.getBindPort());
-    return CompletableFuture.completedFuture(address);
+    return SafeFuture.completedFuture(address);
   }
 
   @Override
-  protected CompletableFuture<Void> sendOutgoingPacket(
-      final DiscoveryPeer toPeer, final Packet packet) {
-    CompletableFuture<Void> result = new CompletableFuture<>();
+  protected SafeFuture<Void> sendOutgoingPacket(final DiscoveryPeer toPeer, final Packet packet) {
+    SafeFuture<Void> result = new SafeFuture<>();
     if (!this.isRunning) {
       result.completeExceptionally(new Exception("Attempt to send message from an inactive agent"));
     }
@@ -127,9 +126,9 @@ public class MockPeerDiscoveryAgent extends PeerDiscoveryAgent {
   }
 
   @Override
-  public CompletableFuture<?> stop() {
+  public SafeFuture<?> stop() {
     isRunning = false;
-    return CompletableFuture.completedFuture(null);
+    return SafeFuture.completedFuture(null);
   }
 
   public NodeKey getNodeKey() {

@@ -76,7 +76,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
@@ -229,7 +229,7 @@ public final class EthProtocolManagerTest {
 
   @Test
   public void respondToGetHeaders() throws ExecutionException, InterruptedException {
-    final CompletableFuture<Void> done = new CompletableFuture<>();
+    final SafeFuture<Void> done = new SafeFuture<>();
     try (final EthProtocolManager ethManager =
         EthProtocolManagerTestUtil.create(
             blockchain,
@@ -265,7 +265,7 @@ public final class EthProtocolManagerTest {
 
   @Test
   public void respondToGetHeadersWithinLimits() throws ExecutionException, InterruptedException {
-    final CompletableFuture<Void> done = new CompletableFuture<>();
+    final SafeFuture<Void> done = new SafeFuture<>();
     final int limit = 5;
     try (final EthProtocolManager ethManager =
         EthProtocolManagerTestUtil.create(
@@ -302,7 +302,7 @@ public final class EthProtocolManagerTest {
 
   @Test
   public void respondToGetHeadersReversed() throws ExecutionException, InterruptedException {
-    final CompletableFuture<Void> done = new CompletableFuture<>();
+    final SafeFuture<Void> done = new SafeFuture<>();
     try (final EthProtocolManager ethManager =
         EthProtocolManagerTestUtil.create(
             blockchain,
@@ -338,7 +338,7 @@ public final class EthProtocolManagerTest {
 
   @Test
   public void respondToGetHeadersWithSkip() throws ExecutionException, InterruptedException {
-    final CompletableFuture<Void> done = new CompletableFuture<>();
+    final SafeFuture<Void> done = new SafeFuture<>();
     try (final EthProtocolManager ethManager =
         EthProtocolManagerTestUtil.create(
             blockchain,
@@ -377,7 +377,7 @@ public final class EthProtocolManagerTest {
   @Test
   public void respondToGetHeadersReversedWithSkip()
       throws ExecutionException, InterruptedException {
-    final CompletableFuture<Void> done = new CompletableFuture<>();
+    final SafeFuture<Void> done = new SafeFuture<>();
     try (final EthProtocolManager ethManager =
         EthProtocolManagerTestUtil.create(
             blockchain,
@@ -437,7 +437,7 @@ public final class EthProtocolManagerTest {
 
   @Test
   public void respondToGetHeadersPartial() throws ExecutionException, InterruptedException {
-    final CompletableFuture<Void> done = new CompletableFuture<>();
+    final SafeFuture<Void> done = new SafeFuture<>();
     try (final EthProtocolManager ethManager =
         EthProtocolManagerTestUtil.create(
             blockchain,
@@ -474,7 +474,7 @@ public final class EthProtocolManagerTest {
 
   @Test
   public void respondToGetHeadersEmpty() throws ExecutionException, InterruptedException {
-    final CompletableFuture<Void> done = new CompletableFuture<>();
+    final SafeFuture<Void> done = new SafeFuture<>();
     try (final EthProtocolManager ethManager =
         EthProtocolManagerTestUtil.create(
             blockchain,
@@ -508,7 +508,7 @@ public final class EthProtocolManagerTest {
 
   @Test
   public void respondToGetBodies() throws ExecutionException, InterruptedException {
-    final CompletableFuture<Void> done = new CompletableFuture<>();
+    final SafeFuture<Void> done = new SafeFuture<>();
     try (final EthProtocolManager ethManager =
         EthProtocolManagerTestUtil.create(
             blockchain,
@@ -557,7 +557,7 @@ public final class EthProtocolManagerTest {
 
   @Test
   public void respondToGetBodiesWithinLimits() throws ExecutionException, InterruptedException {
-    final CompletableFuture<Void> done = new CompletableFuture<>();
+    final SafeFuture<Void> done = new SafeFuture<>();
     final int limit = 5;
     try (final EthProtocolManager ethManager =
         EthProtocolManagerTestUtil.create(
@@ -606,7 +606,7 @@ public final class EthProtocolManagerTest {
 
   @Test
   public void respondToGetBodiesPartial() throws ExecutionException, InterruptedException {
-    final CompletableFuture<Void> done = new CompletableFuture<>();
+    final SafeFuture<Void> done = new SafeFuture<>();
     try (final EthProtocolManager ethManager =
         EthProtocolManagerTestUtil.create(
             blockchain,
@@ -648,7 +648,7 @@ public final class EthProtocolManagerTest {
 
   @Test
   public void respondToGetReceipts() throws ExecutionException, InterruptedException {
-    final CompletableFuture<Void> done = new CompletableFuture<>();
+    final SafeFuture<Void> done = new SafeFuture<>();
     try (final EthProtocolManager ethManager =
         EthProtocolManagerTestUtil.create(
             blockchain,
@@ -695,7 +695,7 @@ public final class EthProtocolManagerTest {
 
   @Test
   public void respondToGetReceiptsWithinLimits() throws ExecutionException, InterruptedException {
-    final CompletableFuture<Void> done = new CompletableFuture<>();
+    final SafeFuture<Void> done = new SafeFuture<>();
     final int limit = 5;
     try (final EthProtocolManager ethManager =
         EthProtocolManagerTestUtil.create(
@@ -743,7 +743,7 @@ public final class EthProtocolManagerTest {
 
   @Test
   public void respondToGetReceiptsPartial() throws ExecutionException, InterruptedException {
-    final CompletableFuture<Void> done = new CompletableFuture<>();
+    final SafeFuture<Void> done = new SafeFuture<>();
     try (final EthProtocolManager ethManager =
         EthProtocolManagerTestUtil.create(
             blockchain,
@@ -785,7 +785,7 @@ public final class EthProtocolManagerTest {
 
   @Test
   public void respondToGetNodeData() throws Exception {
-    final CompletableFuture<Void> done = new CompletableFuture<>();
+    final SafeFuture<Void> done = new SafeFuture<>();
     final WorldStateArchive worldStateArchive = protocolContext.getWorldStateArchive();
 
     try (final EthProtocolManager ethManager =
@@ -904,7 +904,7 @@ public final class EthProtocolManagerTest {
     final List<TransactionReceipt> receipts = gen.receipts(block);
     blockchain.appendBlock(block, receipts);
 
-    final CompletableFuture<Void> done = new CompletableFuture<>();
+    final SafeFuture<Void> done = new SafeFuture<>();
     try (final EthProtocolManager ethManager =
         EthProtocolManagerTestUtil.create(
             blockchain,

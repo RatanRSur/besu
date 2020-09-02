@@ -27,7 +27,7 @@ import org.hyperledger.besu.ethereum.p2p.rlpx.wire.Capability;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.stream.Stream;
 
 public class NoopP2PNetwork implements P2PNetwork {
@@ -42,7 +42,7 @@ public class NoopP2PNetwork implements P2PNetwork {
   }
 
   @Override
-  public CompletableFuture<PeerConnection> connect(final Peer peer) {
+  public SafeFuture<PeerConnection> connect(final Peer peer) {
     throw new P2PDisabledException("P2P networking disabled.  Unable to connect to network.");
   }
 

@@ -22,11 +22,10 @@ import org.hyperledger.besu.ethereum.mainnet.ProtocolSchedule;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.function.Function;
 
-public class DownloadBodiesStep
-    implements Function<List<BlockHeader>, CompletableFuture<List<Block>>> {
+public class DownloadBodiesStep implements Function<List<BlockHeader>, SafeFuture<List<Block>>> {
 
   private final ProtocolSchedule protocolSchedule;
   private final EthContext ethContext;
@@ -42,7 +41,7 @@ public class DownloadBodiesStep
   }
 
   @Override
-  public CompletableFuture<List<Block>> apply(final List<BlockHeader> blockHeaders) {
+  public SafeFuture<List<Block>> apply(final List<BlockHeader> blockHeaders) {
     return CompleteBlocksTask.forHeaders(protocolSchedule, ethContext, blockHeaders, metricsSystem)
         .run();
   }

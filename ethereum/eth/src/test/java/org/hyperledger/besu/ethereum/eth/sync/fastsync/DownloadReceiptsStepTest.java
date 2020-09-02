@@ -33,7 +33,7 @@ import org.hyperledger.besu.ethereum.eth.transactions.TransactionPool;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -74,7 +74,7 @@ public class DownloadReceiptsStepTest {
     final RespondingEthPeer peer = EthProtocolManagerTestUtil.createPeer(ethProtocolManager, 1000);
 
     final List<Block> blocks = asList(block(1), block(2), block(3), block(4));
-    final CompletableFuture<List<BlockWithReceipts>> result = downloadReceiptsStep.apply(blocks);
+    final SafeFuture<List<BlockWithReceipts>> result = downloadReceiptsStep.apply(blocks);
 
     peer.respond(RespondingEthPeer.blockchainResponder(blockchain));
 

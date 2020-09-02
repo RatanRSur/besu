@@ -15,7 +15,7 @@
 package org.hyperledger.besu.ethereum.eth.sync;
 
 import static java.util.Collections.emptyList;
-import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.SafeFuture.completedFuture;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import org.hyperledger.besu.ethereum.core.BlockHeader;
@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -49,8 +49,7 @@ public class CheckpointRangeSource implements Iterator<CheckpointRange> {
   private final Queue<CheckpointRange> retrievedRanges = new ArrayDeque<>();
   private BlockHeader lastRangeEnd;
   private boolean reachedEndOfCheckpoints = false;
-  private Optional<CompletableFuture<List<BlockHeader>>> pendingCheckpointsRequest =
-      Optional.empty();
+  private Optional<SafeFuture<List<BlockHeader>>> pendingCheckpointsRequest = Optional.empty();
   private int requestFailureCount = 0;
 
   public CheckpointRangeSource(
@@ -114,7 +113,7 @@ public class CheckpointRangeSource implements Iterator<CheckpointRange> {
     return getCheckpointRangeFromPendingRequest();
   }
 
-  private CompletableFuture<List<BlockHeader>> getNextCheckpointHeaders() {
+  private SafeFuture<List<BlockHeader>> getNextCheckpointHeaders() {
     return checkpointFetcher
         .getNextCheckpointHeaders(peer, lastRangeEnd)
         .exceptionally(
@@ -132,13 +131,13 @@ public class CheckpointRangeSource implements Iterator<CheckpointRange> {
    *
    * @return a future that after the pause completes with an empty list.
    */
-  private CompletableFuture<List<BlockHeader>> pauseBriefly() {
+  private SafeFuture<List<BlockHeader>> pauseBriefly() {
     return ethScheduler.scheduleFutureTask(
         () -> completedFuture(emptyList()), RETRY_DELAY_DURATION);
   }
 
   private CheckpointRange getCheckpointRangeFromPendingRequest() {
-    final CompletableFuture<List<BlockHeader>> pendingRequest = pendingCheckpointsRequest.get();
+    final SafeFuture<List<BlockHeader>> pendingRequest = pendingCheckpointsRequest.get();
     try {
       final List<BlockHeader> newCheckpointHeaders =
           pendingRequest.get(newHeaderWaitDuration.toMillis(), MILLISECONDS);

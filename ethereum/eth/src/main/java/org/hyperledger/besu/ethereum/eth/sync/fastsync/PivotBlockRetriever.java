@@ -21,7 +21,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.util.ExceptionUtils;
 
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -56,7 +56,7 @@ public class PivotBlockRetriever {
   // The current pivot block number, gets pushed back if peers disagree on the pivot block
   AtomicLong pivotBlockNumber;
 
-  private final CompletableFuture<FastSyncState> result = new CompletableFuture<>();
+  private final SafeFuture<FastSyncState> result = new SafeFuture<>();
   private final Map<Long, PivotBlockConfirmer> confirmationTasks = new ConcurrentHashMap<>();
 
   private final AtomicBoolean isStarted = new AtomicBoolean(false);
@@ -96,7 +96,7 @@ public class PivotBlockRetriever {
         DEFAULT_MAX_PIVOT_BLOCK_RESETS);
   }
 
-  public CompletableFuture<FastSyncState> downloadPivotBlockHeader() {
+  public SafeFuture<FastSyncState> downloadPivotBlockHeader() {
     if (isStarted.compareAndSet(false, true)) {
       LOG.info("Retrieve a pivot block that can be confirmed by at least {} peers.", peersToQuery);
       confirmBlock(pivotBlockNumber.get());

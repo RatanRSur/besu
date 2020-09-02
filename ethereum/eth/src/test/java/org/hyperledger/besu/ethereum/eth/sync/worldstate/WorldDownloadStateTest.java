@@ -30,7 +30,7 @@ import org.hyperledger.besu.services.tasks.CachingTaskCollection;
 import org.hyperledger.besu.services.tasks.InMemoryTaskQueue;
 import org.hyperledger.besu.testutil.TestClock;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
 
@@ -60,7 +60,7 @@ public class WorldDownloadStateTest {
       new WorldDownloadState(
           pendingRequests, MAX_REQUESTS_WITHOUT_PROGRESS, MIN_MILLIS_BEFORE_STALLING, clock);
 
-  private final CompletableFuture<Void> future = downloadState.getDownloadFuture();
+  private final SafeFuture<Void> future = downloadState.getDownloadFuture();
 
   @Before
   public void setUp() {
@@ -78,7 +78,7 @@ public class WorldDownloadStateTest {
 
   @Test
   public void shouldStoreRootNodeBeforeReturnedFutureCompletes() {
-    final CompletableFuture<Void> postFutureChecks =
+    final SafeFuture<Void> postFutureChecks =
         future.thenAccept(
             result ->
                 assertThat(worldStateStorage.getAccountStateTrieNode(ROOT_NODE_HASH))
@@ -190,7 +190,7 @@ public class WorldDownloadStateTest {
   }
 
   private void assertWorldStateStalled(final WorldDownloadState state) {
-    final CompletableFuture<Void> future = state.getDownloadFuture();
+    final SafeFuture<Void> future = state.getDownloadFuture();
     assertThat(future).isCompletedExceptionally();
     assertThatThrownBy(future::get)
         .isInstanceOf(ExecutionException.class)

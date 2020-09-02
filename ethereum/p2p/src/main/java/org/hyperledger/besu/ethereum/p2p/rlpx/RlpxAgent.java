@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -122,9 +122,9 @@ public class RlpxAgent {
     return new Builder();
   }
 
-  public CompletableFuture<Integer> start() {
+  public SafeFuture<Integer> start() {
     if (!started.compareAndSet(false, true)) {
-      return CompletableFuture.failedFuture(
+      return SafeFuture.failedFuture(
           new IllegalStateException(
               "Unable to start an already started " + getClass().getSimpleName()));
     }
@@ -147,9 +147,9 @@ public class RlpxAgent {
             });
   }
 
-  public CompletableFuture<Void> stop() {
+  public SafeFuture<Void> stop() {
     if (!started.get() || !stopped.compareAndSet(false, true)) {
-      return CompletableFuture.failedFuture(
+      return SafeFuture.failedFuture(
           new IllegalStateException("Illegal attempt to stop " + getClass().getSimpleName()));
     }
 
@@ -187,7 +187,7 @@ public class RlpxAgent {
     }
   }
 
-  public Optional<CompletableFuture<PeerConnection>> getPeerConnection(final Peer peer) {
+  public Optional<SafeFuture<PeerConnection>> getPeerConnection(final Peer peer) {
     final RlpxConnection connection = connectionsById.get(peer.getId());
     return Optional.ofNullable(connection)
         .filter(conn -> !conn.isFailedOrDisconnected())
@@ -201,10 +201,10 @@ public class RlpxAgent {
    * @return A future that will resolve to the existing or newly-established connection with this
    *     peer.
    */
-  public CompletableFuture<PeerConnection> connect(final Peer peer) {
+  public SafeFuture<PeerConnection> connect(final Peer peer) {
     // Check if we're ready to establish connections
     if (!localNode.isReady()) {
-      return CompletableFuture.failedFuture(
+      return SafeFuture.failedFuture(
           new IllegalStateException(
               "Cannot connect before "
                   + this.getClass().getSimpleName()
@@ -216,11 +216,11 @@ public class RlpxAgent {
       final String errorMsg =
           "Attempt to connect to peer with no listening port: " + enode.toString();
       LOG.warn(errorMsg);
-      return CompletableFuture.failedFuture((new IllegalArgumentException(errorMsg)));
+      return SafeFuture.failedFuture((new IllegalArgumentException(errorMsg)));
     }
 
     // Shortcut checks if we're already connected
-    final Optional<CompletableFuture<PeerConnection>> peerConnection = getPeerConnection(peer);
+    final Optional<SafeFuture<PeerConnection>> peerConnection = getPeerConnection(peer);
     if (peerConnection.isPresent()) {
       return peerConnection.get();
     }
@@ -231,15 +231,15 @@ public class RlpxAgent {
               + maxConnections
               + "). Cannot connect to peer: "
               + peer;
-      return CompletableFuture.failedFuture(new IllegalStateException(errorMsg));
+      return SafeFuture.failedFuture(new IllegalStateException(errorMsg));
     }
     // Check permissions
     if (!peerPermissions.allowNewOutboundConnectionTo(peer)) {
-      return CompletableFuture.failedFuture(peerPermissions.newOutboundConnectionException(peer));
+      return SafeFuture.failedFuture(peerPermissions.newOutboundConnectionException(peer));
     }
 
     // Initiate connection or return existing connection
-    AtomicReference<CompletableFuture<PeerConnection>> connectionFuture = new AtomicReference<>();
+    AtomicReference<SafeFuture<PeerConnection>> connectionFuture = new AtomicReference<>();
     connectionsById.compute(
         peer.getId(),
         (id, existingConnection) -> {
@@ -249,7 +249,7 @@ public class RlpxAgent {
             return existingConnection;
           } else {
             // We're initiating a new connection
-            final CompletableFuture<PeerConnection> future = initiateOutboundConnection(peer);
+            final SafeFuture<PeerConnection> future = initiateOutboundConnection(peer);
             connectionFuture.set(future);
             RlpxConnection newConnection = RlpxConnection.outboundConnection(peer, future);
             newConnection.subscribeConnectionEstablished(
@@ -319,7 +319,7 @@ public class RlpxAgent {
         });
   }
 
-  private CompletableFuture<PeerConnection> initiateOutboundConnection(final Peer peer) {
+  private SafeFuture<PeerConnection> initiateOutboundConnection(final Peer peer) {
     LOG.trace("Initiating connection to peer: {}", peer.getEnodeURL());
     if (peer instanceof DiscoveryPeer) {
       ((DiscoveryPeer) peer).setLastAttemptedConnection(System.currentTimeMillis());

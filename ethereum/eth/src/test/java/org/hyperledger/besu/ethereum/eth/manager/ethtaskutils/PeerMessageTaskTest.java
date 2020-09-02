@@ -24,7 +24,7 @@ import org.hyperledger.besu.ethereum.eth.manager.task.AbstractPeerTask;
 import org.hyperledger.besu.ethereum.eth.manager.task.EthTask;
 import org.hyperledger.besu.util.ExceptionUtils;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -57,7 +57,7 @@ public abstract class PeerMessageTaskTest<T>
     final AtomicBoolean done = new AtomicBoolean(false);
     final T requestedData = generateDataToBeRequested();
     final EthTask<AbstractPeerTask.PeerTaskResult<T>> task = createTask(requestedData);
-    final CompletableFuture<AbstractPeerTask.PeerTaskResult<T>> future = task.run();
+    final SafeFuture<AbstractPeerTask.PeerTaskResult<T>> future = task.run();
     respondingEthPeer.respondWhile(responder, () -> !future.isDone());
     future.whenComplete(
         (response, error) -> {
@@ -78,7 +78,7 @@ public abstract class PeerMessageTaskTest<T>
 
     // Execute task
     final EthTask<AbstractPeerTask.PeerTaskResult<T>> task = createTask(requestedData);
-    final CompletableFuture<AbstractPeerTask.PeerTaskResult<T>> future = task.run();
+    final SafeFuture<AbstractPeerTask.PeerTaskResult<T>> future = task.run();
     final AtomicReference<Throwable> failure = new AtomicReference<>();
     future.whenComplete((r, t) -> failure.set(t));
 
@@ -108,7 +108,7 @@ public abstract class PeerMessageTaskTest<T>
     // Execute task and wait for response
     final AtomicBoolean done = new AtomicBoolean(false);
     final EthTask<AbstractPeerTask.PeerTaskResult<T>> task = createTask(requestedData);
-    final CompletableFuture<AbstractPeerTask.PeerTaskResult<T>> future = task.run();
+    final SafeFuture<AbstractPeerTask.PeerTaskResult<T>> future = task.run();
     respondingEthPeer.respondWhile(responder, () -> !future.isDone());
     future.whenComplete((response, error) -> done.compareAndSet(false, true));
     assertThat(future.isDone()).isTrue();
@@ -127,7 +127,7 @@ public abstract class PeerMessageTaskTest<T>
 
     // Execute task and wait for response
     final EthTask<AbstractPeerTask.PeerTaskResult<T>> task = createTask(requestedData);
-    final CompletableFuture<AbstractPeerTask.PeerTaskResult<T>> future = task.run();
+    final SafeFuture<AbstractPeerTask.PeerTaskResult<T>> future = task.run();
 
     assertThat(future.isCompletedExceptionally()).isTrue();
     assertThat(

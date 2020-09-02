@@ -15,7 +15,7 @@
 package org.hyperledger.besu.plugin;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 /**
  * Base interface for Besu plugins.
@@ -64,10 +64,10 @@ public interface BesuPlugin {
    *
    * <p>The plugin should reload its configuration dynamically or do nothing if not applicable.
    *
-   * @return a {@link CompletableFuture}
+   * @return a {@link SafeFuture}
    */
-  default CompletableFuture<Void> reloadConfiguration() {
-    return CompletableFuture.completedFuture(null);
+  default SafeFuture<Void> reloadConfiguration() {
+    return SafeFuture.completedFuture(null);
   }
 
   /**

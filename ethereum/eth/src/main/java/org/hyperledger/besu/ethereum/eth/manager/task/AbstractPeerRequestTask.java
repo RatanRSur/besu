@@ -28,7 +28,7 @@ import org.hyperledger.besu.util.ExceptionUtils;
 
 import java.time.Duration;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.logging.log4j.LogManager;
@@ -55,7 +55,7 @@ public abstract class AbstractPeerRequestTask<R> extends AbstractPeerTask<R> {
 
   @Override
   protected final void executeTask() {
-    final CompletableFuture<R> promise = new CompletableFuture<>();
+    final SafeFuture<R> promise = new SafeFuture<>();
     responseStream = sendRequest();
     responseStream.then(
         stream -> {
@@ -91,7 +91,7 @@ public abstract class AbstractPeerRequestTask<R> extends AbstractPeerTask<R> {
   }
 
   private void handleMessage(
-      final CompletableFuture<R> promise,
+      final SafeFuture<R> promise,
       final boolean streamClosed,
       final MessageData message,
       final EthPeer peer) {

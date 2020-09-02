@@ -16,7 +16,7 @@ package org.hyperledger.besu.services.pipeline;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.synchronizedList;
-import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.SafeFuture.completedFuture;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -80,7 +80,7 @@ public class PipelineBuilderTest {
     final Pipeline<Integer> pipeline =
         PipelineBuilder.createPipelineFrom("input", tasks, 10, NO_OP_LABELLED_2_COUNTER)
             .andFinishWith("end", output::add);
-    final CompletableFuture<?> result = pipeline.start(executorService);
+    final SafeFuture<?> result = pipeline.start(executorService);
     result.get(10, SECONDS);
     assertThat(output).containsExactly(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
   }
@@ -93,7 +93,7 @@ public class PipelineBuilderTest {
             .thenProcess("toString", Object::toString)
             .andFinishWith("end", output::add);
 
-    final CompletableFuture<?> result = pipeline.start(executorService);
+    final SafeFuture<?> result = pipeline.start(executorService);
     result.get(10, SECONDS);
     assertThat(output)
         .containsExactly(
@@ -111,7 +111,7 @@ public class PipelineBuilderTest {
     final Pipe<Integer> input = pipeline.getInputPipe();
     tasks.forEachRemaining(input::put);
 
-    final CompletableFuture<?> result = pipeline.start(executorService);
+    final SafeFuture<?> result = pipeline.start(executorService);
 
     assertThat(output.poll(10, SECONDS)).containsExactly(1, 2, 3, 4, 5, 6);
     assertThat(output.poll(10, SECONDS)).containsExactly(7, 8, 9, 10, 11, 12);
@@ -138,7 +138,7 @@ public class PipelineBuilderTest {
         PipelineBuilder.createPipelineFrom("input", tasks, 10, NO_OP_LABELLED_2_COUNTER)
             .thenProcessAsync("toString", value -> completedFuture(Integer.toString(value)), 3)
             .andFinishWith("end", output::add);
-    final CompletableFuture<?> result = pipeline.start(executorService);
+    final SafeFuture<?> result = pipeline.start(executorService);
     result.get(10, SECONDS);
     assertThat(output)
         .containsExactlyInAnyOrder(
@@ -147,20 +147,20 @@ public class PipelineBuilderTest {
 
   @Test
   public void shouldProcessAsyncOrdered() throws Exception {
-    final Map<Integer, CompletableFuture<String>> futures = new ConcurrentHashMap<>();
+    final Map<Integer, SafeFuture<String>> futures = new ConcurrentHashMap<>();
     final List<String> output = new CopyOnWriteArrayList<>();
     final Pipeline<Integer> pipeline =
         PipelineBuilder.createPipelineFrom("input", tasks, 15, NO_OP_LABELLED_2_COUNTER)
             .thenProcessAsyncOrdered(
                 "toString",
                 value -> {
-                  final CompletableFuture<String> future = new CompletableFuture<>();
+                  final SafeFuture<String> future = new SafeFuture<>();
                   futures.put(value, future);
                   return future;
                 },
                 8)
             .andFinishWith("end", output::add);
-    final CompletableFuture<?> result = pipeline.start(executorService);
+    final SafeFuture<?> result = pipeline.start(executorService);
 
     waitForSize(futures.values(), 8);
     // Complete current items out of order, except for 3
@@ -195,20 +195,20 @@ public class PipelineBuilderTest {
   @Test
   public void shouldLimitInFlightProcessesWhenProcessingAsync() throws Exception {
     final List<String> output = new ArrayList<>();
-    final List<CompletableFuture<String>> futures = new CopyOnWriteArrayList<>();
+    final List<SafeFuture<String>> futures = new CopyOnWriteArrayList<>();
     final Pipeline<Integer> pipeline =
         PipelineBuilder.createPipelineFrom(
                 "input", asList(1, 2, 3, 4, 5, 6, 7).iterator(), 10, NO_OP_LABELLED_2_COUNTER)
             .thenProcessAsync(
                 "createFuture",
                 value -> {
-                  final CompletableFuture<String> future = new CompletableFuture<>();
+                  final SafeFuture<String> future = new SafeFuture<>();
                   futures.add(future);
                   return future;
                 },
                 3)
             .andFinishWith("end", output::add);
-    final CompletableFuture<?> result = pipeline.start(executorService);
+    final SafeFuture<?> result = pipeline.start(executorService);
 
     waitForSize(futures, 3);
 
@@ -267,7 +267,7 @@ public class PipelineBuilderTest {
                 },
                 2)
             .andFinishWith("end", output::add);
-    final CompletableFuture<?> result = pipeline.start(executorService);
+    final SafeFuture<?> result = pipeline.start(executorService);
 
     // One thread will block but the other should process the remaining entries.
     waitForSize(output, 14);
@@ -303,7 +303,7 @@ public class PipelineBuilderTest {
                 2,
                 10)
             .andFinishWith("end", output::add);
-    final CompletableFuture<?> result = pipeline.start(executorService);
+    final SafeFuture<?> result = pipeline.start(executorService);
 
     // One thread will block but the other should process the remaining entries.
     waitForSize(output, 28);
@@ -343,7 +343,7 @@ public class PipelineBuilderTest {
                 })
             .andFinishWith("end", output::add);
 
-    final CompletableFuture<?> result = pipeline.start(executorService);
+    final SafeFuture<?> result = pipeline.start(executorService);
 
     startedProcessingValueSix.await(10, SECONDS);
     waitForSize(output, allowProcessingUpTo);
@@ -379,7 +379,7 @@ public class PipelineBuilderTest {
                 })
             .andFinishWith("end", output::add);
 
-    final CompletableFuture<?> result = pipeline.start(executorService);
+    final SafeFuture<?> result = pipeline.start(executorService);
 
     startedProcessingValueSix.await(10, SECONDS);
     waitForSize(output, allowProcessingUpTo);
@@ -405,7 +405,7 @@ public class PipelineBuilderTest {
                     })
             .andFinishWith("end", new ArrayList<Integer>()::add);
 
-    final CompletableFuture<?> result = pipeline.start(executorService);
+    final SafeFuture<?> result = pipeline.start(executorService);
 
     assertThatThrownBy(() -> result.get(10, SECONDS))
         .isInstanceOf(ExecutionException.class)
@@ -424,8 +424,8 @@ public class PipelineBuilderTest {
         PipelineBuilder.createPipelineFrom("input", tasks, 10, labelledCounter)
             .thenProcess("map", Function.identity())
             .thenProcessInParallel("parallel", Function.identity(), 3)
-            .thenProcessAsync("async", CompletableFuture::completedFuture, 3)
-            .thenProcessAsyncOrdered("asyncOrdered", CompletableFuture::completedFuture, 3)
+            .thenProcessAsync("async", SafeFuture::completedFuture, 3)
+            .thenProcessAsyncOrdered("asyncOrdered", SafeFuture::completedFuture, 3)
             .inBatches(4)
             .thenFlatMap("flatMap", List::stream, 10)
             .andFinishWith("finish", new ArrayList<>()::add);

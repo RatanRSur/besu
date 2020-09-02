@@ -14,11 +14,11 @@
  */
 package org.hyperledger.besu.ethereum.eth.sync;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 public interface ChainDownloader {
 
-  CompletableFuture<Void> start();
+  SafeFuture<Void> start();
 
   void cancel();
 }

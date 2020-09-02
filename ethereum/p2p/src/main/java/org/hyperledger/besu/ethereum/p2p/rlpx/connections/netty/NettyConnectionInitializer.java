@@ -29,7 +29,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.util.Subscribers;
 
 import java.net.InetSocketAddress;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.IntSupplier;
@@ -90,8 +90,8 @@ public class NettyConnectionInitializer implements ConnectionInitializer {
   }
 
   @Override
-  public CompletableFuture<InetSocketAddress> start() {
-    final CompletableFuture<InetSocketAddress> listeningPortFuture = new CompletableFuture<>();
+  public SafeFuture<InetSocketAddress> start() {
+    final SafeFuture<InetSocketAddress> listeningPortFuture = new SafeFuture<>();
     if (!started.compareAndSet(false, true)) {
       listeningPortFuture.completeExceptionally(
           new IllegalStateException(
@@ -126,8 +126,8 @@ public class NettyConnectionInitializer implements ConnectionInitializer {
   }
 
   @Override
-  public CompletableFuture<Void> stop() {
-    CompletableFuture<Void> stoppedFuture = new CompletableFuture<>();
+  public SafeFuture<Void> stop() {
+    SafeFuture<Void> stoppedFuture = new SafeFuture<>();
     if (!started.get() || !stopped.compareAndSet(false, true)) {
       stoppedFuture.completeExceptionally(
           new IllegalStateException("Illegal attempt to stop " + this.getClass().getSimpleName()));
@@ -156,8 +156,8 @@ public class NettyConnectionInitializer implements ConnectionInitializer {
   }
 
   @Override
-  public CompletableFuture<PeerConnection> connect(final Peer peer) {
-    final CompletableFuture<PeerConnection> connectionFuture = new CompletableFuture<>();
+  public SafeFuture<PeerConnection> connect(final Peer peer) {
+    final SafeFuture<PeerConnection> connectionFuture = new SafeFuture<>();
 
     if (peer instanceof DiscoveryPeer) {
       ((DiscoveryPeer) peer).setLastAttemptedConnection(System.currentTimeMillis());
@@ -210,7 +210,7 @@ public class NettyConnectionInitializer implements ConnectionInitializer {
     return new ChannelInitializer<SocketChannel>() {
       @Override
       protected void initChannel(final SocketChannel ch) {
-        final CompletableFuture<PeerConnection> connectionFuture = new CompletableFuture<>();
+        final SafeFuture<PeerConnection> connectionFuture = new SafeFuture<>();
         connectionFuture.thenAccept(
             connection -> connectSubscribers.forEach(c -> c.onConnect(connection)));
 

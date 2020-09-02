@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -87,16 +87,16 @@ public class GetReceiptsForHeadersTask
   }
 
   @Override
-  protected CompletableFuture<Map<BlockHeader, List<TransactionReceipt>>> executePeerTask(
+  protected SafeFuture<Map<BlockHeader, List<TransactionReceipt>>> executePeerTask(
       final Optional<EthPeer> assignedPeer) {
     return requestReceipts(assignedPeer).thenCompose(this::processResponse);
   }
 
-  private CompletableFuture<Map<BlockHeader, List<TransactionReceipt>>> requestReceipts(
+  private SafeFuture<Map<BlockHeader, List<TransactionReceipt>>> requestReceipts(
       final Optional<EthPeer> assignedPeer) {
     final List<BlockHeader> incompleteHeaders = incompleteHeaders();
     if (incompleteHeaders.isEmpty()) {
-      return CompletableFuture.completedFuture(emptyMap());
+      return SafeFuture.completedFuture(emptyMap());
     }
     LOG.debug(
         "Requesting bodies to complete {} blocks, starting with {}.",
@@ -111,7 +111,7 @@ public class GetReceiptsForHeadersTask
         });
   }
 
-  private CompletableFuture<Map<BlockHeader, List<TransactionReceipt>>> processResponse(
+  private SafeFuture<Map<BlockHeader, List<TransactionReceipt>>> processResponse(
       final Map<BlockHeader, List<TransactionReceipt>> responseData) {
     receipts.putAll(responseData);
 
@@ -119,7 +119,7 @@ public class GetReceiptsForHeadersTask
       result.complete(receipts);
     }
 
-    return CompletableFuture.completedFuture(responseData);
+    return SafeFuture.completedFuture(responseData);
   }
 
   private List<BlockHeader> incompleteHeaders() {

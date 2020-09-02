@@ -29,7 +29,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.google.common.io.MoreFiles;
@@ -66,14 +66,14 @@ public class FastSyncDownloader {
     this.initialFastSyncState = initialFastSyncState;
   }
 
-  public CompletableFuture<FastSyncState> start() {
+  public SafeFuture<FastSyncState> start() {
     if (!running.compareAndSet(false, true)) {
       throw new IllegalStateException("FastSyncDownloader already running");
     }
     return start(initialFastSyncState);
   }
 
-  private CompletableFuture<FastSyncState> start(final FastSyncState fastSyncState) {
+  private SafeFuture<FastSyncState> start(final FastSyncState fastSyncState) {
     LOG.info("Starting fast sync.");
     return exceptionallyCompose(
         fastSyncActions
@@ -86,10 +86,10 @@ public class FastSyncDownloader {
         this::handleFailure);
   }
 
-  private CompletableFuture<FastSyncState> handleFailure(final Throwable error) {
+  private SafeFuture<FastSyncState> handleFailure(final Throwable error) {
     trailingPeerRequirements = Optional.empty();
     if (ExceptionUtils.rootCause(error) instanceof FastSyncException) {
-      return CompletableFuture.failedFuture(error);
+      return SafeFuture.failedFuture(error);
     } else if (ExceptionUtils.rootCause(error) instanceof StalledDownloadException) {
       LOG.warn(
           "Fast sync was unable to download the world state. Retrying with a new pivot block.");
@@ -143,20 +143,18 @@ public class FastSyncDownloader {
     return state;
   }
 
-  private CompletableFuture<FastSyncState> downloadChainAndWorldState(
-      final FastSyncState currentState) {
+  private SafeFuture<FastSyncState> downloadChainAndWorldState(final FastSyncState currentState) {
     // Synchronized ensures that stop isn't called while we're in the process of starting a
     // world state and chain download. If it did we might wind up starting a new download
     // after the stop method had called cancel.
     synchronized (this) {
       if (!running.get()) {
-        return CompletableFuture.failedFuture(
-            new CancellationException("FastSyncDownloader stopped"));
+        return SafeFuture.failedFuture(new CancellationException("FastSyncDownloader stopped"));
       }
-      final CompletableFuture<Void> worldStateFuture =
+      final SafeFuture<Void> worldStateFuture =
           worldStateDownloader.run(currentState.getPivotBlockHeader().get());
       final ChainDownloader chainDownloader = fastSyncActions.createChainDownloader(currentState);
-      final CompletableFuture<Void> chainFuture = chainDownloader.start();
+      final SafeFuture<Void> chainFuture = chainDownloader.start();
 
       // If either download fails, cancel the other one.
       chainFuture.exceptionally(
@@ -170,7 +168,7 @@ public class FastSyncDownloader {
             return null;
           });
 
-      return CompletableFuture.allOf(worldStateFuture, chainFuture)
+      return SafeFuture.allOf(worldStateFuture, chainFuture)
           .thenApply(
               complete -> {
                 trailingPeerRequirements = Optional.empty();

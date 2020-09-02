@@ -26,7 +26,7 @@ import org.hyperledger.besu.nat.core.exception.NatInitializationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
@@ -82,13 +82,13 @@ public class DockerNatManager extends AbstractNatManager {
   }
 
   @Override
-  protected CompletableFuture<String> retrieveExternalIPAddress() {
-    return CompletableFuture.completedFuture(internalAdvertisedHost);
+  protected SafeFuture<String> retrieveExternalIPAddress() {
+    return SafeFuture.completedFuture(internalAdvertisedHost);
   }
 
   @Override
-  public CompletableFuture<List<NatPortMapping>> getPortMappings() {
-    return CompletableFuture.completedFuture(forwardedPorts);
+  public SafeFuture<List<NatPortMapping>> getPortMappings() {
+    return SafeFuture.completedFuture(forwardedPorts);
   }
 
   private int getExternalPort(final int defaultValue) {

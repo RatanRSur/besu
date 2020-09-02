@@ -35,7 +35,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import org.awaitility.Awaitility;
 import org.junit.Before;
@@ -78,7 +78,7 @@ public class PersistBlockTaskTest {
             nextBlock,
             HeaderValidationMode.FULL,
             metricsSystem);
-    final CompletableFuture<Block> result = task.run();
+    final SafeFuture<Block> result = task.run();
 
     Awaitility.await().atMost(30, SECONDS).until(result::isDone);
 
@@ -105,7 +105,7 @@ public class PersistBlockTaskTest {
             nextBlock,
             HeaderValidationMode.FULL,
             metricsSystem);
-    final CompletableFuture<Block> result = task.run();
+    final SafeFuture<Block> result = task.run();
 
     Awaitility.await().atMost(30, SECONDS).until(result::isDone);
 
@@ -126,7 +126,7 @@ public class PersistBlockTaskTest {
     }
 
     // Create task
-    final CompletableFuture<List<Block>> task =
+    final SafeFuture<List<Block>> task =
         PersistBlockTask.forSequentialBlocks(
                 protocolSchedule,
                 protocolContext,
@@ -157,7 +157,7 @@ public class PersistBlockTaskTest {
     }
 
     // Create task
-    final CompletableFuture<List<Block>> task =
+    final SafeFuture<List<Block>> task =
         PersistBlockTask.forSequentialBlocks(
                 protocolSchedule,
                 protocolContext,
@@ -187,7 +187,7 @@ public class PersistBlockTaskTest {
     }
 
     // Create task
-    final CompletableFuture<List<Block>> task =
+    final SafeFuture<List<Block>> task =
         PersistBlockTask.forSequentialBlocks(
                 protocolSchedule,
                 protocolContext,
@@ -217,7 +217,7 @@ public class PersistBlockTaskTest {
     }
 
     // Create task
-    final CompletableFuture<List<Block>> task =
+    final SafeFuture<List<Block>> task =
         PersistBlockTask.forUnorderedBlocks(
                 protocolSchedule,
                 protocolContext,
@@ -250,7 +250,7 @@ public class PersistBlockTaskTest {
     }
 
     // Create task
-    final CompletableFuture<List<Block>> task =
+    final SafeFuture<List<Block>> task =
         PersistBlockTask.forUnorderedBlocks(
                 protocolSchedule,
                 protocolContext,
@@ -280,7 +280,7 @@ public class PersistBlockTaskTest {
     }
 
     // Create task
-    final CompletableFuture<List<Block>> task =
+    final SafeFuture<List<Block>> task =
         PersistBlockTask.forUnorderedBlocks(
                 protocolSchedule,
                 protocolContext,
@@ -312,7 +312,7 @@ public class PersistBlockTaskTest {
     }
 
     // Create task
-    final CompletableFuture<List<Block>> task =
+    final SafeFuture<List<Block>> task =
         PersistBlockTask.forUnorderedBlocks(
                 protocolSchedule,
                 protocolContext,
@@ -350,7 +350,7 @@ public class PersistBlockTaskTest {
             metricsSystem);
 
     task.cancel();
-    final CompletableFuture<Block> result = task.run();
+    final SafeFuture<Block> result = task.run();
 
     assertThat(result.isCancelled()).isTrue();
     assertThat(blockchain.contains(nextBlock.getHash())).isFalse();
@@ -376,7 +376,7 @@ public class PersistBlockTaskTest {
     final PersistBlockTask taskSpy = Mockito.spy(task);
     Mockito.doNothing().when(taskSpy).executeTaskTimed();
 
-    final CompletableFuture<Block> result = taskSpy.run();
+    final SafeFuture<Block> result = taskSpy.run();
     taskSpy.cancel();
 
     assertThat(result.isCancelled()).isTrue();

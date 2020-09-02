@@ -21,7 +21,7 @@ import org.hyperledger.besu.ethereum.chain.EthHashObserver;
 import org.hyperledger.besu.ethereum.mainnet.EthHashSolution;
 import org.hyperledger.besu.ethereum.mainnet.EthHashSolverInputs;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
@@ -63,13 +63,13 @@ public class StratumServer implements EthHashObserver {
         };
   }
 
-  public CompletableFuture<?> start() {
+  public SafeFuture<?> start() {
     if (started.compareAndSet(false, true)) {
       logger.info("Starting stratum server on {}:{}", networkInterface, port);
       server =
           vertx.createNetServer(
               new NetServerOptions().setPort(port).setHost(networkInterface).setTcpKeepAlive(true));
-      CompletableFuture<?> result = new CompletableFuture<>();
+      SafeFuture<?> result = new SafeFuture<>();
       server.connectHandler(this::handle);
       server.listen(
           res -> {
@@ -85,7 +85,7 @@ public class StratumServer implements EthHashObserver {
           });
       return result;
     }
-    return CompletableFuture.completedFuture(null);
+    return SafeFuture.completedFuture(null);
   }
 
   private void handle(final NetSocket socket) {
@@ -96,9 +96,9 @@ public class StratumServer implements EthHashObserver {
     socket.closeHandler(conn::close);
   }
 
-  public CompletableFuture<?> stop() {
+  public SafeFuture<?> stop() {
     if (started.compareAndSet(true, false)) {
-      CompletableFuture<?> result = new CompletableFuture<>();
+      SafeFuture<?> result = new SafeFuture<>();
       server.close(
           res -> {
             if (res.failed()) {
@@ -114,7 +114,7 @@ public class StratumServer implements EthHashObserver {
       return result;
     }
     logger.debug("Stopping StratumServer that was not running");
-    return CompletableFuture.completedFuture(null);
+    return SafeFuture.completedFuture(null);
   }
 
   @Override

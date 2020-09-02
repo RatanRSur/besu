@@ -36,7 +36,7 @@ import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.tuweni.bytes.Bytes;
@@ -102,7 +102,7 @@ public class PivotBlockConfirmerTest {
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, 1000);
 
     // Execute task
-    final CompletableFuture<FastSyncState> future = pivotBlockConfirmer.confirmPivotBlock();
+    final SafeFuture<FastSyncState> future = pivotBlockConfirmer.confirmPivotBlock();
 
     // First peer responds
     respondingPeerA.respond(responder);
@@ -131,7 +131,7 @@ public class PivotBlockConfirmerTest {
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, 1000);
 
     // Execute task
-    final CompletableFuture<FastSyncState> future = pivotBlockConfirmer.confirmPivotBlock();
+    final SafeFuture<FastSyncState> future = pivotBlockConfirmer.confirmPivotBlock();
 
     // First peer is responsive
     respondingPeerA.respond(responder);
@@ -165,7 +165,7 @@ public class PivotBlockConfirmerTest {
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, 1000);
 
     // Execute task
-    final CompletableFuture<FastSyncState> future = pivotBlockConfirmer.confirmPivotBlock();
+    final SafeFuture<FastSyncState> future = pivotBlockConfirmer.confirmPivotBlock();
 
     // First peer is responsive
     respondingPeerA.respond(responder);
@@ -205,7 +205,7 @@ public class PivotBlockConfirmerTest {
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, 1000);
 
     // Execute task
-    final CompletableFuture<FastSyncState> future = pivotBlockConfirmer.confirmPivotBlock();
+    final SafeFuture<FastSyncState> future = pivotBlockConfirmer.confirmPivotBlock();
 
     // First peer is responsive
     respondingPeerA.respond(responder);
@@ -245,7 +245,7 @@ public class PivotBlockConfirmerTest {
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, 1000);
 
     // Execute task
-    final CompletableFuture<FastSyncState> future = pivotBlockConfirmer.confirmPivotBlock();
+    final SafeFuture<FastSyncState> future = pivotBlockConfirmer.confirmPivotBlock();
 
     // First peer is responsive
     respondingPeerA.respond(responder);
@@ -287,7 +287,7 @@ public class PivotBlockConfirmerTest {
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, 1000);
 
     // Execute task and wait for response
-    final CompletableFuture<FastSyncState> future = pivotBlockConfirmer.confirmPivotBlock();
+    final SafeFuture<FastSyncState> future = pivotBlockConfirmer.confirmPivotBlock();
     respondingPeerA.respond(responderA);
     assertThat(future).isNotDone();
     respondingPeerB.respond(responderB);

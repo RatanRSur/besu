@@ -44,7 +44,7 @@ import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.netty.buffer.ByteBuf;
@@ -59,7 +59,7 @@ final class DeFramer extends ByteToMessageDecoder {
 
   private static final Logger LOG = LogManager.getLogger();
 
-  private final CompletableFuture<PeerConnection> connectFuture;
+  private final SafeFuture<PeerConnection> connectFuture;
 
   private final PeerConnectionEventDispatcher connectionEventDispatcher;
 
@@ -77,7 +77,7 @@ final class DeFramer extends ByteToMessageDecoder {
       final LocalNode localNode,
       final Optional<Peer> expectedPeer,
       final PeerConnectionEventDispatcher connectionEventDispatcher,
-      final CompletableFuture<PeerConnection> connectFuture,
+      final SafeFuture<PeerConnection> connectFuture,
       final MetricsSystem metricsSystem) {
     this.framer = framer;
     this.subProtocols = subProtocols;

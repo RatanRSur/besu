@@ -27,7 +27,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.List;
 import java.util.OptionalInt;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import com.google.common.annotations.VisibleForTesting;
 import org.apache.logging.log4j.LogManager;
@@ -113,7 +113,7 @@ public class DetermineCommonAncestorTask extends AbstractEthTask<BlockHeader> {
   }
 
   @VisibleForTesting
-  CompletableFuture<AbstractPeerTask.PeerTaskResult<List<BlockHeader>>> requestHeaders() {
+  SafeFuture<AbstractPeerTask.PeerTaskResult<List<BlockHeader>>> requestHeaders() {
     final long range = maximumPossibleCommonAncestorNumber - minimumPossibleCommonAncestorNumber;
     final int skipInterval = initialQuery ? 0 : calculateSkipInterval(range, headerRequestSize);
     final int count =
@@ -151,13 +151,13 @@ public class DetermineCommonAncestorTask extends AbstractEthTask<BlockHeader> {
     return Math.toIntExact((long) Math.ceil(range / (skipInterval + 1)) + 1);
   }
 
-  private CompletableFuture<Void> processHeaders(
+  private SafeFuture<Void> processHeaders(
       final AbstractPeerTask.PeerTaskResult<List<BlockHeader>> headersResult) {
     initialQuery = false;
     final List<BlockHeader> headers = headersResult.getResult();
     if (headers.isEmpty()) {
       // Nothing to do
-      return CompletableFuture.completedFuture(null);
+      return SafeFuture.completedFuture(null);
     }
 
     final OptionalInt maybeAncestorNumber =
@@ -166,7 +166,7 @@ public class DetermineCommonAncestorTask extends AbstractEthTask<BlockHeader> {
     // Means the insertion point is in the next header request.
     if (!maybeAncestorNumber.isPresent()) {
       maximumPossibleCommonAncestorNumber = headers.get(headers.size() - 1).getNumber() - 1L;
-      return CompletableFuture.completedFuture(null);
+      return SafeFuture.completedFuture(null);
     }
     final int ancestorNumber = maybeAncestorNumber.getAsInt();
     commonAncestorCandidate = headers.get(ancestorNumber);
@@ -176,6 +176,6 @@ public class DetermineCommonAncestorTask extends AbstractEthTask<BlockHeader> {
     }
     minimumPossibleCommonAncestorNumber = headers.get(ancestorNumber).getNumber();
 
-    return CompletableFuture.completedFuture(null);
+    return SafeFuture.completedFuture(null);
   }
 }

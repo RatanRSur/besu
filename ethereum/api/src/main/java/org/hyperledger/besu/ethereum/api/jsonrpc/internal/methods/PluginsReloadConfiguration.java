@@ -24,7 +24,7 @@ import org.hyperledger.besu.ethereum.api.jsonrpc.internal.response.JsonRpcSucces
 import org.hyperledger.besu.plugin.BesuPlugin;
 
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,7 +65,7 @@ public class PluginsReloadConfiguration implements JsonRpcMethod {
   private void reloadPluginConfig(final BesuPlugin plugin) {
     final String name = plugin.getName().orElseThrow();
     LOG.info("Reloading plugin configuration: {}.", name);
-    final CompletableFuture<Void> future = plugin.reloadConfiguration();
+    final SafeFuture<Void> future = plugin.reloadConfiguration();
     future.thenAcceptAsync(aVoid -> LOG.info("Plugin {} has been reloaded.", name));
   }
 }

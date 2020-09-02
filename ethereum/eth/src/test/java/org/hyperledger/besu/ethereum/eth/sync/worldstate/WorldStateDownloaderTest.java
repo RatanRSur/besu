@@ -76,7 +76,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -172,7 +172,7 @@ public class WorldStateDownloaderTest {
     final WorldStateDownloader downloader =
         createDownloader(ethProtocolManager.ethContext(), localStorage, taskCollection);
 
-    final CompletableFuture<Void> future = downloader.run(header);
+    final SafeFuture<Void> future = downloader.run(header);
     assertThat(future).isDone();
 
     // Peers should not have been queried
@@ -209,7 +209,7 @@ public class WorldStateDownloaderTest {
             worldStateArchive.getWorldStateStorage(),
             taskCollection);
 
-    final CompletableFuture<Void> future = downloader.run(header);
+    final SafeFuture<Void> future = downloader.run(header);
     assertThat(future).isDone();
 
     // Peers should not have been queried because we already had the state
@@ -253,7 +253,7 @@ public class WorldStateDownloaderTest {
     final WorldStateDownloader downloader =
         createDownloader(ethProtocolManager.ethContext(), localStorage, taskCollection);
 
-    final CompletableFuture<Void> result = downloader.run(header);
+    final SafeFuture<Void> result = downloader.run(header);
 
     serviceExecutor.runPendingFuturesInSeparateThreads(persistenceThread);
 
@@ -311,7 +311,7 @@ public class WorldStateDownloaderTest {
     final WorldStateDownloader downloader =
         createDownloader(ethProtocolManager.ethContext(), localStorage, taskCollection);
 
-    final CompletableFuture<Void> result = downloader.run(header);
+    final SafeFuture<Void> result = downloader.run(header);
 
     // Respond to node data requests
     final List<MessageData> sentMessages = new ArrayList<>();
@@ -384,7 +384,7 @@ public class WorldStateDownloaderTest {
     final WorldStateDownloader downloader =
         createDownloader(ethProtocolManager.ethContext(), localStorage, taskCollection);
 
-    final CompletableFuture<Void> result = downloader.run(header);
+    final SafeFuture<Void> result = downloader.run(header);
 
     // Send a few responses
     final RespondingEthPeer.Responder responder =
@@ -476,7 +476,7 @@ public class WorldStateDownloaderTest {
     final WorldStateDownloader downloader =
         createDownloader(ethProtocolManager.ethContext(), localStorage, taskCollection);
 
-    final CompletableFuture<Void> result = downloader.run(header);
+    final SafeFuture<Void> result = downloader.run(header);
 
     // Respond to node data requests
     final List<MessageData> sentMessages = new ArrayList<>();
@@ -572,7 +572,7 @@ public class WorldStateDownloaderTest {
     final WorldStateDownloader downloader =
         createDownloader(ethProtocolManager.ethContext(), localStorage, taskCollection);
 
-    final CompletableFuture<Void> result = downloader.run(header);
+    final SafeFuture<Void> result = downloader.run(header);
 
     // Respond to node data requests
     final List<MessageData> sentMessages = new ArrayList<>();
@@ -638,11 +638,11 @@ public class WorldStateDownloaderTest {
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, header.getNumber());
 
     // Start downloader (with a state root that's not available anywhere
-    final CompletableFuture<?> result =
+    final SafeFuture<?> result =
         downloader.run(
             new BlockHeaderTestFixture().stateRoot(Hash.hash(Bytes.of(1, 2, 3, 4))).buildHeader());
     // A second run should return an error without impacting the first result
-    final CompletableFuture<?> secondResult = downloader.run(header);
+    final SafeFuture<?> secondResult = downloader.run(header);
     assertThat(secondResult).isCompletedExceptionally();
     assertThat(result).isNotCompletedExceptionally();
 
@@ -653,7 +653,7 @@ public class WorldStateDownloaderTest {
     assertThatThrownBy(result::get).hasCauseInstanceOf(StalledDownloadException.class);
 
     // Finally, check that when we restart the download with state that is available it works
-    final CompletableFuture<Void> retryResult = downloader.run(header);
+    final SafeFuture<Void> retryResult = downloader.run(header);
     final RespondingEthPeer.Responder responder =
         RespondingEthPeer.blockchainResponder(mock(Blockchain.class), remoteWorldStateArchive);
     peer.respondWhileOtherThreadsWork(responder, () -> !retryResult.isDone());
@@ -708,7 +708,7 @@ public class WorldStateDownloaderTest {
     final RespondingEthPeer.Responder responder =
         RespondingEthPeer.wrapResponderWithCollector(blockChainResponder, sentMessages);
 
-    CompletableFuture<Void> result = downloader.run(header);
+    SafeFuture<Void> result = downloader.run(header);
     peer.respondWhileOtherThreadsWork(responder, () -> !result.isDone());
     assertThat(localStorage.isWorldStateAvailable(stateRoot)).isTrue();
 
@@ -853,9 +853,9 @@ public class WorldStateDownloaderTest {
             .collect(Collectors.toList());
 
     // Start downloader
-    final CompletableFuture<?> result = downloader.run(header);
+    final SafeFuture<?> result = downloader.run(header);
     // A second run should return an error without impacting the first result
-    final CompletableFuture<?> secondResult = downloader.run(header);
+    final SafeFuture<?> secondResult = downloader.run(header);
     assertThat(secondResult).isCompletedExceptionally();
     assertThat(result).isNotCompletedExceptionally();
 
@@ -889,7 +889,7 @@ public class WorldStateDownloaderTest {
   private void respondFully(
       final List<RespondingEthPeer> peers,
       final WorldStateArchive remoteWorldStateArchive,
-      final CompletableFuture<?> downloaderFuture) {
+      final SafeFuture<?> downloaderFuture) {
     final RespondingEthPeer.Responder responder =
         RespondingEthPeer.blockchainResponder(mock(Blockchain.class), remoteWorldStateArchive);
     respondUntilDone(peers, responder, downloaderFuture);
@@ -898,7 +898,7 @@ public class WorldStateDownloaderTest {
   private void respondPartially(
       final List<RespondingEthPeer> peers,
       final WorldStateArchive remoteWorldStateArchive,
-      final CompletableFuture<?> downloaderFuture) {
+      final SafeFuture<?> downloaderFuture) {
     final RespondingEthPeer.Responder fullResponder =
         RespondingEthPeer.blockchainResponder(
             mock(Blockchain.class), remoteWorldStateArchive, mock(TransactionPool.class));
@@ -986,7 +986,7 @@ public class WorldStateDownloaderTest {
   private void respondUntilDone(
       final List<RespondingEthPeer> peers,
       final RespondingEthPeer.Responder responder,
-      final CompletableFuture<?> result) {
+      final SafeFuture<?> result) {
     if (peers.size() == 1) {
       // Use a blocking approach to waiting for the next message when we can.
       peers.get(0).respondWhileOtherThreadsWork(responder, () -> !result.isDone());
@@ -1009,6 +1009,6 @@ public class WorldStateDownloaderTest {
     void respond(
         final List<RespondingEthPeer> peers,
         final WorldStateArchive remoteWorldStateArchive,
-        final CompletableFuture<?> downloaderFuture);
+        final SafeFuture<?> downloaderFuture);
   }
 }

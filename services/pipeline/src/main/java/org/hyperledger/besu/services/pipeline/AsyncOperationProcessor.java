@@ -14,12 +14,12 @@
  */
 package org.hyperledger.besu.services.pipeline;
 
-import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.SafeFuture.completedFuture;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -30,14 +30,14 @@ import org.apache.logging.log4j.Logger;
 
 class AsyncOperationProcessor<I, O> implements Processor<I, O> {
   private static final Logger LOG = LogManager.getLogger();
-  private final Function<I, CompletableFuture<O>> processor;
-  private final List<CompletableFuture<O>> inProgress;
-  private CompletableFuture<?> nextOutputAvailableFuture = completedFuture(null);
+  private final Function<I, SafeFuture<O>> processor;
+  private final List<SafeFuture<O>> inProgress;
+  private SafeFuture<?> nextOutputAvailableFuture = completedFuture(null);
   private final boolean preserveOrder;
   private final int maxConcurrency;
 
   public AsyncOperationProcessor(
-      final Function<I, CompletableFuture<O>> processor,
+      final Function<I, SafeFuture<O>> processor,
       final int maxConcurrency,
       final boolean preserveOrder) {
     this.processor = processor;
@@ -51,7 +51,7 @@ class AsyncOperationProcessor<I, O> implements Processor<I, O> {
     if (inProgress.size() < maxConcurrency) {
       final I value = inputPipe.get();
       if (value != null) {
-        final CompletableFuture<O> future = processor.apply(value);
+        final SafeFuture<O> future = processor.apply(value);
         // When the future completes, interrupt so if we're waiting for new input we wake up and
         // schedule the output.
         final Thread stageThread = Thread.currentThread();
@@ -96,8 +96,8 @@ class AsyncOperationProcessor<I, O> implements Processor<I, O> {
 
   private void outputCompletedTasks(final WritePipe<O> outputPipe) {
     boolean inProgressChanged = false;
-    for (final Iterator<CompletableFuture<O>> i = inProgress.iterator(); i.hasNext(); ) {
-      final CompletableFuture<O> process = i.next();
+    for (final Iterator<SafeFuture<O>> i = inProgress.iterator(); i.hasNext(); ) {
+      final SafeFuture<O> process = i.next();
       final O result = process.getNow(null);
       if (result != null) {
         inProgressChanged = true;
@@ -113,18 +113,16 @@ class AsyncOperationProcessor<I, O> implements Processor<I, O> {
   }
 
   /**
-   * CompletableFuture.anyOf adds a completion handler to every future its passed so if we call it
-   * too often we can quickly wind up with thousands of completion handlers which take a long time
-   * to iterate through and notify. So only create it when the futures it covers have actually
-   * changed.
+   * SafeFuture.anyOf adds a completion handler to every future its passed so if we call it too
+   * often we can quickly wind up with thousands of completion handlers which take a long time to
+   * iterate through and notify. So only create it when the futures it covers have actually changed.
    */
   @SuppressWarnings("rawtypes")
   private void updateNextOutputAvailableFuture() {
     if (preserveOrder) {
       nextOutputAvailableFuture = inProgress.isEmpty() ? completedFuture(null) : inProgress.get(0);
     } else {
-      nextOutputAvailableFuture =
-          CompletableFuture.anyOf(inProgress.toArray(new CompletableFuture[0]));
+      nextOutputAvailableFuture = SafeFuture.anyOf(inProgress.toArray(new SafeFuture[0]));
     }
   }
 }

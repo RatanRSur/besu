@@ -16,7 +16,7 @@ package org.hyperledger.besu.ethereum.eth.sync.tasks;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Collections.emptyList;
-import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.SafeFuture.completedFuture;
 import static java.util.stream.Collectors.toMap;
 
 import org.hyperledger.besu.ethereum.core.Block;
@@ -35,7 +35,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -101,11 +101,11 @@ public class CompleteBlocksTask extends AbstractRetryingPeerTask<List<Block>> {
   }
 
   @Override
-  protected CompletableFuture<List<Block>> executePeerTask(final Optional<EthPeer> assignedPeer) {
+  protected SafeFuture<List<Block>> executePeerTask(final Optional<EthPeer> assignedPeer) {
     return requestBodies(assignedPeer).thenCompose(this::processBodiesResult);
   }
 
-  private CompletableFuture<List<Block>> requestBodies(final Optional<EthPeer> assignedPeer) {
+  private SafeFuture<List<Block>> requestBodies(final Optional<EthPeer> assignedPeer) {
     final List<BlockHeader> incompleteHeaders = incompleteHeaders();
     if (incompleteHeaders.isEmpty()) {
       return completedFuture(emptyList());
@@ -124,7 +124,7 @@ public class CompleteBlocksTask extends AbstractRetryingPeerTask<List<Block>> {
         });
   }
 
-  private CompletableFuture<List<Block>> processBodiesResult(final List<Block> blocksResult) {
+  private SafeFuture<List<Block>> processBodiesResult(final List<Block> blocksResult) {
     blocksResult.forEach((block) -> blocks.put(block.getHeader().getNumber(), block));
 
     if (incompleteHeaders().isEmpty()) {

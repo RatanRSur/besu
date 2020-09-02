@@ -24,7 +24,7 @@ import org.hyperledger.besu.ethereum.p2p.peers.Peer;
 import org.hyperledger.besu.ethereum.p2p.rlpx.connections.RlpxConnection.ConnectionNotEstablishedException;
 import org.hyperledger.besu.ethereum.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import org.junit.Test;
 
@@ -33,7 +33,7 @@ public class RlpxConnectionTest {
   @Test
   public void getPeer_pendingOutboundConnection() {
     final Peer peer = createPeer();
-    final CompletableFuture<PeerConnection> future = new CompletableFuture<>();
+    final SafeFuture<PeerConnection> future = new SafeFuture<>();
     final RlpxConnection conn = RlpxConnection.outboundConnection(peer, future);
 
     assertThat(conn.getPeer()).isEqualTo(peer);
@@ -42,7 +42,7 @@ public class RlpxConnectionTest {
   @Test
   public void getPeer_establishedOutboundConnection() {
     final Peer peer = createPeer();
-    final CompletableFuture<PeerConnection> future = new CompletableFuture<>();
+    final SafeFuture<PeerConnection> future = new SafeFuture<>();
     final RlpxConnection conn = RlpxConnection.outboundConnection(peer, future);
     future.complete(peerConnection(peer));
 
@@ -61,7 +61,7 @@ public class RlpxConnectionTest {
   @Test
   public void disconnect_pendingOutboundConnection() {
     final Peer peer = createPeer();
-    final CompletableFuture<PeerConnection> future = new CompletableFuture<>();
+    final SafeFuture<PeerConnection> future = new SafeFuture<>();
     final RlpxConnection conn = RlpxConnection.outboundConnection(peer, future);
 
     final DisconnectReason reason = DisconnectReason.REQUESTED;
@@ -80,7 +80,7 @@ public class RlpxConnectionTest {
   @Test
   public void disconnect_activeOutboundConnection() {
     final Peer peer = createPeer();
-    final CompletableFuture<PeerConnection> future = new CompletableFuture<>();
+    final SafeFuture<PeerConnection> future = new SafeFuture<>();
     final RlpxConnection conn = RlpxConnection.outboundConnection(peer, future);
     final PeerConnection peerConnection = peerConnection(peer);
     future.complete(peerConnection);
@@ -96,7 +96,7 @@ public class RlpxConnectionTest {
   @Test
   public void disconnect_failedOutboundConnection() {
     final Peer peer = createPeer();
-    final CompletableFuture<PeerConnection> future = new CompletableFuture<>();
+    final SafeFuture<PeerConnection> future = new SafeFuture<>();
     final RlpxConnection conn = RlpxConnection.outboundConnection(peer, future);
     future.completeExceptionally(new IllegalStateException("whoops"));
 
@@ -124,7 +124,7 @@ public class RlpxConnectionTest {
   @Test
   public void getPeerConnection_pendingOutboundConnection() {
     final Peer peer = createPeer();
-    final CompletableFuture<PeerConnection> future = new CompletableFuture<>();
+    final SafeFuture<PeerConnection> future = new SafeFuture<>();
     final RlpxConnection conn = RlpxConnection.outboundConnection(peer, future);
 
     assertThatThrownBy(conn::getPeerConnection)
@@ -134,7 +134,7 @@ public class RlpxConnectionTest {
   @Test
   public void getPeerConnection_activeOutboundConnection() {
     final Peer peer = createPeer();
-    final CompletableFuture<PeerConnection> future = new CompletableFuture<>();
+    final SafeFuture<PeerConnection> future = new SafeFuture<>();
     final RlpxConnection conn = RlpxConnection.outboundConnection(peer, future);
     final PeerConnection peerConnection = peerConnection(peer);
     future.complete(peerConnection);
@@ -145,7 +145,7 @@ public class RlpxConnectionTest {
   @Test
   public void getPeerConnection_failedOutboundConnection() {
     final Peer peer = createPeer();
-    final CompletableFuture<PeerConnection> future = new CompletableFuture<>();
+    final SafeFuture<PeerConnection> future = new SafeFuture<>();
     final RlpxConnection conn = RlpxConnection.outboundConnection(peer, future);
     future.completeExceptionally(new IllegalStateException("whoops"));
 
@@ -156,7 +156,7 @@ public class RlpxConnectionTest {
   @Test
   public void getPeerConnection_disconnectedOutboundConnection() {
     final Peer peer = createPeer();
-    final CompletableFuture<PeerConnection> future = new CompletableFuture<>();
+    final SafeFuture<PeerConnection> future = new SafeFuture<>();
     final RlpxConnection conn = RlpxConnection.outboundConnection(peer, future);
     final PeerConnection peerConnection = peerConnection(peer);
     future.complete(peerConnection);
@@ -187,7 +187,7 @@ public class RlpxConnectionTest {
   @Test
   public void checkState_pendingOutboundConnection() {
     final Peer peer = createPeer();
-    final CompletableFuture<PeerConnection> future = new CompletableFuture<>();
+    final SafeFuture<PeerConnection> future = new SafeFuture<>();
     final RlpxConnection conn = RlpxConnection.outboundConnection(peer, future);
 
     assertThat(conn.initiatedRemotely()).isFalse();
@@ -199,7 +199,7 @@ public class RlpxConnectionTest {
   @Test
   public void checkState_activeOutboundConnection() {
     final Peer peer = createPeer();
-    final CompletableFuture<PeerConnection> future = new CompletableFuture<>();
+    final SafeFuture<PeerConnection> future = new SafeFuture<>();
     final RlpxConnection conn = RlpxConnection.outboundConnection(peer, future);
     final PeerConnection peerConnection = peerConnection(peer);
     future.complete(peerConnection);
@@ -213,7 +213,7 @@ public class RlpxConnectionTest {
   @Test
   public void checkState_failedOutboundConnection() {
     final Peer peer = createPeer();
-    final CompletableFuture<PeerConnection> future = new CompletableFuture<>();
+    final SafeFuture<PeerConnection> future = new SafeFuture<>();
     final RlpxConnection conn = RlpxConnection.outboundConnection(peer, future);
     future.completeExceptionally(new IllegalStateException("whoops"));
 
@@ -226,7 +226,7 @@ public class RlpxConnectionTest {
   @Test
   public void checkState_disconnectedOutboundConnection() {
     final Peer peer = createPeer();
-    final CompletableFuture<PeerConnection> future = new CompletableFuture<>();
+    final SafeFuture<PeerConnection> future = new SafeFuture<>();
     final RlpxConnection conn = RlpxConnection.outboundConnection(peer, future);
     final PeerConnection peerConnection = peerConnection(peer);
     future.complete(peerConnection);

@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.ethereum.eth.sync.fastsync;
 
-import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.SafeFuture.completedFuture;
 import static org.hyperledger.besu.util.FutureUtils.exceptionallyCompose;
 
 import org.hyperledger.besu.ethereum.ProtocolContext;
@@ -32,7 +32,7 @@ import org.hyperledger.besu.plugin.services.metrics.Counter;
 import org.hyperledger.besu.util.ExceptionUtils;
 
 import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
@@ -78,7 +78,7 @@ public class FastSyncActions {
         pivotBlockGauge::get);
   }
 
-  public CompletableFuture<FastSyncState> waitForSuitablePeers(final FastSyncState fastSyncState) {
+  public SafeFuture<FastSyncState> waitForSuitablePeers(final FastSyncState fastSyncState) {
     if (fastSyncState.hasPivotBlockHeader()) {
       return waitForAnyPeer().thenApply(ignore -> fastSyncState);
     }
@@ -88,13 +88,13 @@ public class FastSyncActions {
         .thenApply(successfulWaitResult -> fastSyncState);
   }
 
-  public <T> CompletableFuture<T> scheduleFutureTask(
-      final Supplier<CompletableFuture<T>> future, final Duration duration) {
+  public <T> SafeFuture<T> scheduleFutureTask(
+      final Supplier<SafeFuture<T>> future, final Duration duration) {
     return ethContext.getScheduler().scheduleFutureTask(future, duration);
   }
 
-  private CompletableFuture<Void> waitForAnyPeer() {
-    final CompletableFuture<Void> waitForPeerResult =
+  private SafeFuture<Void> waitForAnyPeer() {
+    final SafeFuture<Void> waitForPeerResult =
         ethContext.getScheduler().timeout(WaitForPeersTask.create(ethContext, 1, metricsSystem));
     return exceptionallyCompose(
         waitForPeerResult,
@@ -102,23 +102,23 @@ public class FastSyncActions {
           if (ExceptionUtils.rootCause(throwable) instanceof TimeoutException) {
             return waitForAnyPeer();
           }
-          return CompletableFuture.failedFuture(throwable);
+          return SafeFuture.failedFuture(throwable);
         });
   }
 
-  private CompletableFuture<Void> waitForPeers(final int count) {
+  private SafeFuture<Void> waitForPeers(final int count) {
     final WaitForPeersTask waitForPeersTask =
         WaitForPeersTask.create(ethContext, count, metricsSystem);
     return waitForPeersTask.run();
   }
 
-  public CompletableFuture<FastSyncState> selectPivotBlock(final FastSyncState fastSyncState) {
+  public SafeFuture<FastSyncState> selectPivotBlock(final FastSyncState fastSyncState) {
     return fastSyncState.hasPivotBlockHeader()
         ? completedFuture(fastSyncState)
         : selectPivotBlockFromPeers();
   }
 
-  private CompletableFuture<FastSyncState> selectPivotBlockFromPeers() {
+  private SafeFuture<FastSyncState> selectPivotBlockFromPeers() {
     return ethContext
         .getEthPeers()
         .bestPeerMatchingCriteria(this::canPeerDeterminePivotBlock)
@@ -165,7 +165,7 @@ public class FastSyncActions {
     return peer.chainState().hasEstimatedHeight() && peer.isFullyValidated();
   }
 
-  private CompletableFuture<FastSyncState> retrySelectPivotBlockAfterDelay() {
+  private SafeFuture<FastSyncState> retrySelectPivotBlockAfterDelay() {
     return ethContext
         .getScheduler()
         .scheduleFutureTask(
@@ -175,8 +175,7 @@ public class FastSyncActions {
             Duration.ofSeconds(5));
   }
 
-  public CompletableFuture<FastSyncState> downloadPivotBlockHeader(
-      final FastSyncState currentState) {
+  public SafeFuture<FastSyncState> downloadPivotBlockHeader(final FastSyncState currentState) {
     if (currentState.getPivotBlockHeader().isPresent()) {
       return completedFuture(currentState);
     }

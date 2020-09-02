@@ -47,7 +47,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
@@ -127,7 +127,7 @@ public class BlockPropagationManager {
     }
 
     if (!readyForImport.isEmpty()) {
-      final Supplier<CompletableFuture<List<Block>>> importBlocksTask =
+      final Supplier<SafeFuture<List<Block>>> importBlocksTask =
           PersistBlockTask.forUnorderedBlocks(
               protocolSchedule,
               protocolContext,
@@ -241,8 +241,7 @@ public class BlockPropagationManager {
     }
   }
 
-  private CompletableFuture<Block> processAnnouncedBlock(
-      final EthPeer peer, final NewBlockHash newBlock) {
+  private SafeFuture<Block> processAnnouncedBlock(final EthPeer peer, final NewBlockHash newBlock) {
     final AbstractPeerTask<Block> getBlockTask =
         GetBlockFromPeerTask.create(
                 protocolSchedule, ethContext, newBlock.hash(), newBlock.number(), metricsSystem)
@@ -264,7 +263,7 @@ public class BlockPropagationManager {
   }
 
   @VisibleForTesting
-  CompletableFuture<Block> importOrSavePendingBlock(final Block block, final Bytes nodeId) {
+  SafeFuture<Block> importOrSavePendingBlock(final Block block, final Bytes nodeId) {
     // Synchronize to avoid race condition where block import event fires after the
     // blockchain.contains() check and before the block is registered, causing onBlockAdded() to be
     // invoked for the parent of this block before we are able to register it.
@@ -277,19 +276,19 @@ public class BlockPropagationManager {
               block.getHeader().getNumber(),
               block.getHash());
         }
-        return CompletableFuture.completedFuture(block);
+        return SafeFuture.completedFuture(block);
       }
     }
 
     if (!importingBlocks.add(block.getHash())) {
       // We're already importing this block.
-      return CompletableFuture.completedFuture(block);
+      return SafeFuture.completedFuture(block);
     }
 
     if (protocolContext.getBlockchain().contains(block.getHash())) {
       // We've already imported this block.
       importingBlocks.remove(block.getHash());
-      return CompletableFuture.completedFuture(block);
+      return SafeFuture.completedFuture(block);
     }
 
     final BlockHeader parent =
@@ -314,7 +313,7 @@ public class BlockPropagationManager {
                     blockHeaderValidator, block, parent, badBlockManager));
   }
 
-  private CompletableFuture<Block> validateAndProcessPendingBlock(
+  private SafeFuture<Block> validateAndProcessPendingBlock(
       final BlockHeaderValidator blockHeaderValidator,
       final Block block,
       final BlockHeader parent,
@@ -330,11 +329,11 @@ public class BlockPropagationManager {
           "Failed to import announced block {} ({}).",
           block.getHeader().getNumber(),
           block.getHash());
-      return CompletableFuture.completedFuture(block);
+      return SafeFuture.completedFuture(block);
     }
   }
 
-  private CompletableFuture<Block> runImportTask(final Block block) {
+  private SafeFuture<Block> runImportTask(final Block block) {
     final PersistBlockTask importTask =
         PersistBlockTask.create(
             protocolSchedule,

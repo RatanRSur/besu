@@ -16,7 +16,7 @@ package org.hyperledger.besu.ethereum.eth.sync;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.SafeFuture.completedFuture;
 
 import org.hyperledger.besu.ethereum.core.BlockHeader;
 import org.hyperledger.besu.ethereum.eth.manager.EthContext;
@@ -28,7 +28,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,7 +56,7 @@ public class CheckpointHeaderFetcher {
     this.metricsSystem = metricsSystem;
   }
 
-  public CompletableFuture<List<BlockHeader>> getNextCheckpointHeaders(
+  public SafeFuture<List<BlockHeader>> getNextCheckpointHeaders(
       final EthPeer peer, final BlockHeader previousCheckpointHeader) {
     final int skip = syncConfig.getDownloaderChainSegmentSize() - 1;
     final int maximumHeaderRequestSize = syncConfig.getDownloaderHeaderRequestSize();
@@ -81,7 +81,7 @@ public class CheckpointHeaderFetcher {
     return requestHeaders(peer, previousCheckpointHeader, additionalHeaderCount, skip);
   }
 
-  private CompletableFuture<List<BlockHeader>> requestHeaders(
+  private SafeFuture<List<BlockHeader>> requestHeaders(
       final EthPeer peer,
       final BlockHeader referenceHeader,
       final int headerCount,

@@ -15,7 +15,7 @@
 package org.hyperledger.besu.ethereum.eth.sync;
 
 import static java.util.Collections.emptyList;
-import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.SafeFuture.completedFuture;
 
 import org.hyperledger.besu.ethereum.ProtocolContext;
 import org.hyperledger.besu.ethereum.core.BlockHeader;
@@ -29,14 +29,14 @@ import org.hyperledger.besu.util.FutureUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class DownloadHeadersStep
-    implements Function<CheckpointRange, CompletableFuture<CheckpointRangeHeaders>> {
+    implements Function<CheckpointRange, SafeFuture<CheckpointRangeHeaders>> {
   private static final Logger LOG = LogManager.getLogger();
   private final ProtocolSchedule protocolSchedule;
   private final ProtocolContext protocolContext;
@@ -61,16 +61,15 @@ public class DownloadHeadersStep
   }
 
   @Override
-  public CompletableFuture<CheckpointRangeHeaders> apply(final CheckpointRange checkpointRange) {
-    final CompletableFuture<List<BlockHeader>> taskFuture = downloadHeaders(checkpointRange);
-    final CompletableFuture<CheckpointRangeHeaders> processedFuture =
+  public SafeFuture<CheckpointRangeHeaders> apply(final CheckpointRange checkpointRange) {
+    final SafeFuture<List<BlockHeader>> taskFuture = downloadHeaders(checkpointRange);
+    final SafeFuture<CheckpointRangeHeaders> processedFuture =
         taskFuture.thenApply(headers -> processHeaders(checkpointRange, headers));
     FutureUtils.propagateCancellation(processedFuture, taskFuture);
     return processedFuture;
   }
 
-  private CompletableFuture<List<BlockHeader>> downloadHeaders(
-      final CheckpointRange checkpointRange) {
+  private SafeFuture<List<BlockHeader>> downloadHeaders(final CheckpointRange checkpointRange) {
     if (checkpointRange.hasEnd()) {
       LOG.debug(
           "Downloading headers for range {} to {}",

@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.ethereum.eth.sync;
 
-import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.SafeFuture.completedFuture;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,7 +39,7 @@ import org.hyperledger.besu.services.pipeline.Pipeline;
 
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
@@ -80,7 +80,7 @@ public class PipelineChainDownloaderTest {
 
   @Test
   public void shouldSelectSyncTargetWhenStarted() {
-    when(syncTargetManager.findSyncTarget(Optional.empty())).thenReturn(new CompletableFuture<>());
+    when(syncTargetManager.findSyncTarget(Optional.empty())).thenReturn(new SafeFuture<>());
     chainDownloader.start();
 
     verify(syncTargetManager).findSyncTarget(Optional.empty());
@@ -88,10 +88,10 @@ public class PipelineChainDownloaderTest {
 
   @Test
   public void shouldStartChainDownloadWhenTargetSelected() {
-    final CompletableFuture<SyncTarget> selectTargetFuture = new CompletableFuture<>();
+    final SafeFuture<SyncTarget> selectTargetFuture = new SafeFuture<>();
     when(syncTargetManager.findSyncTarget(Optional.empty())).thenReturn(selectTargetFuture);
     expectPipelineCreation(syncTarget, downloadPipeline);
-    when(scheduler.startPipeline(downloadPipeline)).thenReturn(new CompletableFuture<>());
+    when(scheduler.startPipeline(downloadPipeline)).thenReturn(new SafeFuture<>());
     chainDownloader.start();
     verifyZeroInteractions(downloadPipelineFactory);
 
@@ -103,10 +103,10 @@ public class PipelineChainDownloaderTest {
 
   @Test
   public void shouldUpdateSyncStateWhenTargetSelected() {
-    final CompletableFuture<SyncTarget> selectTargetFuture = new CompletableFuture<>();
+    final SafeFuture<SyncTarget> selectTargetFuture = new SafeFuture<>();
     when(syncTargetManager.findSyncTarget(Optional.empty())).thenReturn(selectTargetFuture);
     expectPipelineCreation(syncTarget, downloadPipeline);
-    when(scheduler.startPipeline(downloadPipeline)).thenReturn(new CompletableFuture<>());
+    when(scheduler.startPipeline(downloadPipeline)).thenReturn(new SafeFuture<>());
     chainDownloader.start();
     verifyZeroInteractions(downloadPipelineFactory);
 
@@ -117,11 +117,11 @@ public class PipelineChainDownloaderTest {
 
   @Test
   public void shouldRetryWhenSyncTargetSelectionFailsAndSyncTargetManagerShouldContinue() {
-    final CompletableFuture<SyncTarget> selectTargetFuture = new CompletableFuture<>();
+    final SafeFuture<SyncTarget> selectTargetFuture = new SafeFuture<>();
     when(syncTargetManager.shouldContinueDownloading()).thenReturn(true);
     when(syncTargetManager.findSyncTarget(Optional.empty()))
         .thenReturn(selectTargetFuture)
-        .thenReturn(new CompletableFuture<>());
+        .thenReturn(new SafeFuture<>());
     chainDownloader.start();
 
     verify(syncTargetManager).findSyncTarget(Optional.empty());
@@ -133,12 +133,12 @@ public class PipelineChainDownloaderTest {
 
   @Test
   public void shouldBeCompleteWhenSyncTargetSelectionFailsAndSyncTargetManagerShouldNotContinue() {
-    final CompletableFuture<SyncTarget> selectTargetFuture = new CompletableFuture<>();
+    final SafeFuture<SyncTarget> selectTargetFuture = new SafeFuture<>();
     when(syncTargetManager.shouldContinueDownloading()).thenReturn(false);
     when(syncTargetManager.findSyncTarget(Optional.empty()))
         .thenReturn(selectTargetFuture)
-        .thenReturn(new CompletableFuture<>());
-    final CompletableFuture<Void> result = chainDownloader.start();
+        .thenReturn(new SafeFuture<>());
+    final SafeFuture<Void> result = chainDownloader.start();
 
     verify(syncTargetManager).findSyncTarget(Optional.empty());
 
@@ -150,8 +150,8 @@ public class PipelineChainDownloaderTest {
 
   @Test
   public void shouldBeCompleteWhenPipelineCompletesAndSyncTargetManagerShouldNotContinue() {
-    final CompletableFuture<Void> pipelineFuture = expectPipelineStarted(syncTarget);
-    final CompletableFuture<Void> result = chainDownloader.start();
+    final SafeFuture<Void> pipelineFuture = expectPipelineStarted(syncTarget);
+    final SafeFuture<Void> result = chainDownloader.start();
 
     verify(syncTargetManager).findSyncTarget(Optional.empty());
 
@@ -167,9 +167,9 @@ public class PipelineChainDownloaderTest {
   @Test
   public void shouldSelectNewSyncTargetWhenPipelineCompletesIfSyncTargetManagerShouldContinue() {
     when(syncTargetManager.shouldContinueDownloading()).thenReturn(true);
-    final CompletableFuture<Void> pipelineFuture = expectPipelineStarted(syncTarget);
+    final SafeFuture<Void> pipelineFuture = expectPipelineStarted(syncTarget);
 
-    final CompletableFuture<Void> result = chainDownloader.start();
+    final SafeFuture<Void> result = chainDownloader.start();
 
     final SyncTarget syncTarget2 = new SyncTarget(peer2, commonAncestor);
     verify(syncTargetManager).findSyncTarget(Optional.empty());
@@ -190,10 +190,10 @@ public class PipelineChainDownloaderTest {
         .thenReturn(true) // Allow continuing after first successful download
         .thenReturn(false); // But not after finding the second sync target fails
 
-    final CompletableFuture<SyncTarget> findSecondSyncTargetFuture = new CompletableFuture<>();
-    final CompletableFuture<Void> pipelineFuture = expectPipelineStarted(syncTarget);
+    final SafeFuture<SyncTarget> findSecondSyncTargetFuture = new SafeFuture<>();
+    final SafeFuture<Void> pipelineFuture = expectPipelineStarted(syncTarget);
 
-    final CompletableFuture<Void> result = chainDownloader.start();
+    final SafeFuture<Void> result = chainDownloader.start();
 
     verify(syncTargetManager).findSyncTarget(Optional.empty());
 
@@ -218,11 +218,11 @@ public class PipelineChainDownloaderTest {
 
   @Test
   public void shouldNotStartDownloadIfCancelledWhileSelectingSyncTarget() {
-    final CompletableFuture<SyncTarget> selectSyncTargetFuture = new CompletableFuture<>();
+    final SafeFuture<SyncTarget> selectSyncTargetFuture = new SafeFuture<>();
     lenient().when(syncTargetManager.shouldContinueDownloading()).thenReturn(true);
     when(syncTargetManager.findSyncTarget(Optional.empty())).thenReturn(selectSyncTargetFuture);
 
-    final CompletableFuture<Void> result = chainDownloader.start();
+    final SafeFuture<Void> result = chainDownloader.start();
     verify(syncTargetManager).findSyncTarget(Optional.empty());
 
     chainDownloader.cancel();
@@ -237,9 +237,9 @@ public class PipelineChainDownloaderTest {
   @Test
   public void shouldAbortPipelineIfCancelledAfterDownloadStarts() {
     lenient().when(syncTargetManager.shouldContinueDownloading()).thenReturn(true);
-    final CompletableFuture<Void> pipelineFuture = expectPipelineStarted(syncTarget);
+    final SafeFuture<Void> pipelineFuture = expectPipelineStarted(syncTarget);
 
-    final CompletableFuture<Void> result = chainDownloader.start();
+    final SafeFuture<Void> result = chainDownloader.start();
     verify(syncTargetManager).findSyncTarget(Optional.empty());
     verify(downloadPipelineFactory).createDownloadPipelineForSyncTarget(syncTarget);
 
@@ -277,11 +277,11 @@ public class PipelineChainDownloaderTest {
 
   public void testInvalidBlockHandling(
       final boolean isFinishedDownloading, final boolean isCancelled) {
-    final CompletableFuture<SyncTarget> selectTargetFuture = new CompletableFuture<>();
+    final SafeFuture<SyncTarget> selectTargetFuture = new SafeFuture<>();
     when(syncTargetManager.shouldContinueDownloading()).thenReturn(isFinishedDownloading);
     when(syncTargetManager.findSyncTarget(Optional.empty()))
         .thenReturn(selectTargetFuture)
-        .thenReturn(new CompletableFuture<>());
+        .thenReturn(new SafeFuture<>());
 
     chainDownloader.start();
     verify(syncTargetManager).findSyncTarget(Optional.empty());
@@ -293,13 +293,13 @@ public class PipelineChainDownloaderTest {
     verify(syncState, times(1)).disconnectSyncTarget(DisconnectReason.BREACH_OF_PROTOCOL);
   }
 
-  private CompletableFuture<Void> expectPipelineStarted(final SyncTarget syncTarget) {
+  private SafeFuture<Void> expectPipelineStarted(final SyncTarget syncTarget) {
     return expectPipelineStarted(syncTarget, downloadPipeline);
   }
 
-  private CompletableFuture<Void> expectPipelineStarted(
+  private SafeFuture<Void> expectPipelineStarted(
       final SyncTarget syncTarget, final Pipeline<?> pipeline) {
-    final CompletableFuture<Void> pipelineFuture = new CompletableFuture<>();
+    final SafeFuture<Void> pipelineFuture = new SafeFuture<>();
     when(syncTargetManager.findSyncTarget(Optional.empty()))
         .thenReturn(completedFuture(syncTarget));
     expectPipelineCreation(syncTarget, pipeline);
@@ -313,13 +313,12 @@ public class PipelineChainDownloaderTest {
         .thenReturn((Pipeline) pipeline);
   }
 
-  private void assertExceptionallyCompletedWith(
-      final CompletableFuture<?> future, final Throwable error) {
+  private void assertExceptionallyCompletedWith(final SafeFuture<?> future, final Throwable error) {
     assertThat(future).isCompletedExceptionally();
     assertThatThrownBy(future::get).isInstanceOf(ExecutionException.class).hasRootCause(error);
   }
 
-  private void assertCancelled(final CompletableFuture<?> future) {
+  private void assertCancelled(final SafeFuture<?> future) {
     assertThat(future).isCompletedExceptionally();
     assertThatThrownBy(future::get)
         .isInstanceOf(ExecutionException.class)
@@ -330,6 +329,6 @@ public class PipelineChainDownloaderTest {
   private void immediatelyCompletePauseAfterError() {
     when(scheduler.scheduleFutureTask(
             any(Supplier.class), same(PipelineChainDownloader.PAUSE_AFTER_ERROR_DURATION)))
-        .then(invocation -> ((Supplier<CompletableFuture<?>>) invocation.getArgument(0)).get());
+        .then(invocation -> ((Supplier<SafeFuture<?>>) invocation.getArgument(0)).get());
   }
 }

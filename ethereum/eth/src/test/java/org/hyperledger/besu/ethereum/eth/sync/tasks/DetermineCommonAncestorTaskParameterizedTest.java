@@ -45,7 +45,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -170,7 +170,7 @@ public class DetermineCommonAncestorTaskParameterizedTest {
             headerRequestSize,
             metricsSystem);
 
-    final CompletableFuture<BlockHeader> future = task.run();
+    final SafeFuture<BlockHeader> future = task.run();
     respondingEthPeer.respondWhile(responder, () -> !future.isDone());
 
     future.whenComplete(

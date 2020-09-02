@@ -28,7 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -75,7 +75,7 @@ class MetricsHttpService implements MetricsService {
   }
 
   @Override
-  public CompletableFuture<?> start() {
+  public SafeFuture<?> start() {
     LOG.info("Starting metrics http service on {}:{}", config.getHost(), config.getPort());
     // Create the HTTP server and a router object.
     httpServer =
@@ -93,7 +93,7 @@ class MetricsHttpService implements MetricsService {
     // Endpoint for Prometheus metrics monitoring.
     router.route("/metrics").method(HttpMethod.GET).handler(this::metricsRequest);
 
-    final CompletableFuture<?> resultFuture = new CompletableFuture<>();
+    final SafeFuture<?> resultFuture = new SafeFuture<>();
     httpServer
         .requestHandler(router)
         .listen(
@@ -172,12 +172,12 @@ class MetricsHttpService implements MetricsService {
   }
 
   @Override
-  public CompletableFuture<?> stop() {
+  public SafeFuture<?> stop() {
     if (httpServer == null) {
-      return CompletableFuture.completedFuture(null);
+      return SafeFuture.completedFuture(null);
     }
 
-    final CompletableFuture<?> resultFuture = new CompletableFuture<>();
+    final SafeFuture<?> resultFuture = new SafeFuture<>();
     httpServer.close(
         res -> {
           if (res.failed()) {

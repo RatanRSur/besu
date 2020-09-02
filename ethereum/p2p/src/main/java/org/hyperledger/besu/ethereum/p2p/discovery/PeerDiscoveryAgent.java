@@ -39,7 +39,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -110,14 +110,14 @@ public abstract class PeerDiscoveryAgent {
 
   protected abstract AsyncExecutor createWorkerExecutor();
 
-  protected abstract CompletableFuture<InetSocketAddress> listenForConnections();
+  protected abstract SafeFuture<InetSocketAddress> listenForConnections();
 
-  protected abstract CompletableFuture<Void> sendOutgoingPacket(
+  protected abstract SafeFuture<Void> sendOutgoingPacket(
       final DiscoveryPeer peer, final Packet packet);
 
-  public abstract CompletableFuture<?> stop();
+  public abstract SafeFuture<?> stop();
 
-  public CompletableFuture<Integer> start(final int tcpPort) {
+  public SafeFuture<Integer> start(final int tcpPort) {
     if (config.isActive()) {
       final String host = config.getBindHost();
       final int port = config.getBindPort();
@@ -148,7 +148,7 @@ public abstract class PeerDiscoveryAgent {
               });
     } else {
       this.isActive = false;
-      return CompletableFuture.completedFuture(0);
+      return SafeFuture.completedFuture(0);
     }
   }
 

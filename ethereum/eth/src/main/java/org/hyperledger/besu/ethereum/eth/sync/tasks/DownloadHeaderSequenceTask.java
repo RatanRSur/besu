@@ -42,7 +42,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import com.google.common.primitives.Ints;
 import org.apache.logging.log4j.LogManager;
@@ -133,11 +133,10 @@ public class DownloadHeaderSequenceTask extends AbstractRetryingPeerTask<List<Bl
   }
 
   @Override
-  protected CompletableFuture<List<BlockHeader>> executePeerTask(
-      final Optional<EthPeer> assignedPeer) {
+  protected SafeFuture<List<BlockHeader>> executePeerTask(final Optional<EthPeer> assignedPeer) {
     LOG.debug(
         "Downloading headers from {} to {}.", startingBlockNumber, referenceHeader.getNumber());
-    final CompletableFuture<List<BlockHeader>> task =
+    final SafeFuture<List<BlockHeader>> task =
         downloadHeaders(assignedPeer).thenCompose(this::processHeaders);
     return task.whenComplete(
         (r, t) -> {
@@ -152,7 +151,7 @@ public class DownloadHeaderSequenceTask extends AbstractRetryingPeerTask<List<Bl
         });
   }
 
-  private CompletableFuture<PeerTaskResult<List<BlockHeader>>> downloadHeaders(
+  private SafeFuture<PeerTaskResult<List<BlockHeader>>> downloadHeaders(
       final Optional<EthPeer> assignedPeer) {
     // Figure out parameters for our headers request
     final boolean partiallyFilled = lastFilledHeaderIndex < segmentLength;
@@ -177,12 +176,12 @@ public class DownloadHeaderSequenceTask extends AbstractRetryingPeerTask<List<Bl
         });
   }
 
-  private CompletableFuture<List<BlockHeader>> processHeaders(
+  private SafeFuture<List<BlockHeader>> processHeaders(
       final PeerTaskResult<List<BlockHeader>> headersResult) {
     return executeWorkerSubTask(
         ethContext.getScheduler(),
         () -> {
-          final CompletableFuture<List<BlockHeader>> future = new CompletableFuture<>();
+          final SafeFuture<List<BlockHeader>> future = new SafeFuture<>();
           BlockHeader child = null;
           boolean firstSkipped = false;
           final int previousHeaderIndex = lastFilledHeaderIndex;

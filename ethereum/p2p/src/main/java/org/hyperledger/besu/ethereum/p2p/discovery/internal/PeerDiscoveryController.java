@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalLong;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -236,9 +236,9 @@ public class PeerDiscoveryController {
             timerUtil.setPeriodic(cleanPeerTableIntervalMs, this::cleanPeerTableIfRequired));
   }
 
-  public CompletableFuture<?> stop() {
+  public SafeFuture<?> stop() {
     if (!started.compareAndSet(true, false)) {
-      return CompletableFuture.completedFuture(null);
+      return SafeFuture.completedFuture(null);
     }
 
     tableRefreshTimerId.ifPresent(timerUtil::cancelTimer);
@@ -247,7 +247,7 @@ public class PeerDiscoveryController {
     cleanTableTimerId = OptionalLong.empty();
     inflightInteractions.values().forEach(PeerInteractionState::cancelTimers);
     inflightInteractions.clear();
-    return CompletableFuture.completedFuture(null);
+    return SafeFuture.completedFuture(null);
   }
 
   private void handlePermissionsUpdate(
@@ -681,7 +681,7 @@ public class PeerDiscoveryController {
   }
 
   public interface AsyncExecutor {
-    <T> CompletableFuture<T> execute(Supplier<T> action);
+    <T> SafeFuture<T> execute(Supplier<T> action);
   }
 
   public static class Builder {

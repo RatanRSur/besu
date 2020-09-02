@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.ethereum.eth.sync;
 
-import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.SafeFuture.completedFuture;
 import static org.hyperledger.besu.util.FutureUtils.exceptionallyCompose;
 
 import org.hyperledger.besu.ethereum.eth.manager.EthScheduler;
@@ -33,7 +33,7 @@ import org.hyperledger.besu.util.ExceptionUtils;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -76,7 +76,7 @@ public class PipelineChainDownloader implements ChainDownloader {
   }
 
   @Override
-  public CompletableFuture<Void> start() {
+  public SafeFuture<Void> start() {
     if (!started.compareAndSet(false, true)) {
       throw new IllegalStateException("Cannot start a chain download twice");
     }
@@ -91,12 +91,12 @@ public class PipelineChainDownloader implements ChainDownloader {
     }
   }
 
-  private CompletableFuture<Void> performDownload() {
+  private SafeFuture<Void> performDownload() {
     return exceptionallyCompose(selectSyncTargetAndDownload(), this::handleFailedDownload)
         .thenCompose(this::repeatUnlessDownloadComplete);
   }
 
-  private CompletableFuture<Void> selectSyncTargetAndDownload() {
+  private SafeFuture<Void> selectSyncTargetAndDownload() {
     return syncTargetManager
         .findSyncTarget(Optional.empty())
         .thenCompose(this::startDownloadForSyncTarget)
@@ -133,7 +133,7 @@ public class PipelineChainDownloader implements ChainDownloader {
 
     logDownloadFailure("Chain download failed.", error);
     // Propagate the error out, terminating this chain download.
-    return CompletableFuture.failedFuture(error);
+    return SafeFuture.failedFuture(error);
   }
 
   private void logDownloadFailure(final String message, final Throwable error) {
@@ -151,8 +151,7 @@ public class PipelineChainDownloader implements ChainDownloader {
 
   private synchronized CompletionStage<Void> startDownloadForSyncTarget(final SyncTarget target) {
     if (cancelled.get()) {
-      return CompletableFuture.failedFuture(
-          new CancellationException("Chain download was cancelled"));
+      return SafeFuture.failedFuture(new CancellationException("Chain download was cancelled"));
     }
     syncState.setSyncTarget(target.peer(), target.commonAncestor());
     currentDownloadPipeline = downloadPipelineFactory.createDownloadPipelineForSyncTarget(target);

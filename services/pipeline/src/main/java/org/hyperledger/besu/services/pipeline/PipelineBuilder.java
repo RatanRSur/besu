@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -149,10 +149,9 @@ public class PipelineBuilder<I, T> {
    * Adds a 1-to-1, asynchronous processing stage to the pipeline. A single thread reads items from
    * the input and calls <i>processor</i> to begin processing. While a single thread is used to
    * begin processing, up to <i>maxConcurrency</i> items may be in progress concurrently. When the
-   * returned {@link CompletableFuture} completes successfully the result is passed to the next
-   * stage.
+   * returned {@link SafeFuture} completes successfully the result is passed to the next stage.
    *
-   * <p>If the returned {@link CompletableFuture} completes exceptionally the pipeline will abort.
+   * <p>If the returned {@link SafeFuture} completes exceptionally the pipeline will abort.
    *
    * <p>Note: The order of items is not preserved.
    *
@@ -164,7 +163,7 @@ public class PipelineBuilder<I, T> {
    */
   public <O> PipelineBuilder<I, O> thenProcessAsync(
       final String stageName,
-      final Function<T, CompletableFuture<O>> processor,
+      final Function<T, SafeFuture<O>> processor,
       final int maxConcurrency) {
     return addStage(new AsyncOperationProcessor<>(processor, maxConcurrency, false), stageName);
   }
@@ -173,10 +172,10 @@ public class PipelineBuilder<I, T> {
    * Adds a 1-to-1, asynchronous processing stage to the pipeline. A single thread reads items from
    * the input and calls <i>processor</i> to begin processing. While a single thread is used to
    * begin processing, up to <i>maxConcurrency</i> items may be in progress concurrently. As each
-   * returned {@link CompletableFuture} completes successfully the result is passed to the next
-   * stage in order.
+   * returned {@link SafeFuture} completes successfully the result is passed to the next stage in
+   * order.
    *
-   * <p>If the returned {@link CompletableFuture} completes exceptionally the pipeline will abort.
+   * <p>If the returned {@link SafeFuture} completes exceptionally the pipeline will abort.
    *
    * <p>Note: While processing may occur concurrently, order is preserved when results are output.
    *
@@ -188,7 +187,7 @@ public class PipelineBuilder<I, T> {
    */
   public <O> PipelineBuilder<I, O> thenProcessAsyncOrdered(
       final String stageName,
-      final Function<T, CompletableFuture<O>> processor,
+      final Function<T, SafeFuture<O>> processor,
       final int maxConcurrency) {
     return addStage(new AsyncOperationProcessor<>(processor, maxConcurrency, true), stageName);
   }

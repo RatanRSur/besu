@@ -27,7 +27,7 @@ import org.hyperledger.besu.ethereum.p2p.rlpx.wire.messages.DisconnectMessage.Di
 
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 
@@ -60,7 +60,7 @@ public final class MockNetworkTest {
                 .build());
     try (final P2PNetwork network1 = network.setup(one);
         final P2PNetwork network2 = network.setup(two)) {
-      final CompletableFuture<Message> messageFuture = new CompletableFuture<>();
+      final SafeFuture<Message> messageFuture = new SafeFuture<>();
       network1.subscribe(cap, (capability, msg) -> messageFuture.complete(msg));
       final Predicate<PeerConnection> isPeerOne =
           peerConnection -> peerConnection.getPeerInfo().getNodeId().equals(one.getId());
@@ -72,9 +72,9 @@ public final class MockNetworkTest {
           .isNotPresent();
 
       // Validate Connect Behaviour
-      final CompletableFuture<PeerConnection> peer2Future = new CompletableFuture<>();
+      final SafeFuture<PeerConnection> peer2Future = new SafeFuture<>();
       network1.subscribeConnect(peer2Future::complete);
-      final CompletableFuture<PeerConnection> peer1Future = new CompletableFuture<>();
+      final SafeFuture<PeerConnection> peer1Future = new SafeFuture<>();
       network2.subscribeConnect(peer1Future::complete);
       network1.connect(two).get();
       Assertions.assertThat(peer1Future.get().getPeerInfo().getNodeId()).isEqualTo(one.getId());
@@ -100,8 +100,8 @@ public final class MockNetworkTest {
       Assertions.assertThat(receivedMessageData.getCode()).isEqualTo(code);
 
       // Validate Disconnect Behaviour
-      final CompletableFuture<DisconnectReason> peer1DisconnectFuture = new CompletableFuture<>();
-      final CompletableFuture<DisconnectReason> peer2DisconnectFuture = new CompletableFuture<>();
+      final SafeFuture<DisconnectReason> peer1DisconnectFuture = new SafeFuture<>();
+      final SafeFuture<DisconnectReason> peer2DisconnectFuture = new SafeFuture<>();
       network2.subscribeDisconnect(
           (peer, reason, initiatedByPeer) -> peer1DisconnectFuture.complete(reason));
       network1.subscribeDisconnect(

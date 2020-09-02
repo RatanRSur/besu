@@ -26,7 +26,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -51,7 +51,7 @@ public abstract class AbstractNatManager implements NatManager {
 
   protected abstract void doStop();
 
-  protected abstract CompletableFuture<String> retrieveExternalIPAddress();
+  protected abstract SafeFuture<String> retrieveExternalIPAddress();
 
   @Override
   public NatMethod getNatMethod() {
@@ -64,14 +64,14 @@ public abstract class AbstractNatManager implements NatManager {
   }
 
   @Override
-  public CompletableFuture<String> queryExternalIPAddress() {
+  public SafeFuture<String> queryExternalIPAddress() {
     checkState(isStarted(), "Cannot call queryExternalIPAddress() when in stopped state");
     return retrieveExternalIPAddress();
   }
 
   @Override
-  public CompletableFuture<String> queryLocalIPAddress() {
-    final CompletableFuture<String> future = new CompletableFuture<>();
+  public SafeFuture<String> queryLocalIPAddress() {
+    final SafeFuture<String> future = new SafeFuture<>();
     Executors.newCachedThreadPool()
         .submit(
             () -> {

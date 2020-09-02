@@ -24,7 +24,7 @@ import org.hyperledger.besu.util.ExceptionUtils;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -54,7 +54,7 @@ public class EthScheduler {
   protected final ExecutorService servicesExecutor;
   protected final ExecutorService computationExecutor;
 
-  private final Collection<CompletableFuture<?>> pendingFutures = new ConcurrentLinkedDeque<>();
+  private final Collection<SafeFuture<?>> pendingFutures = new ConcurrentLinkedDeque<>();
 
   public EthScheduler(
       final int syncWorkerCount,
@@ -101,9 +101,8 @@ public class EthScheduler {
     this.computationExecutor = computationExecutor;
   }
 
-  public <T> CompletableFuture<T> scheduleSyncWorkerTask(
-      final Supplier<CompletableFuture<T>> future) {
-    final CompletableFuture<T> promise = new CompletableFuture<>();
+  public <T> SafeFuture<T> scheduleSyncWorkerTask(final Supplier<SafeFuture<T>> future) {
+    final SafeFuture<T> promise = new SafeFuture<>();
     final Future<?> workerFuture =
         syncWorkerExecutor.submit(() -> propagateResult(future, promise));
     // If returned promise is cancelled, cancel the worker future
@@ -120,8 +119,8 @@ public class EthScheduler {
     syncWorkerExecutor.execute(command);
   }
 
-  public <T> CompletableFuture<T> scheduleSyncWorkerTask(final EthTask<T> task) {
-    final CompletableFuture<T> syncFuture = task.runAsync(syncWorkerExecutor);
+  public <T> SafeFuture<T> scheduleSyncWorkerTask(final EthTask<T> task) {
+    final SafeFuture<T> syncFuture = task.runAsync(syncWorkerExecutor);
     pendingFutures.add(syncFuture);
     syncFuture.whenComplete((r, t) -> pendingFutures.remove(syncFuture));
     return syncFuture;
@@ -131,27 +130,26 @@ public class EthScheduler {
     txWorkerExecutor.execute(command);
   }
 
-  public <T> CompletableFuture<T> scheduleServiceTask(final EthTask<T> task) {
-    final CompletableFuture<T> serviceFuture = task.runAsync(servicesExecutor);
+  public <T> SafeFuture<T> scheduleServiceTask(final EthTask<T> task) {
+    final SafeFuture<T> serviceFuture = task.runAsync(servicesExecutor);
     pendingFutures.add(serviceFuture);
     serviceFuture.whenComplete((r, t) -> pendingFutures.remove(serviceFuture));
     return serviceFuture;
   }
 
-  public CompletableFuture<Void> startPipeline(final Pipeline<?> pipeline) {
-    final CompletableFuture<Void> pipelineFuture = pipeline.start(servicesExecutor);
+  public SafeFuture<Void> startPipeline(final Pipeline<?> pipeline) {
+    final SafeFuture<Void> pipelineFuture = pipeline.start(servicesExecutor);
     pendingFutures.add(pipelineFuture);
     pipelineFuture.whenComplete((r, t) -> pendingFutures.remove(pipelineFuture));
     return pipelineFuture;
   }
 
-  public <T> CompletableFuture<T> scheduleComputationTask(final Supplier<T> computation) {
-    return CompletableFuture.supplyAsync(computation, computationExecutor);
+  public <T> SafeFuture<T> scheduleComputationTask(final Supplier<T> computation) {
+    return SafeFuture.supplyAsync(computation, computationExecutor);
   }
 
-  public CompletableFuture<Void> scheduleFutureTask(
-      final Runnable command, final Duration duration) {
-    final CompletableFuture<Void> promise = new CompletableFuture<>();
+  public SafeFuture<Void> scheduleFutureTask(final Runnable command, final Duration duration) {
+    final SafeFuture<Void> promise = new SafeFuture<>();
     final ScheduledFuture<?> scheduledFuture =
         scheduler.schedule(
             () -> {
@@ -180,9 +178,9 @@ public class EthScheduler {
         command::run, initialDelay.toMillis(), duration.toMillis(), TimeUnit.MILLISECONDS);
   }
 
-  public <T> CompletableFuture<T> scheduleFutureTask(
-      final Supplier<CompletableFuture<T>> future, final Duration duration) {
-    final CompletableFuture<T> promise = new CompletableFuture<>();
+  public <T> SafeFuture<T> scheduleFutureTask(
+      final Supplier<SafeFuture<T>> future, final Duration duration) {
+    final SafeFuture<T> promise = new SafeFuture<>();
     final ScheduledFuture<?> scheduledFuture =
         scheduler.schedule(
             () -> propagateResult(future, promise), duration.toMillis(), TimeUnit.MILLISECONDS);
@@ -196,13 +194,13 @@ public class EthScheduler {
     return promise;
   }
 
-  public <T> CompletableFuture<T> timeout(final EthTask<T> task) {
+  public <T> SafeFuture<T> timeout(final EthTask<T> task) {
     return timeout(task, defaultTimeout);
   }
 
-  public <T> CompletableFuture<T> timeout(final EthTask<T> task, final Duration timeout) {
-    final CompletableFuture<T> future = task.run();
-    final CompletableFuture<T> result = timeout(future, timeout);
+  public <T> SafeFuture<T> timeout(final EthTask<T> task, final Duration timeout) {
+    final SafeFuture<T> future = task.run();
+    final SafeFuture<T> result = timeout(future, timeout);
     result.whenComplete(
         (r, error) -> {
           if (errorIsTimeoutOrCancellation(error)) {
@@ -217,9 +215,8 @@ public class EthScheduler {
     return cause instanceof TimeoutException || cause instanceof CancellationException;
   }
 
-  private <T> CompletableFuture<T> timeout(
-      final CompletableFuture<T> future, final Duration delay) {
-    final CompletableFuture<T> timeout = failAfterTimeout(delay);
+  private <T> SafeFuture<T> timeout(final SafeFuture<T> future, final Duration delay) {
+    final SafeFuture<T> timeout = failAfterTimeout(delay);
     return future.applyToEither(timeout, Function.identity());
   }
 
@@ -262,13 +259,13 @@ public class EthScheduler {
     LOG.trace("{} stopped.", this.getClass().getSimpleName());
   }
 
-  private <T> CompletableFuture<T> failAfterTimeout(final Duration timeout) {
-    final CompletableFuture<T> promise = new CompletableFuture<>();
+  private <T> SafeFuture<T> failAfterTimeout(final Duration timeout) {
+    final SafeFuture<T> promise = new SafeFuture<>();
     failAfterTimeout(promise, timeout);
     return promise;
   }
 
-  public <T> void failAfterTimeout(final CompletableFuture<T> promise, final Duration timeout) {
+  public <T> void failAfterTimeout(final SafeFuture<T> promise, final Duration timeout) {
     final long delay = timeout.toMillis();
     final TimeUnit unit = TimeUnit.MILLISECONDS;
     scheduler.schedule(

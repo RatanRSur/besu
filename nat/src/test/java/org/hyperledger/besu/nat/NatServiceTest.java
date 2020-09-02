@@ -31,7 +31,7 @@ import org.hyperledger.besu.nat.core.exception.NatInitializationException;
 import org.hyperledger.besu.nat.upnp.UpnpNatManager;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -102,8 +102,7 @@ public class NatServiceTest {
     final String fallbackExternalIp = "127.0.0.1";
     final String externalIp = "127.0.0.3";
     final NatManager natManager = mock(NatManager.class);
-    when(natManager.queryExternalIPAddress())
-        .thenReturn(CompletableFuture.completedFuture(externalIp));
+    when(natManager.queryExternalIPAddress()).thenReturn(SafeFuture.completedFuture(externalIp));
     when(natManager.getNatMethod()).thenReturn(NatMethod.UPNP);
 
     final NatService natService = new NatService(Optional.of(natManager), true);
@@ -132,8 +131,7 @@ public class NatServiceTest {
     final String fallbackExternalIp = "127.0.0.1";
     final String externalIp = "127.0.0.3";
     final NatManager natManager = mock(NatManager.class);
-    when(natManager.queryLocalIPAddress())
-        .thenReturn(CompletableFuture.completedFuture(externalIp));
+    when(natManager.queryLocalIPAddress()).thenReturn(SafeFuture.completedFuture(externalIp));
     when(natManager.getNatMethod()).thenReturn(NatMethod.UPNP);
 
     final NatService natService = new NatService(Optional.of(natManager), true);
@@ -168,9 +166,8 @@ public class NatServiceTest {
 
     final NatManager natManager = mock(NatManager.class);
     doThrow(NatInitializationException.class).when(natManager).start();
-    when(natManager.queryExternalIPAddress())
-        .thenReturn(CompletableFuture.completedFuture(externalIp));
-    when(natManager.queryLocalIPAddress()).thenReturn(CompletableFuture.completedFuture(localIp));
+    when(natManager.queryExternalIPAddress()).thenReturn(SafeFuture.completedFuture(externalIp));
+    when(natManager.queryLocalIPAddress()).thenReturn(SafeFuture.completedFuture(localIp));
     when(natManager.getPortMapping(any(NatServiceType.class), any(NetworkProtocol.class)))
         .thenReturn(
             new NatPortMapping(

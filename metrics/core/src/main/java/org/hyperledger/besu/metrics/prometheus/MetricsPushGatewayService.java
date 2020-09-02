@@ -20,7 +20,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.io.IOException;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -57,7 +57,7 @@ class MetricsPushGatewayService implements MetricsService {
   }
 
   @Override
-  public CompletableFuture<?> start() {
+  public SafeFuture<?> start() {
     LOG.info(
         "Starting metrics push gateway service pushing to {}:{}",
         config.getPushHost(),
@@ -72,12 +72,12 @@ class MetricsPushGatewayService implements MetricsService {
         config.getPushInterval() / 2,
         config.getPushInterval(),
         TimeUnit.SECONDS);
-    return CompletableFuture.completedFuture(null);
+    return SafeFuture.completedFuture(null);
   }
 
   @Override
-  public CompletableFuture<?> stop() {
-    final CompletableFuture<?> resultFuture = new CompletableFuture<>();
+  public SafeFuture<?> stop() {
+    final SafeFuture<?> resultFuture = new SafeFuture<>();
     try {
       // Calling shutdown now cancels the pending push, which is desirable.
       scheduledExecutorService.shutdownNow();

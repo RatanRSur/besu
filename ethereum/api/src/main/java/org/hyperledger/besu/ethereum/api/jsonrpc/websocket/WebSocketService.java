@@ -22,7 +22,7 @@ import org.hyperledger.besu.ethereum.api.jsonrpc.websocket.subscription.Subscrip
 
 import java.net.InetSocketAddress;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Splitter;
@@ -79,11 +79,11 @@ public class WebSocketService {
     this.authenticationService = authenticationService;
   }
 
-  public CompletableFuture<?> start() {
+  public SafeFuture<?> start() {
     LOG.info(
         "Starting Websocket service on {}:{}", configuration.getHost(), configuration.getPort());
 
-    final CompletableFuture<?> resultFuture = new CompletableFuture<>();
+    final SafeFuture<?> resultFuture = new SafeFuture<>();
 
     httpServer =
         vertx
@@ -178,7 +178,7 @@ public class WebSocketService {
     }
   }
 
-  private Handler<AsyncResult<HttpServer>> startHandler(final CompletableFuture<?> resultFuture) {
+  private Handler<AsyncResult<HttpServer>> startHandler(final SafeFuture<?> resultFuture) {
     return res -> {
       if (res.succeeded()) {
 
@@ -195,12 +195,12 @@ public class WebSocketService {
     };
   }
 
-  public CompletableFuture<?> stop() {
+  public SafeFuture<?> stop() {
     if (httpServer == null) {
-      return CompletableFuture.completedFuture(null);
+      return SafeFuture.completedFuture(null);
     }
 
-    final CompletableFuture<?> resultFuture = new CompletableFuture<>();
+    final SafeFuture<?> resultFuture = new SafeFuture<>();
 
     httpServer.close(
         res -> {

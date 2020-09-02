@@ -37,7 +37,7 @@ import org.hyperledger.besu.ethereum.eth.sync.state.SyncState;
 import org.hyperledger.besu.ethereum.mainnet.ProtocolSchedule;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.locks.LockSupport;
 
 import org.junit.After;
@@ -109,7 +109,7 @@ public class FastSyncChainDownloaderTest {
             .build();
     final long pivotBlockNumber = 25;
     final ChainDownloader downloader = downloader(syncConfig, pivotBlockNumber);
-    final CompletableFuture<Void> result = downloader.start();
+    final SafeFuture<Void> result = downloader.start();
 
     peer.respondWhileOtherThreadsWork(responder, () -> !result.isDone());
 
@@ -131,7 +131,7 @@ public class FastSyncChainDownloaderTest {
     final long pivotBlockNumber = 5;
     final SynchronizerConfiguration syncConfig = SynchronizerConfiguration.builder().build();
     final ChainDownloader downloader = downloader(syncConfig, pivotBlockNumber);
-    final CompletableFuture<Void> result = downloader.start();
+    final SafeFuture<Void> result = downloader.start();
 
     peer.respondWhileOtherThreadsWork(responder, () -> !result.isDone());
 
@@ -178,7 +178,7 @@ public class FastSyncChainDownloaderTest {
             .build();
     final long pivotBlockNumber = 25;
     final ChainDownloader downloader = downloader(syncConfig, pivotBlockNumber);
-    final CompletableFuture<Void> result = downloader.start();
+    final SafeFuture<Void> result = downloader.start();
 
     while (localBlockchain.getChainHeadBlockNumber() < 15) {
       bestPeer.respond(shorterLimitedRangeResponder);

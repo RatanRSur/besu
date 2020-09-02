@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
@@ -137,17 +137,17 @@ public final class MockNetwork {
     }
 
     @Override
-    public CompletableFuture<PeerConnection> connect(final Peer peer) {
+    public SafeFuture<PeerConnection> connect(final Peer peer) {
       synchronized (network) {
         if (network.nodes.containsKey(peer)) {
           final PeerConnection connection = connections.get(peer);
           if (connection == null) {
-            return CompletableFuture.completedFuture(network.connect(self, peer));
+            return SafeFuture.completedFuture(network.connect(self, peer));
           } else {
-            return CompletableFuture.completedFuture(connection);
+            return SafeFuture.completedFuture(connection);
           }
         } else {
-          return CompletableFuture.supplyAsync(
+          return SafeFuture.supplyAsync(
               () -> {
                 throw new IllegalStateException(
                     String.format("Tried to connect to unknown peer %s", peer));

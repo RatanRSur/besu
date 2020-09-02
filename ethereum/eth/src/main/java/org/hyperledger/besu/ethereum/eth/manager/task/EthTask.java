@@ -14,14 +14,14 @@
  */
 package org.hyperledger.besu.ethereum.eth.manager.task;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutorService;
 
 public interface EthTask<T> {
 
-  CompletableFuture<T> run();
+  SafeFuture<T> run();
 
-  CompletableFuture<T> runAsync(ExecutorService executor);
+  SafeFuture<T> runAsync(ExecutorService executor);
 
   void cancel();
 }

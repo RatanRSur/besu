@@ -23,7 +23,7 @@ import org.hyperledger.besu.ethereum.eth.manager.RespondingEthPeer;
 import org.hyperledger.besu.ethereum.eth.manager.exceptions.MaxRetriesReachedException;
 import org.hyperledger.besu.ethereum.eth.manager.task.EthTask;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
@@ -66,7 +66,7 @@ public abstract class RetryingMessageTaskTest<T> extends AbstractMessageTaskTest
     // Execute task and wait for response
     final T requestedData = generateDataToBeRequested();
     final EthTask<T> task = createTask(requestedData);
-    final CompletableFuture<T> future = task.run();
+    final SafeFuture<T> future = task.run();
 
     // Respond once with no data
     respondingPeer.respond(emptyResponder);
@@ -99,7 +99,7 @@ public abstract class RetryingMessageTaskTest<T> extends AbstractMessageTaskTest
     // Execute task and wait for response
     final T requestedData = generateDataToBeRequested();
     final EthTask<T> task = createTask(requestedData);
-    final CompletableFuture<T> future = task.run();
+    final SafeFuture<T> future = task.run();
 
     // Respond with partial data up until complete.
     respondingPeer.respond(
@@ -141,7 +141,7 @@ public abstract class RetryingMessageTaskTest<T> extends AbstractMessageTaskTest
     final T requestedData = generateDataToBeRequested();
 
     final EthTask<T> task = createTask(requestedData);
-    final CompletableFuture<T> future = task.run();
+    final SafeFuture<T> future = task.run();
 
     assertThat(future.isDone()).isFalse();
   }
@@ -154,7 +154,7 @@ public abstract class RetryingMessageTaskTest<T> extends AbstractMessageTaskTest
 
     // Execute task and wait for response
     final EthTask<T> task = createTask(requestedData);
-    final CompletableFuture<T> future = task.run();
+    final SafeFuture<T> future = task.run();
 
     assertThat(future.isDone()).isFalse();
 
@@ -181,7 +181,7 @@ public abstract class RetryingMessageTaskTest<T> extends AbstractMessageTaskTest
     final T requestedData = generateDataToBeRequested();
 
     final EthTask<T> task = createTask(requestedData);
-    final CompletableFuture<T> future = task.run();
+    final SafeFuture<T> future = task.run();
 
     assertThat(future.isDone()).isFalse();
     respondingPeer.respondWhile(responder, () -> !future.isDone());
@@ -201,7 +201,7 @@ public abstract class RetryingMessageTaskTest<T> extends AbstractMessageTaskTest
 
     // Setup and run task
     final EthTask<T> task = createTask(requestedData);
-    final CompletableFuture<T> future = task.run();
+    final SafeFuture<T> future = task.run();
 
     assertThat(future.isDone()).isFalse();
 

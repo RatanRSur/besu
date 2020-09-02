@@ -28,11 +28,11 @@ import org.hyperledger.besu.util.FutureUtils;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.function.Function;
 
 public class DownloadReceiptsStep
-    implements Function<List<Block>, CompletableFuture<List<BlockWithReceipts>>> {
+    implements Function<List<Block>, SafeFuture<List<BlockWithReceipts>>> {
   private final EthContext ethContext;
   private final MetricsSystem metricsSystem;
 
@@ -42,11 +42,11 @@ public class DownloadReceiptsStep
   }
 
   @Override
-  public CompletableFuture<List<BlockWithReceipts>> apply(final List<Block> blocks) {
+  public SafeFuture<List<BlockWithReceipts>> apply(final List<Block> blocks) {
     final List<BlockHeader> headers = blocks.stream().map(Block::getHeader).collect(toList());
-    final CompletableFuture<Map<BlockHeader, List<TransactionReceipt>>> getReceipts =
+    final SafeFuture<Map<BlockHeader, List<TransactionReceipt>>> getReceipts =
         GetReceiptsForHeadersTask.forHeaders(ethContext, headers, metricsSystem).run();
-    final CompletableFuture<List<BlockWithReceipts>> combineWithBlocks =
+    final SafeFuture<List<BlockWithReceipts>> combineWithBlocks =
         getReceipts.thenApply(
             receiptsByHeader -> combineBlocksAndReceipts(blocks, receiptsByHeader));
     FutureUtils.propagateCancellation(combineWithBlocks, getReceipts);

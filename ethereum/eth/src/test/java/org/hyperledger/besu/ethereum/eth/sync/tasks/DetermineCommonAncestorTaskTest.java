@@ -53,7 +53,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.util.ExceptionUtils;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.assertj.core.api.Assertions;
@@ -105,7 +105,7 @@ public class DetermineCommonAncestorTaskTest {
             metricsSystem);
 
     final AtomicReference<Throwable> failure = new AtomicReference<>();
-    final CompletableFuture<BlockHeader> future = task.run();
+    final SafeFuture<BlockHeader> future = task.run();
     future.whenComplete(
         (response, error) -> {
           failure.set(error);
@@ -141,7 +141,7 @@ public class DetermineCommonAncestorTaskTest {
             metricsSystem);
 
     // Empty response should be handled without any error
-    final CompletableFuture<BlockHeader> future = task.run();
+    final SafeFuture<BlockHeader> future = task.run();
     respondingEthPeer.respond(emptyResponder);
     assertThat(future).isNotDone();
 
@@ -190,7 +190,7 @@ public class DetermineCommonAncestorTaskTest {
     final DetermineCommonAncestorTask spy = spy(task);
 
     // Execute task
-    final CompletableFuture<BlockHeader> future = spy.run();
+    final SafeFuture<BlockHeader> future = spy.run();
     respondingEthPeer.respondWhile(responder, () -> !future.isDone());
 
     final AtomicReference<BlockHeader> result = new AtomicReference<>();
@@ -226,7 +226,7 @@ public class DetermineCommonAncestorTaskTest {
     final DetermineCommonAncestorTask spy = spy(task);
 
     // Execute task
-    final CompletableFuture<BlockHeader> future = spy.run();
+    final SafeFuture<BlockHeader> future = spy.run();
     respondingEthPeer.respondWhile(responder, () -> !future.isDone());
 
     final AtomicReference<BlockHeader> result = new AtomicReference<>();
@@ -256,7 +256,7 @@ public class DetermineCommonAncestorTaskTest {
             defaultHeaderRequestSize,
             metricsSystem);
 
-    final CompletableFuture<BlockHeader> result = task.run();
+    final SafeFuture<BlockHeader> result = task.run();
     assertThat(result).isCompletedWithValue(localGenesisBlock.getHeader());
 
     // Make sure we didn't ask for any headers

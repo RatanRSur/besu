@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.TimeoutException;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -53,7 +53,7 @@ public class RequestDataStep {
     this.getNodeDataTaskFactory = getNodeDataTaskFactory;
   }
 
-  public CompletableFuture<List<Task<NodeDataRequest>>> requestData(
+  public SafeFuture<List<Task<NodeDataRequest>>> requestData(
       final List<Task<NodeDataRequest>> requestTasks,
       final BlockHeader blockHeader,
       final WorldDownloadState downloadState) {
@@ -77,7 +77,7 @@ public class RequestDataStep {
             });
   }
 
-  private CompletableFuture<Map<Hash, Bytes>> sendRequest(
+  private SafeFuture<Map<Hash, Bytes>> sendRequest(
       final BlockHeader blockHeader,
       final List<Hash> hashes,
       final WorldDownloadState downloadState) {

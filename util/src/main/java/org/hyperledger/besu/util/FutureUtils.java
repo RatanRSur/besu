@@ -17,10 +17,10 @@ package org.hyperledger.besu.util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.SafeFuture.completedFuture;
 
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -42,10 +42,9 @@ public class FutureUtils {
    * @param <T> the type of the CompletionStage's result
    * @return the CompletionStage
    */
-  public static <T> CompletableFuture<T> exceptionallyCompose(
-      final CompletableFuture<T> future,
-      final Function<Throwable, CompletionStage<T>> errorHandler) {
-    final CompletableFuture<T> result = new CompletableFuture<>();
+  public static <T> SafeFuture<T> exceptionallyCompose(
+      final SafeFuture<T> future, final Function<Throwable, CompletionStage<T>> errorHandler) {
+    final SafeFuture<T> result = new SafeFuture<>();
     future.whenComplete(
         (value, error) -> {
           try {
@@ -60,18 +59,17 @@ public class FutureUtils {
   }
 
   /**
-   * Propagates the result of one {@link CompletionStage} to a different {@link CompletableFuture}.
+   * Propagates the result of one {@link CompletionStage} to a different {@link SafeFuture}.
    *
    * <p>When <code>from</code> completes successfully, <code>to</code> will be completed
    * successfully with the same value. When <code>from</code> completes exceptionally, <code>to
    * </code> will be completed exceptionally with the same exception.
    *
    * @param from the CompletionStage to take results and exceptions from
-   * @param to the CompletableFuture to propagate results and exceptions to
+   * @param to the SafeFuture to propagate results and exceptions to
    * @param <T> the type of the success value
    */
-  public static <T> void propagateResult(
-      final CompletionStage<T> from, final CompletableFuture<T> to) {
+  public static <T> void propagateResult(final CompletionStage<T> from, final SafeFuture<T> to) {
     from.whenComplete(
         (value, error) -> {
           if (error != null) {
@@ -83,22 +81,22 @@ public class FutureUtils {
   }
 
   /**
-   * Propagates the result of the {@link CompletableFuture} returned from a {@link Supplier} to a
-   * different {@link CompletableFuture}.
+   * Propagates the result of the {@link SafeFuture} returned from a {@link Supplier} to a different
+   * {@link SafeFuture}.
    *
    * <p>When <code>from</code> completes successfully, <code>to</code> will be completed
    * successfully with the same value. When <code>from</code> completes exceptionally, <code>to
    * </code> will be completed exceptionally with the same exception.
    *
-   * <p>If the Supplier throws an exception, the target CompletableFuture will be completed
-   * exceptionally with the thrown exception.
+   * <p>If the Supplier throws an exception, the target SafeFuture will be completed exceptionally
+   * with the thrown exception.
    *
-   * @param from the Supplier to get the CompletableFuture to take results and exceptions from
-   * @param to the CompletableFuture to propagate results and exceptions to
+   * @param from the Supplier to get the SafeFuture to take results and exceptions from
+   * @param to the SafeFuture to propagate results and exceptions to
    * @param <T> the type of the success value
    */
   public static <T> void propagateResult(
-      final Supplier<CompletableFuture<T>> from, final CompletableFuture<T> to) {
+      final Supplier<SafeFuture<T>> from, final SafeFuture<T> to) {
     try {
       propagateResult(from.get(), to);
     } catch (final Throwable t) {
@@ -113,11 +111,10 @@ public class FutureUtils {
    * java.util.concurrent.CancellationException} {@link java.util.concurrent.Future#cancel(boolean)}
    * will be called on <code>to</code>, allowing interruption if the future is currently running.
    *
-   * @param from the CompletableFuture to take cancellation from
-   * @param to the CompletableFuture to propagate cancellation to
+   * @param from the SafeFuture to take cancellation from
+   * @param to the SafeFuture to propagate cancellation to
    */
-  public static void propagateCancellation(
-      final CompletableFuture<?> from, final CompletableFuture<?> to) {
+  public static void propagateCancellation(final SafeFuture<?> from, final SafeFuture<?> to) {
     from.exceptionally(
         error -> {
           if (error instanceof CancellationException) {

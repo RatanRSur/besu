@@ -56,7 +56,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
 
 import io.netty.buffer.ByteBuf;
@@ -84,7 +84,7 @@ public class DeFramerTest {
   private final Framer framer = mock(Framer.class);
   private final PeerConnectionEvents connectionEventDispatcher = mock(PeerConnectionEvents.class);
   private final PeerConnection peerConnection = mock(PeerConnection.class);
-  private final CompletableFuture<PeerConnection> connectFuture = new CompletableFuture<>();
+  private final SafeFuture<PeerConnection> connectFuture = new SafeFuture<>();
   private final int remotePort = 12345;
   private final InetSocketAddress remoteAddress = new InetSocketAddress("127.0.0.1", remotePort);
 

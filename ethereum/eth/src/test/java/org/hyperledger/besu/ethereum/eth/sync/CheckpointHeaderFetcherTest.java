@@ -36,7 +36,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -89,7 +89,7 @@ public class CheckpointHeaderFetcherTest {
     final CheckpointHeaderFetcher checkpointHeaderFetcher =
         createCheckpointHeaderFetcher(Optional.empty());
 
-    final CompletableFuture<List<BlockHeader>> result =
+    final SafeFuture<List<BlockHeader>> result =
         checkpointHeaderFetcher.getNextCheckpointHeaders(respondingPeer.getEthPeer(), header(1));
 
     assertThat(result).isNotDone();
@@ -104,7 +104,7 @@ public class CheckpointHeaderFetcherTest {
     final CheckpointHeaderFetcher checkpointHeaderFetcher =
         createCheckpointHeaderFetcher(Optional.of(header(11)));
 
-    final CompletableFuture<List<BlockHeader>> result =
+    final SafeFuture<List<BlockHeader>> result =
         checkpointHeaderFetcher.getNextCheckpointHeaders(respondingPeer.getEthPeer(), header(1));
 
     respondingPeer.respond(responder);
@@ -117,7 +117,7 @@ public class CheckpointHeaderFetcherTest {
     final CheckpointHeaderFetcher checkpointHeaderFetcher =
         createCheckpointHeaderFetcher(Optional.of(header(15)));
 
-    final CompletableFuture<List<BlockHeader>> result =
+    final SafeFuture<List<BlockHeader>> result =
         checkpointHeaderFetcher.getNextCheckpointHeaders(respondingPeer.getEthPeer(), header(1));
 
     respondingPeer.respond(responder);
@@ -130,7 +130,7 @@ public class CheckpointHeaderFetcherTest {
     final CheckpointHeaderFetcher checkpointHeaderFetcher =
         createCheckpointHeaderFetcher(Optional.of(header(15)));
 
-    final CompletableFuture<List<BlockHeader>> result =
+    final SafeFuture<List<BlockHeader>> result =
         checkpointHeaderFetcher.getNextCheckpointHeaders(respondingPeer.getEthPeer(), header(11));
 
     assertThat(result).isCompletedWithValue(singletonList(header(15)));
@@ -141,7 +141,7 @@ public class CheckpointHeaderFetcherTest {
     final CheckpointHeaderFetcher checkpointHeaderFetcher =
         createCheckpointHeaderFetcher(Optional.of(header(15)));
 
-    final CompletableFuture<List<BlockHeader>> result =
+    final SafeFuture<List<BlockHeader>> result =
         checkpointHeaderFetcher.getNextCheckpointHeaders(respondingPeer.getEthPeer(), header(15));
     assertThat(result).isCompletedWithValue(emptyList());
   }
@@ -151,7 +151,7 @@ public class CheckpointHeaderFetcherTest {
     final CheckpointHeaderFetcher checkpointHeaderFetcher =
         createCheckpointHeaderFetcher(Optional.of(header(15)));
 
-    final CompletableFuture<List<BlockHeader>> result =
+    final SafeFuture<List<BlockHeader>> result =
         checkpointHeaderFetcher.getNextCheckpointHeaders(respondingPeer.getEthPeer(), header(16));
     assertThat(result).isCompletedWithValue(emptyList());
   }
@@ -191,7 +191,7 @@ public class CheckpointHeaderFetcherTest {
                 respondingPeer.getEthPeer(), header(remoteChainHeight - SEGMENT_SIZE)))
         .isFalse();
 
-    final CompletableFuture<List<BlockHeader>> result =
+    final SafeFuture<List<BlockHeader>> result =
         checkpointHeaderFetcher.getNextCheckpointHeaders(
             respondingPeer.getEthPeer(), header(remoteChainHeight - SEGMENT_SIZE));
 

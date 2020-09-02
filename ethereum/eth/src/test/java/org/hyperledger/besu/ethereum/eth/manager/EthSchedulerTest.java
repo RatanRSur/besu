@@ -24,7 +24,7 @@ import static org.mockito.Mockito.verify;
 import org.hyperledger.besu.testutil.MockExecutorService;
 
 import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -49,8 +49,8 @@ public class EthSchedulerTest {
 
   @Test
   public void scheduleWorkerTask_completesWhenScheduledTaskCompletes() {
-    final CompletableFuture<Object> future = new CompletableFuture<>();
-    final CompletableFuture<Object> result = ethScheduler.scheduleSyncWorkerTask(() -> future);
+    final SafeFuture<Object> future = new SafeFuture<>();
+    final SafeFuture<Object> result = ethScheduler.scheduleSyncWorkerTask(() -> future);
 
     assertThat(result.isDone()).isFalse();
     future.complete("bla");
@@ -61,8 +61,8 @@ public class EthSchedulerTest {
 
   @Test
   public void scheduleWorkerTask_completesWhenScheduledTaskFails() {
-    final CompletableFuture<Object> future = new CompletableFuture<>();
-    final CompletableFuture<Object> result = ethScheduler.scheduleSyncWorkerTask(() -> future);
+    final SafeFuture<Object> future = new SafeFuture<>();
+    final SafeFuture<Object> result = ethScheduler.scheduleSyncWorkerTask(() -> future);
 
     assertThat(result.isDone()).isFalse();
     future.completeExceptionally(new RuntimeException("whoops"));
@@ -73,8 +73,8 @@ public class EthSchedulerTest {
 
   @Test
   public void scheduleWorkerTask_completesWhenScheduledTaskIsCancelled() {
-    final CompletableFuture<Object> future = new CompletableFuture<>();
-    final CompletableFuture<Object> result = ethScheduler.scheduleSyncWorkerTask(() -> future);
+    final SafeFuture<Object> future = new SafeFuture<>();
+    final SafeFuture<Object> result = ethScheduler.scheduleSyncWorkerTask(() -> future);
 
     assertThat(result.isDone()).isFalse();
     future.cancel(false);
@@ -85,8 +85,7 @@ public class EthSchedulerTest {
 
   @Test
   public void scheduleWorkerTask_cancelsScheduledFutureWhenResultIsCancelled() {
-    final CompletableFuture<Object> result =
-        ethScheduler.scheduleSyncWorkerTask(() -> new CompletableFuture<>());
+    final SafeFuture<Object> result = ethScheduler.scheduleSyncWorkerTask(() -> new SafeFuture<>());
 
     assertThat(syncWorkerExecutor.getFutures().size()).isEqualTo(1);
     final Future<?> future = syncWorkerExecutor.getFutures().get(0);
@@ -98,8 +97,8 @@ public class EthSchedulerTest {
 
   @Test
   public void scheduleFutureTask_completesWhenScheduledTaskCompletes() {
-    final CompletableFuture<Object> future = new CompletableFuture<>();
-    final CompletableFuture<Object> result =
+    final SafeFuture<Object> future = new SafeFuture<>();
+    final SafeFuture<Object> result =
         ethScheduler.scheduleFutureTask(() -> future, Duration.ofMillis(100));
 
     assertThat(result.isDone()).isFalse();
@@ -111,8 +110,8 @@ public class EthSchedulerTest {
 
   @Test
   public void scheduleFutureTask_completesWhenScheduledTaskFails() {
-    final CompletableFuture<Object> future = new CompletableFuture<>();
-    final CompletableFuture<Object> result =
+    final SafeFuture<Object> future = new SafeFuture<>();
+    final SafeFuture<Object> result =
         ethScheduler.scheduleFutureTask(() -> future, Duration.ofMillis(100));
 
     assertThat(result.isDone()).isFalse();
@@ -124,8 +123,8 @@ public class EthSchedulerTest {
 
   @Test
   public void scheduleFutureTask_completesWhenScheduledTaskIsCancelled() {
-    final CompletableFuture<Object> future = new CompletableFuture<>();
-    final CompletableFuture<Object> result =
+    final SafeFuture<Object> future = new SafeFuture<>();
+    final SafeFuture<Object> result =
         ethScheduler.scheduleFutureTask(() -> future, Duration.ofMillis(100));
 
     assertThat(result.isDone()).isFalse();
@@ -137,8 +136,8 @@ public class EthSchedulerTest {
 
   @Test
   public void scheduleFutureTask_cancelsScheduledFutureWhenResultIsCancelled() {
-    final CompletableFuture<Object> result =
-        ethScheduler.scheduleFutureTask(() -> new CompletableFuture<>(), Duration.ofMillis(100));
+    final SafeFuture<Object> result =
+        ethScheduler.scheduleFutureTask(() -> new SafeFuture<>(), Duration.ofMillis(100));
 
     assertThat(scheduledExecutor.getFutures().size()).isEqualTo(1);
     final Future<?> future = scheduledExecutor.getFutures().get(0);
@@ -151,7 +150,7 @@ public class EthSchedulerTest {
   @Test
   public void timeout_resultCompletesWhenScheduledTaskCompletes() {
     final MockEthTask task = new MockEthTask();
-    final CompletableFuture<Object> result = ethScheduler.timeout(task, Duration.ofSeconds(2));
+    final SafeFuture<Object> result = ethScheduler.timeout(task, Duration.ofSeconds(2));
 
     assertThat(task.hasBeenStarted()).isTrue();
     assertThat(task.isDone()).isFalse();
@@ -166,7 +165,7 @@ public class EthSchedulerTest {
   @Test
   public void timeout_resultCompletesWhenScheduledTaskFails() {
     final MockEthTask task = new MockEthTask();
-    final CompletableFuture<Object> result = ethScheduler.timeout(task, Duration.ofSeconds(2));
+    final SafeFuture<Object> result = ethScheduler.timeout(task, Duration.ofSeconds(2));
 
     assertThat(task.hasBeenStarted()).isTrue();
     assertThat(task.isDone()).isFalse();
@@ -182,7 +181,7 @@ public class EthSchedulerTest {
   public void timeout_resultCompletesOnTimeout() {
     shouldTimeout.set(true);
     final MockEthTask task = new MockEthTask();
-    final CompletableFuture<Object> result = ethScheduler.timeout(task, Duration.ofSeconds(2));
+    final SafeFuture<Object> result = ethScheduler.timeout(task, Duration.ofSeconds(2));
 
     // Timeout fires immediately, so everything should be done
     assertThat(task.hasBeenStarted()).isTrue();
@@ -196,7 +195,7 @@ public class EthSchedulerTest {
   @Test
   public void timeout_cancelsTaskWhenResultIsCancelled() {
     final MockEthTask task = new MockEthTask();
-    final CompletableFuture<Object> result = ethScheduler.timeout(task, Duration.ofSeconds(2));
+    final SafeFuture<Object> result = ethScheduler.timeout(task, Duration.ofSeconds(2));
 
     assertThat(task.hasBeenStarted()).isTrue();
     assertThat(task.isDone()).isFalse();

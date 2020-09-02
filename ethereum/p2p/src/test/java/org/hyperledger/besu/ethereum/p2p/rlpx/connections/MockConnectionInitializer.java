@@ -21,7 +21,7 @@ import org.hyperledger.besu.util.Subscribers;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MockConnectionInitializer implements ConnectionInitializer {
@@ -30,8 +30,7 @@ public class MockConnectionInitializer implements ConnectionInitializer {
   private final PeerConnectionEventDispatcher eventDispatcher;
   private final Subscribers<ConnectCallback> connectCallbacks = Subscribers.create();
   private boolean autocompleteConnections = true;
-  private final Map<Peer, CompletableFuture<PeerConnection>> incompleteConnections =
-      new HashMap<>();
+  private final Map<Peer, SafeFuture<PeerConnection>> incompleteConnections = new HashMap<>();
 
   public MockConnectionInitializer(final PeerConnectionEventDispatcher eventDispatcher) {
     this.eventDispatcher = eventDispatcher;
@@ -42,8 +41,7 @@ public class MockConnectionInitializer implements ConnectionInitializer {
   }
 
   public void completePendingFutures() {
-    for (Map.Entry<Peer, CompletableFuture<PeerConnection>> conn :
-        incompleteConnections.entrySet()) {
+    for (Map.Entry<Peer, SafeFuture<PeerConnection>> conn : incompleteConnections.entrySet()) {
       conn.getValue().complete(MockPeerConnection.create(conn.getKey()));
     }
     incompleteConnections.clear();
@@ -54,15 +52,15 @@ public class MockConnectionInitializer implements ConnectionInitializer {
   }
 
   @Override
-  public CompletableFuture<InetSocketAddress> start() {
+  public SafeFuture<InetSocketAddress> start() {
     InetSocketAddress socketAddress =
         new InetSocketAddress("127.0.0.1", NEXT_PORT.incrementAndGet());
-    return CompletableFuture.completedFuture(socketAddress);
+    return SafeFuture.completedFuture(socketAddress);
   }
 
   @Override
-  public CompletableFuture<Void> stop() {
-    return CompletableFuture.completedFuture(null);
+  public SafeFuture<Void> stop() {
+    return SafeFuture.completedFuture(null);
   }
 
   @Override
@@ -71,11 +69,11 @@ public class MockConnectionInitializer implements ConnectionInitializer {
   }
 
   @Override
-  public CompletableFuture<PeerConnection> connect(final Peer peer) {
+  public SafeFuture<PeerConnection> connect(final Peer peer) {
     if (autocompleteConnections) {
-      return CompletableFuture.completedFuture(MockPeerConnection.create(peer, eventDispatcher));
+      return SafeFuture.completedFuture(MockPeerConnection.create(peer, eventDispatcher));
     } else {
-      final CompletableFuture<PeerConnection> future = new CompletableFuture<>();
+      final SafeFuture<PeerConnection> future = new SafeFuture<>();
       incompleteConnections.put(peer, future);
       return future;
     }

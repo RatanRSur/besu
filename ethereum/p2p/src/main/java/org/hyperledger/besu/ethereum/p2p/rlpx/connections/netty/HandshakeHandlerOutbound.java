@@ -26,7 +26,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -44,7 +44,7 @@ final class HandshakeHandlerOutbound extends AbstractHandshakeHandler {
       final Peer peer,
       final List<SubProtocol> subProtocols,
       final LocalNode localNode,
-      final CompletableFuture<PeerConnection> connectionFuture,
+      final SafeFuture<PeerConnection> connectionFuture,
       final PeerConnectionEventDispatcher connectionEventDispatcher,
       final MetricsSystem metricsSystem) {
     super(

@@ -24,7 +24,7 @@ import org.hyperledger.besu.services.tasks.CachingTaskCollection;
 
 import java.time.Clock;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.IntSupplier;
@@ -90,11 +90,11 @@ public class WorldStateDownloader implements WorldStateDownloadStatus {
     };
   }
 
-  public CompletableFuture<Void> run(final BlockHeader header) {
+  public SafeFuture<Void> run(final BlockHeader header) {
     synchronized (this) {
       final WorldDownloadState oldDownloadState = this.downloadState.get();
       if (oldDownloadState != null && oldDownloadState.isDownloading()) {
-        final CompletableFuture<Void> failed = new CompletableFuture<>();
+        final SafeFuture<Void> failed = new SafeFuture<>();
         failed.completeExceptionally(
             new IllegalStateException(
                 "Cannot run an already running " + this.getClass().getSimpleName()));
@@ -108,7 +108,7 @@ public class WorldStateDownloader implements WorldStateDownloadStatus {
             header.getNumber(),
             header.getHash(),
             stateRoot);
-        return CompletableFuture.completedFuture(null);
+        return SafeFuture.completedFuture(null);
       }
       LOG.info(
           "Begin downloading world state from peers for block {} ({}). State root {}",

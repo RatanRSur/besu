@@ -24,7 +24,7 @@ import org.hyperledger.besu.ethereum.mainnet.ProtocolSchedule;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -86,7 +86,7 @@ public class GetBlockFromPeerTask extends AbstractPeerTask<Block> {
             });
   }
 
-  private CompletableFuture<PeerTaskResult<List<BlockHeader>>> downloadHeader() {
+  private SafeFuture<PeerTaskResult<List<BlockHeader>>> downloadHeader() {
     return executeSubTask(
         () -> {
           final AbstractGetHeadersFromPeerTask task =
@@ -97,10 +97,10 @@ public class GetBlockFromPeerTask extends AbstractPeerTask<Block> {
         });
   }
 
-  private CompletableFuture<PeerTaskResult<List<Block>>> completeBlock(
+  private SafeFuture<PeerTaskResult<List<Block>>> completeBlock(
       final PeerTaskResult<List<BlockHeader>> headerResult) {
     if (headerResult.getResult().isEmpty()) {
-      return CompletableFuture.failedFuture(new IncompleteResultsException());
+      return SafeFuture.failedFuture(new IncompleteResultsException());
     }
 
     return executeSubTask(

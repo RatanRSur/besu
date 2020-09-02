@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -143,12 +143,12 @@ public class MockExecutorService implements ExecutorService {
   }
 
   private static class ExecutorTask<T> {
-    private final CompletableFuture<T> future;
+    private final SafeFuture<T> future;
     private final Callable<T> taskRunner;
     private boolean isPending = true;
 
     private ExecutorTask(final Callable<T> taskRunner) {
-      this.future = spy(new CompletableFuture<>());
+      this.future = spy(new SafeFuture<>());
       this.taskRunner = taskRunner;
     }
 
@@ -166,7 +166,7 @@ public class MockExecutorService implements ExecutorService {
       }
     }
 
-    public CompletableFuture<T> getFuture() {
+    public SafeFuture<T> getFuture() {
       return future;
     }
 

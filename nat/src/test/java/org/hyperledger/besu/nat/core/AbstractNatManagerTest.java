@@ -26,7 +26,7 @@ import org.hyperledger.besu.nat.core.exception.NatInitializationException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
@@ -98,13 +98,13 @@ public class AbstractNatManagerTest {
       public void doStop() {}
 
       @Override
-      protected CompletableFuture<String> retrieveExternalIPAddress() {
-        return new CompletableFuture<>();
+      protected SafeFuture<String> retrieveExternalIPAddress() {
+        return new SafeFuture<>();
       }
 
       @Override
-      public CompletableFuture<List<NatPortMapping>> getPortMappings() {
-        return new CompletableFuture<>();
+      public SafeFuture<List<NatPortMapping>> getPortMappings() {
+        return new SafeFuture<>();
       }
     };
   }

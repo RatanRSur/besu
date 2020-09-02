@@ -37,7 +37,7 @@ import org.hyperledger.besu.ethereum.worldstate.WorldStateArchive;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import org.junit.After;
 import org.junit.Before;
@@ -95,7 +95,7 @@ public class FullSyncTargetManagerTest {
     final RespondingEthPeer bestPeer =
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, Difficulty.MAX_VALUE, 4);
 
-    final CompletableFuture<SyncTarget> result = syncTargetManager.findSyncTarget(Optional.empty());
+    final SafeFuture<SyncTarget> result = syncTargetManager.findSyncTarget(Optional.empty());
     bestPeer.respond(responder);
 
     assertThat(result)
@@ -110,7 +110,7 @@ public class FullSyncTargetManagerTest {
     final RespondingEthPeer bestPeer =
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, Difficulty.MAX_VALUE, 0);
 
-    final CompletableFuture<SyncTarget> result = syncTargetManager.findSyncTarget(Optional.empty());
+    final SafeFuture<SyncTarget> result = syncTargetManager.findSyncTarget(Optional.empty());
     bestPeer.respond(responder);
 
     assertThat(result).isNotCompleted();
@@ -123,7 +123,7 @@ public class FullSyncTargetManagerTest {
     final RespondingEthPeer bestPeer =
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, 20);
 
-    final CompletableFuture<SyncTarget> result = syncTargetManager.findSyncTarget(Optional.empty());
+    final SafeFuture<SyncTarget> result = syncTargetManager.findSyncTarget(Optional.empty());
 
     bestPeer.respond(responder);
 
@@ -138,7 +138,7 @@ public class FullSyncTargetManagerTest {
     final RespondingEthPeer bestPeer =
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, 20);
 
-    final CompletableFuture<SyncTarget> result = syncTargetManager.findSyncTarget(Optional.empty());
+    final SafeFuture<SyncTarget> result = syncTargetManager.findSyncTarget(Optional.empty());
 
     bestPeer.respond(responder);
 

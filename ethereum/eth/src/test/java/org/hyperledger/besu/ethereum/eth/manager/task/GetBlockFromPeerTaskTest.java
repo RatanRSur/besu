@@ -26,7 +26,7 @@ import org.hyperledger.besu.ethereum.eth.manager.ethtaskutils.AbstractMessageTas
 import org.hyperledger.besu.ethereum.eth.manager.exceptions.EthTaskException;
 import org.hyperledger.besu.util.ExceptionUtils;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -66,7 +66,7 @@ public class GetBlockFromPeerTaskTest
 
     // Execute task
     final EthTask<AbstractPeerTask.PeerTaskResult<Block>> task = createTask(requestedData);
-    final CompletableFuture<AbstractPeerTask.PeerTaskResult<Block>> future = task.run();
+    final SafeFuture<AbstractPeerTask.PeerTaskResult<Block>> future = task.run();
     final AtomicReference<Throwable> failure = new AtomicReference<>();
     future.whenComplete(
         (r, t) -> {
@@ -98,7 +98,7 @@ public class GetBlockFromPeerTaskTest
 
     // Execute task and wait for response
     final EthTask<AbstractPeerTask.PeerTaskResult<Block>> task = createTask(requestedData);
-    final CompletableFuture<AbstractPeerTask.PeerTaskResult<Block>> future = task.run();
+    final SafeFuture<AbstractPeerTask.PeerTaskResult<Block>> future = task.run();
     respondingEthPeer.respondWhile(responder, () -> !future.isDone());
     final AtomicReference<Throwable> failure = new AtomicReference<>();
     future.whenComplete(

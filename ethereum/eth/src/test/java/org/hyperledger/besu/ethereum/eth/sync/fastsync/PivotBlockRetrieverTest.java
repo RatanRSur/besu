@@ -39,7 +39,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.util.ExceptionUtils;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.tuweni.bytes.Bytes;
@@ -105,7 +105,7 @@ public class PivotBlockRetrieverTest {
     final RespondingEthPeer respondingPeerC =
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, 1000);
 
-    final CompletableFuture<FastSyncState> future = pivotBlockRetriever.downloadPivotBlockHeader();
+    final SafeFuture<FastSyncState> future = pivotBlockRetriever.downloadPivotBlockHeader();
     respondingPeerA.respond(responder);
     respondingPeerB.respond(responder);
     respondingPeerC.respond(responder);
@@ -128,7 +128,7 @@ public class PivotBlockRetrieverTest {
     final RespondingEthPeer badPeerA = EthProtocolManagerTestUtil.createPeer(ethProtocolManager, 1);
     final RespondingEthPeer badPeerB = EthProtocolManagerTestUtil.createPeer(ethProtocolManager, 1);
 
-    final CompletableFuture<FastSyncState> future = pivotBlockRetriever.downloadPivotBlockHeader();
+    final SafeFuture<FastSyncState> future = pivotBlockRetriever.downloadPivotBlockHeader();
     respondingPeerA.respond(responder);
 
     // With only one peer with sufficient height, we should not be done yet
@@ -176,7 +176,7 @@ public class PivotBlockRetrieverTest {
     // Mark peerA valid
     respondingPeerA.getEthPeer().markValidated(peerValidator);
 
-    final CompletableFuture<FastSyncState> future = pivotBlockRetriever.downloadPivotBlockHeader();
+    final SafeFuture<FastSyncState> future = pivotBlockRetriever.downloadPivotBlockHeader();
     respondingPeerA.respond(responder);
 
     // With only one peer with sufficient height, we should not be done yet
@@ -234,7 +234,7 @@ public class PivotBlockRetrieverTest {
     final RespondingEthPeer peerC =
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, Difficulty.of(1000), 1000);
 
-    final CompletableFuture<FastSyncState> future = pivotBlockRetriever.downloadPivotBlockHeader();
+    final SafeFuture<FastSyncState> future = pivotBlockRetriever.downloadPivotBlockHeader();
 
     peerA.respond(responder);
     peerC.respond(responder);
@@ -263,7 +263,7 @@ public class PivotBlockRetrieverTest {
     final RespondingEthPeer peerC =
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, Difficulty.of(500), 500);
 
-    final CompletableFuture<FastSyncState> future = pivotBlockRetriever.downloadPivotBlockHeader();
+    final SafeFuture<FastSyncState> future = pivotBlockRetriever.downloadPivotBlockHeader();
     peerA.respond(responder);
     peerB.respondTimes(emptyResponder, 2);
 
@@ -298,7 +298,7 @@ public class PivotBlockRetrieverTest {
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, 1000);
 
     // Execute task and wait for response
-    final CompletableFuture<FastSyncState> future = pivotBlockRetriever.downloadPivotBlockHeader();
+    final SafeFuture<FastSyncState> future = pivotBlockRetriever.downloadPivotBlockHeader();
     respondingPeerA.respond(responderA);
     respondingPeerB.respond(responderB);
 
@@ -332,7 +332,7 @@ public class PivotBlockRetrieverTest {
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, 1000);
 
     // Execute task and wait for response
-    final CompletableFuture<FastSyncState> future = pivotBlockRetriever.downloadPivotBlockHeader();
+    final SafeFuture<FastSyncState> future = pivotBlockRetriever.downloadPivotBlockHeader();
     respondingPeerA.respond(responderA);
     respondingPeerB.respond(responderB);
 
@@ -368,7 +368,7 @@ public class PivotBlockRetrieverTest {
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, 1000);
 
     // Execute task and wait for response
-    final CompletableFuture<FastSyncState> future = pivotBlockRetriever.downloadPivotBlockHeader();
+    final SafeFuture<FastSyncState> future = pivotBlockRetriever.downloadPivotBlockHeader();
     respondingPeerA.respond(responderA);
     respondingPeerB.respond(responderB);
 

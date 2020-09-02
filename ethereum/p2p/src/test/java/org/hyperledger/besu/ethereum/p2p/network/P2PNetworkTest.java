@@ -40,7 +40,7 @@ import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 
 import java.net.InetAddress;
 import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.TimeUnit;
 
 import io.vertx.core.Vertx;
@@ -98,9 +98,9 @@ public class P2PNetworkTest {
       final Bytes listenId = listenerEnode.getNodeId();
       final int listenPort = listenerEnode.getListeningPort().get();
 
-      final CompletableFuture<PeerConnection> firstFuture =
+      final SafeFuture<PeerConnection> firstFuture =
           connector.connect(createPeer(listenId, listenPort));
-      final CompletableFuture<PeerConnection> secondFuture =
+      final SafeFuture<PeerConnection> secondFuture =
           connector.connect(createPeer(listenId, listenPort));
 
       final PeerConnection firstConnection = firstFuture.get(30L, TimeUnit.SECONDS);
@@ -152,8 +152,8 @@ public class P2PNetworkTest {
           .isEqualTo(listenId);
 
       // Setup second connection and check that connection is not accepted
-      final CompletableFuture<PeerConnection> peerFuture = new CompletableFuture<>();
-      final CompletableFuture<DisconnectReason> reasonFuture = new CompletableFuture<>();
+      final SafeFuture<PeerConnection> peerFuture = new SafeFuture<>();
+      final SafeFuture<DisconnectReason> reasonFuture = new SafeFuture<>();
       connector2.subscribeDisconnect(
           (peerConnection, reason, initiatedByPeer) -> {
             peerFuture.complete(peerConnection);
@@ -194,7 +194,7 @@ public class P2PNetworkTest {
       final int listenPort = listenerEnode.getListeningPort().get();
 
       final Peer listenerPeer = createPeer(listenId, listenPort);
-      final CompletableFuture<PeerConnection> connectFuture = connector.connect(listenerPeer);
+      final SafeFuture<PeerConnection> connectFuture = connector.connect(listenerPeer);
       assertThatThrownBy(connectFuture::get).hasCauseInstanceOf(IncompatiblePeerException.class);
     }
   }
@@ -224,8 +224,8 @@ public class P2PNetworkTest {
       localBlacklist.add(remotePeer);
 
       // Setup disconnect listener
-      final CompletableFuture<PeerConnection> peerFuture = new CompletableFuture<>();
-      final CompletableFuture<DisconnectReason> reasonFuture = new CompletableFuture<>();
+      final SafeFuture<PeerConnection> peerFuture = new SafeFuture<>();
+      final SafeFuture<DisconnectReason> reasonFuture = new SafeFuture<>();
       remoteNetwork.subscribeDisconnect(
           (peerConnection, reason, initiatedByPeer) -> {
             peerFuture.complete(peerConnection);
@@ -233,7 +233,7 @@ public class P2PNetworkTest {
           });
 
       // Remote connect to local
-      final CompletableFuture<PeerConnection> connectFuture = remoteNetwork.connect(localPeer);
+      final SafeFuture<PeerConnection> connectFuture = remoteNetwork.connect(localPeer);
 
       // Check connection is made, and then a disconnect is registered at remote
       Assertions.assertThat(connectFuture.get(5L, TimeUnit.SECONDS).getPeerInfo().getNodeId())
@@ -268,8 +268,8 @@ public class P2PNetworkTest {
           .thenReturn(false);
 
       // Setup disconnect listener
-      final CompletableFuture<PeerConnection> peerFuture = new CompletableFuture<>();
-      final CompletableFuture<DisconnectReason> reasonFuture = new CompletableFuture<>();
+      final SafeFuture<PeerConnection> peerFuture = new SafeFuture<>();
+      final SafeFuture<DisconnectReason> reasonFuture = new SafeFuture<>();
       remoteNetwork.subscribeDisconnect(
           (peerConnection, reason, initiatedByPeer) -> {
             peerFuture.complete(peerConnection);
@@ -277,7 +277,7 @@ public class P2PNetworkTest {
           });
 
       // Remote connect to local
-      final CompletableFuture<PeerConnection> connectFuture = remoteNetwork.connect(localPeer);
+      final SafeFuture<PeerConnection> connectFuture = remoteNetwork.connect(localPeer);
 
       // Check connection is made, and then a disconnect is registered at remote
       final Bytes localId = localEnode.getNodeId();

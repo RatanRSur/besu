@@ -21,7 +21,7 @@ import org.hyperledger.besu.util.ExceptionUtils;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -46,7 +46,7 @@ public class Pipeline<I> {
    */
   private final AtomicBoolean completing = new AtomicBoolean(false);
 
-  private final CompletableFuture<Void> overallFuture = new CompletableFuture<>();
+  private final SafeFuture<Void> overallFuture = new SafeFuture<>();
   private volatile List<Future<?>> futures;
 
   Pipeline(
@@ -77,7 +77,7 @@ public class Pipeline<I> {
    * @return a future that will be completed when the pipeline completes. If the pipeline fails or
    *     is aborted the returned future will be completed exceptionally.
    */
-  public synchronized CompletableFuture<Void> start(final ExecutorService executorService) {
+  public synchronized SafeFuture<Void> start(final ExecutorService executorService) {
     if (!started.compareAndSet(false, true)) {
       return overallFuture;
     }

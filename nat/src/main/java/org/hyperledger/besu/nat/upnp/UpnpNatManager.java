@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -65,9 +65,9 @@ public class UpnpNatManager extends AbstractNatManager {
   private final RegistryListener registryListener;
 
   // internally-managed future. external queries for IP addresses will be copy()ed from this.
-  private final CompletableFuture<String> externalIpQueryFuture = new CompletableFuture<>();
+  private final SafeFuture<String> externalIpQueryFuture = new SafeFuture<>();
 
-  private final Map<String, CompletableFuture<RemoteService>> recognizedServices = new HashMap<>();
+  private final Map<String, SafeFuture<RemoteService>> recognizedServices = new HashMap<>();
   private final List<NatPortMapping> forwardedPorts = new ArrayList<>();
   private Optional<String> discoveredOnLocalAddress = Optional.empty();
 
@@ -94,7 +94,7 @@ public class UpnpNatManager extends AbstractNatManager {
     upnpService = service;
 
     // prime our recognizedServices map so we can use its key-set later
-    recognizedServices.put(SERVICE_TYPE_WAN_IP_CONNECTION, new CompletableFuture<>());
+    recognizedServices.put(SERVICE_TYPE_WAN_IP_CONNECTION, new SafeFuture<>());
 
     // registry listener to observe new devices and look for specific services
     registryListener =
@@ -131,7 +131,7 @@ public class UpnpNatManager extends AbstractNatManager {
    */
   @Override
   public synchronized void doStop() {
-    CompletableFuture<Void> portForwardReleaseFuture = releaseAllPortForwards();
+    SafeFuture<Void> portForwardReleaseFuture = releaseAllPortForwards();
     try {
       LOG.info("Allowing 3 seconds to release all port forwards...");
       portForwardReleaseFuture.get(3, TimeUnit.SECONDS);
@@ -139,7 +139,7 @@ public class UpnpNatManager extends AbstractNatManager {
       LOG.warn("Caught exception while trying to release port forwards, ignoring", e);
     }
 
-    for (CompletableFuture<RemoteService> future : recognizedServices.values()) {
+    for (SafeFuture<RemoteService> future : recognizedServices.values()) {
       future.cancel(true);
     }
 
@@ -151,43 +151,43 @@ public class UpnpNatManager extends AbstractNatManager {
    * Returns the first of the discovered services of the given type, if any.
    *
    * @param type is the type descriptor of the desired service
-   * @return a CompletableFuture that will provide the desired RemoteService when completed
+   * @return a SafeFuture that will provide the desired RemoteService when completed
    */
-  private synchronized CompletableFuture<RemoteService> getService(final String type) {
+  private synchronized SafeFuture<RemoteService> getService(final String type) {
     return recognizedServices.get(type);
   }
 
   /**
    * Get the discovered WANIPConnection service, if any.
    *
-   * @return a CompletableFuture that will provide the WANIPConnection RemoteService when completed
+   * @return a SafeFuture that will provide the WANIPConnection RemoteService when completed
    */
   @VisibleForTesting
-  synchronized CompletableFuture<RemoteService> getWANIPConnectionService() {
+  synchronized SafeFuture<RemoteService> getWANIPConnectionService() {
     checkState(isStarted(), "Cannot call getWANIPConnectionService() when in stopped state");
     return getService(SERVICE_TYPE_WAN_IP_CONNECTION);
   }
 
   /**
-   * Returns a CompletableFuture that will wait for the given service type to be discovered. No new
-   * query will be performed, and if the service has already been discovered, the future will
-   * complete in the very near future.
+   * Returns a SafeFuture that will wait for the given service type to be discovered. No new query
+   * will be performed, and if the service has already been discovered, the future will complete in
+   * the very near future.
    *
    * @param serviceType is the service type to wait to be discovered.
    * @return future that will return the desired service once it is discovered, or null if the
    *     future is cancelled.
    */
-  private synchronized CompletableFuture<RemoteService> discoverService(final String serviceType) {
+  private synchronized SafeFuture<RemoteService> discoverService(final String serviceType) {
     return recognizedServices.get(serviceType);
   }
 
   /**
    * Sends a UPnP request to the discovered IGD for the external ip address.
    *
-   * @return A CompletableFuture that can be used to query the result (or error).
+   * @return A SafeFuture that can be used to query the result (or error).
    */
   @Override
-  public CompletableFuture<String> retrieveExternalIPAddress() {
+  public SafeFuture<String> retrieveExternalIPAddress() {
     return externalIpQueryFuture.thenApply(x -> x);
   }
 
@@ -197,9 +197,9 @@ public class UpnpNatManager extends AbstractNatManager {
    * @return The known port mappings wrapped in a {@link java.util.concurrent.Future}.
    */
   @Override
-  public CompletableFuture<List<NatPortMapping>> getPortMappings() {
+  public SafeFuture<List<NatPortMapping>> getPortMappings() {
     checkState(isStarted(), "Cannot call getPortMappings() when in stopped state");
-    return CompletableFuture.completedFuture(forwardedPorts);
+    return SafeFuture.completedFuture(forwardedPorts);
   }
 
   /**
@@ -298,11 +298,11 @@ public class UpnpNatManager extends AbstractNatManager {
    * Sends a UPnP request to the discovered IGD to request a port forward.
    *
    * @param portMapping is a portMapping object describing the desired port mapping parameters.
-   * @return A CompletableFuture that can be used to query the result (or error).
+   * @return A SafeFuture that can be used to query the result (or error).
    */
-  private CompletableFuture<Void> requestPortForward(final PortMapping portMapping) {
+  private SafeFuture<Void> requestPortForward(final PortMapping portMapping) {
 
-    CompletableFuture<Void> upnpQueryFuture = new CompletableFuture<>();
+    SafeFuture<Void> upnpQueryFuture = new SafeFuture<>();
 
     return externalIpQueryFuture.thenCompose(
         address -> {
@@ -387,20 +387,20 @@ public class UpnpNatManager extends AbstractNatManager {
    * <p>Note that this is not synchronized, as it is expected to be called within an
    * already-synchronized context ({@link #stop()}).
    *
-   * @return A CompletableFuture that will complete when all port forward requests have been made
+   * @return A SafeFuture that will complete when all port forward requests have been made
    */
-  private CompletableFuture<Void> releaseAllPortForwards() {
+  private SafeFuture<Void> releaseAllPortForwards() {
     // if we haven't observed the WANIPConnection service yet, we should have no port forwards to
     // release
-    CompletableFuture<RemoteService> wanIPConnectionServiceFuture =
+    SafeFuture<RemoteService> wanIPConnectionServiceFuture =
         getService(SERVICE_TYPE_WAN_IP_CONNECTION);
     if (!wanIPConnectionServiceFuture.isDone()) {
-      return CompletableFuture.completedFuture(null);
+      return SafeFuture.completedFuture(null);
     }
 
     RemoteService service = wanIPConnectionServiceFuture.join();
 
-    List<CompletableFuture<Void>> futures = new ArrayList<>();
+    List<SafeFuture<Void>> futures = new ArrayList<>();
 
     boolean done = false;
     while (!done) {
@@ -421,7 +421,7 @@ public class UpnpNatManager extends AbstractNatManager {
           portMapping.getInternalPort(),
           portMapping.getExternalPort());
 
-      CompletableFuture<Void> future = new CompletableFuture<>();
+      SafeFuture<Void> future = new SafeFuture<>();
 
       PortMappingDelete callback =
           new PortMappingDelete(service, toJupnpPortMapping(portMapping)) {
@@ -468,7 +468,7 @@ public class UpnpNatManager extends AbstractNatManager {
 
     // return a future that completes succeessfully only when each of our port delete requests
     // complete
-    return CompletableFuture.allOf(futures.toArray(new CompletableFuture<?>[0]));
+    return SafeFuture.allOf(futures.toArray(new SafeFuture<?>[0]));
   }
 
   /**
@@ -483,7 +483,7 @@ public class UpnpNatManager extends AbstractNatManager {
       if (serviceTypes.contains(serviceType)) {
         synchronized (this) {
           // log a warning if we detect a second WANIPConnection service
-          CompletableFuture<RemoteService> existingFuture = recognizedServices.get(serviceType);
+          SafeFuture<RemoteService> existingFuture = recognizedServices.get(serviceType);
           if (existingFuture.isDone()) {
             LOG.warn(
                 "Detected multiple WANIPConnection services on network. This may interfere with NAT circumvention.");

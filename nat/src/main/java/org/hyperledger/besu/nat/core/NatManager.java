@@ -21,7 +21,7 @@ import org.hyperledger.besu.nat.core.domain.NetworkProtocol;
 import org.hyperledger.besu.nat.core.exception.NatInitializationException;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 /**
  * This class describes the behaviour of any supported NAT manager. Internal API to support Network
@@ -60,21 +60,21 @@ public interface NatManager {
    *
    * @return The local IP address wrapped in a {@link java.util.concurrent.Future}.
    */
-  CompletableFuture<String> queryLocalIPAddress();
+  SafeFuture<String> queryLocalIPAddress();
 
   /**
    * Returns a {@link java.util.concurrent.Future} wrapping the external IP address.
    *
    * @return The external IP address wrapped in a {@link java.util.concurrent.Future}.
    */
-  CompletableFuture<String> queryExternalIPAddress();
+  SafeFuture<String> queryExternalIPAddress();
 
   /**
    * Returns all known port mappings.
    *
    * @return The known port mappings wrapped in a {@link java.util.concurrent.Future}.
    */
-  CompletableFuture<List<NatPortMapping>> getPortMappings();
+  SafeFuture<List<NatPortMapping>> getPortMappings();
 
   /**
    * Returns the port mapping associated to the passed service type.

@@ -26,7 +26,7 @@ import org.hyperledger.besu.ethereum.eth.manager.ethtaskutils.RetryingMessageTas
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
 
 import com.google.common.collect.Lists;
@@ -69,7 +69,7 @@ public class RetryingGetNodeDataFromPeerTaskTest extends RetryingMessageTaskTest
     // Execute task and wait for response
     final Map<Hash, Bytes> requestedData = generateDataToBeRequested();
     final EthTask<Map<Hash, Bytes>> task = createTask(requestedData);
-    final CompletableFuture<Map<Hash, Bytes>> future = task.run();
+    final SafeFuture<Map<Hash, Bytes>> future = task.run();
 
     // Respond with partial data.
     respondingPeer.respond(

@@ -60,7 +60,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.StringJoiner;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Splitter;
@@ -178,10 +178,10 @@ public class JsonRpcHttpService {
     checkArgument(config.getHost() != null, "Required host is not configured.");
   }
 
-  public CompletableFuture<?> start() {
+  public SafeFuture<?> start() {
     LOG.info("Starting JSON-RPC service on {}:{}", config.getHost(), config.getPort());
 
-    final CompletableFuture<?> resultFuture = new CompletableFuture<>();
+    final SafeFuture<?> resultFuture = new SafeFuture<>();
     try {
       // Create the HTTP server and a router object.
       httpServer = vertx.createHttpServer(getHttpServerOptions());
@@ -391,12 +391,12 @@ public class JsonRpcHttpService {
     }
   }
 
-  public CompletableFuture<?> stop() {
+  public SafeFuture<?> stop() {
     if (httpServer == null) {
-      return CompletableFuture.completedFuture(null);
+      return SafeFuture.completedFuture(null);
     }
 
-    final CompletableFuture<?> resultFuture = new CompletableFuture<>();
+    final SafeFuture<?> resultFuture = new SafeFuture<>();
     httpServer.close(
         res -> {
           if (res.failed()) {

@@ -32,7 +32,7 @@ import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -87,7 +87,7 @@ public class CompleteBlocksTaskTest extends RetryingMessageTaskTest<List<Block>>
     final List<Block> requestedData = generateDataToBeRequested(10);
 
     final EthTask<List<Block>> task = createTask(requestedData);
-    final CompletableFuture<List<Block>> future = task.run();
+    final SafeFuture<List<Block>> future = task.run();
 
     ArgumentCaptor<Long> blockNumbersCaptor = ArgumentCaptor.forClass(Long.class);
 
@@ -110,7 +110,7 @@ public class CompleteBlocksTaskTest extends RetryingMessageTaskTest<List<Block>>
     final List<Block> requestedData = generateDataToBeRequested(1);
 
     final EthTask<List<Block>> task = createTask(requestedData);
-    final CompletableFuture<List<Block>> future = task.run();
+    final SafeFuture<List<Block>> future = task.run();
 
     ArgumentCaptor<Long> blockNumbersCaptor = ArgumentCaptor.forClass(Long.class);
 

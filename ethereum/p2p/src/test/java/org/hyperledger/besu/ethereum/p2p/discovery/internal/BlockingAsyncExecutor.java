@@ -16,13 +16,13 @@ package org.hyperledger.besu.ethereum.p2p.discovery.internal;
 
 import org.hyperledger.besu.ethereum.p2p.discovery.internal.PeerDiscoveryController.AsyncExecutor;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.function.Supplier;
 
 public class BlockingAsyncExecutor implements AsyncExecutor {
 
   @Override
-  public <T> CompletableFuture<T> execute(final Supplier<T> action) {
-    return CompletableFuture.completedFuture(action.get());
+  public <T> SafeFuture<T> execute(final Supplier<T> action) {
+    return SafeFuture.completedFuture(action.get());
   }
 }

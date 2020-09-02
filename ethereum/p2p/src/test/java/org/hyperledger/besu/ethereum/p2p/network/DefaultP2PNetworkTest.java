@@ -53,7 +53,7 @@ import org.hyperledger.besu.nat.upnp.UpnpNatManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -89,14 +89,13 @@ public final class DefaultP2PNetworkTest {
 
   @Before
   public void before() {
-    lenient().when(rlpxAgent.start()).thenReturn(CompletableFuture.completedFuture(30303));
-    lenient().when(rlpxAgent.stop()).thenReturn(CompletableFuture.completedFuture(null));
+    lenient().when(rlpxAgent.start()).thenReturn(SafeFuture.completedFuture(30303));
+    lenient().when(rlpxAgent.stop()).thenReturn(SafeFuture.completedFuture(null));
     lenient()
         .when(discoveryAgent.start(anyInt()))
         .thenAnswer(
-            invocation ->
-                CompletableFuture.completedFuture(invocation.getArgument(0, Integer.class)));
-    lenient().when(discoveryAgent.stop()).thenReturn(CompletableFuture.completedFuture(null));
+            invocation -> SafeFuture.completedFuture(invocation.getArgument(0, Integer.class)));
+    lenient().when(discoveryAgent.stop()).thenReturn(SafeFuture.completedFuture(null));
     lenient()
         .when(discoveryAgent.observePeerBondedEvents(discoverySubscriberCaptor.capture()))
         .thenReturn(1L);
@@ -180,8 +179,8 @@ public final class DefaultP2PNetworkTest {
     network.start();
 
     // Don't connect to an already connected peer
-    final CompletableFuture<PeerConnection> connectionFuture =
-        CompletableFuture.completedFuture(MockPeerConnection.create(peer));
+    final SafeFuture<PeerConnection> connectionFuture =
+        SafeFuture.completedFuture(MockPeerConnection.create(peer));
     when(rlpxAgent.getPeerConnection(peer)).thenReturn(Optional.of(connectionFuture));
     network.checkMaintainedConnectionPeers();
     verify(rlpxAgent, times(0)).connect(peer);
@@ -196,7 +195,7 @@ public final class DefaultP2PNetworkTest {
     network.start();
 
     // Don't connect when connection is already pending.
-    final CompletableFuture<PeerConnection> connectionFuture = new CompletableFuture<>();
+    final SafeFuture<PeerConnection> connectionFuture = new SafeFuture<>();
     when(rlpxAgent.getPeerConnection(peer)).thenReturn(Optional.of(connectionFuture));
     network.checkMaintainedConnectionPeers();
     verify(rlpxAgent, times(0)).connect(peer);
@@ -226,7 +225,7 @@ public final class DefaultP2PNetworkTest {
     final UpnpNatManager upnpNatManager = mock(UpnpNatManager.class);
     when(upnpNatManager.getNatMethod()).thenReturn(NatMethod.UPNP);
     when(upnpNatManager.queryExternalIPAddress())
-        .thenReturn(CompletableFuture.completedFuture(externalIp));
+        .thenReturn(SafeFuture.completedFuture(externalIp));
 
     final NatService natService = Mockito.spy(new NatService(Optional.of(upnpNatManager)));
     final P2PNetwork network = builder().natService(natService).build();

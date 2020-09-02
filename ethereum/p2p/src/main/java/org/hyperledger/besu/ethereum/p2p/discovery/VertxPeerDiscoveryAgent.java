@@ -34,7 +34,7 @@ import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 import java.util.stream.StreamSupport;
@@ -93,8 +93,8 @@ public class VertxPeerDiscoveryAgent extends PeerDiscoveryAgent {
   }
 
   @Override
-  protected CompletableFuture<InetSocketAddress> listenForConnections() {
-    CompletableFuture<InetSocketAddress> future = new CompletableFuture<>();
+  protected SafeFuture<InetSocketAddress> listenForConnections() {
+    SafeFuture<InetSocketAddress> future = new SafeFuture<>();
     vertx
         .createDatagramSocket(new DatagramSocketOptions().setIpV6(NetworkUtility.isIPv6Available()))
         .listen(
@@ -104,7 +104,7 @@ public class VertxPeerDiscoveryAgent extends PeerDiscoveryAgent {
 
   protected void handleListenerSetup(
       final AsyncResult<DatagramSocket> listenResult,
-      final CompletableFuture<InetSocketAddress> addressFuture) {
+      final SafeFuture<InetSocketAddress> addressFuture) {
     if (listenResult.failed()) {
       Throwable cause = listenResult.cause();
       LOG.error("An exception occurred when starting the peer discovery agent", cause);
@@ -142,9 +142,8 @@ public class VertxPeerDiscoveryAgent extends PeerDiscoveryAgent {
   }
 
   @Override
-  protected CompletableFuture<Void> sendOutgoingPacket(
-      final DiscoveryPeer peer, final Packet packet) {
-    CompletableFuture<Void> result = new CompletableFuture<>();
+  protected SafeFuture<Void> sendOutgoingPacket(final DiscoveryPeer peer, final Packet packet) {
+    SafeFuture<Void> result = new SafeFuture<>();
     socket.send(
         packet.encode(),
         peer.getEndpoint().getUdpPort(),
@@ -160,12 +159,12 @@ public class VertxPeerDiscoveryAgent extends PeerDiscoveryAgent {
   }
 
   @Override
-  public CompletableFuture<?> stop() {
+  public SafeFuture<?> stop() {
     if (socket == null) {
-      return CompletableFuture.completedFuture(null);
+      return SafeFuture.completedFuture(null);
     }
 
-    final CompletableFuture<?> completion = new CompletableFuture<>();
+    final SafeFuture<?> completion = new SafeFuture<>();
     socket.close(
         ar -> {
           if (ar.succeeded()) {
@@ -231,8 +230,8 @@ public class VertxPeerDiscoveryAgent extends PeerDiscoveryAgent {
   private class VertxAsyncExecutor implements AsyncExecutor {
 
     @Override
-    public <T> CompletableFuture<T> execute(final Supplier<T> action) {
-      final CompletableFuture<T> result = new CompletableFuture<>();
+    public <T> SafeFuture<T> execute(final Supplier<T> action) {
+      final SafeFuture<T> result = new SafeFuture<>();
       vertx.<T>executeBlocking(
           future -> {
             try {

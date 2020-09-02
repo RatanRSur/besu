@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -60,8 +60,8 @@ class PivotBlockConfirmer {
   // The number of times to retry if a peer fails to return an answer to our query
   private final int numberOfRetriesPerPeer;
 
-  private final CompletableFuture<FastSyncState> result = new CompletableFuture<>();
-  private final Collection<CompletableFuture<?>> runningQueries = new ConcurrentLinkedQueue<>();
+  private final SafeFuture<FastSyncState> result = new SafeFuture<>();
+  private final Collection<SafeFuture<?>> runningQueries = new ConcurrentLinkedQueue<>();
   private final Map<Bytes, RetryingGetHeaderFromPeerByNumberTask> pivotBlockQueriesByPeerId =
       new ConcurrentHashMap<>();
   private final Map<BlockHeader, AtomicInteger> pivotBlockVotes = new ConcurrentHashMap<>();
@@ -85,7 +85,7 @@ class PivotBlockConfirmer {
     this.numberOfRetriesPerPeer = numberOfRetriesPerPeer;
   }
 
-  public CompletableFuture<FastSyncState> confirmPivotBlock() {
+  public SafeFuture<FastSyncState> confirmPivotBlock() {
     if (isStarted.compareAndSet(false, true)) {
       LOG.info(
           "Confirm pivot block {} with at least {} peers.", pivotBlockNumber, numberOfPeersToQuery);
@@ -98,7 +98,7 @@ class PivotBlockConfirmer {
   private void queryPeers(final long blockNumber) {
     synchronized (runningQueries) {
       for (int i = 0; i < numberOfPeersToQuery; i++) {
-        final CompletableFuture<?> query =
+        final SafeFuture<?> query =
             executePivotQuery(blockNumber).whenComplete(this::processReceivedHeader);
         runningQueries.add(query);
       }
@@ -153,16 +153,16 @@ class PivotBlockConfirmer {
         .collect(Collectors.joining(","));
   }
 
-  private CompletableFuture<BlockHeader> executePivotQuery(final long blockNumber) {
+  private SafeFuture<BlockHeader> executePivotQuery(final long blockNumber) {
     if (isCancelled.get() || result.isDone()) {
       // Stop loop if this task is done
-      return CompletableFuture.failedFuture(new CancellationException());
+      return SafeFuture.failedFuture(new CancellationException());
     }
 
     final Optional<RetryingGetHeaderFromPeerByNumberTask> query = createPivotQuery(blockNumber);
-    final CompletableFuture<BlockHeader> pivotHeaderFuture;
+    final SafeFuture<BlockHeader> pivotHeaderFuture;
     if (query.isPresent()) {
-      final CompletableFuture<BlockHeader> headerQuery = query.get().getHeader();
+      final SafeFuture<BlockHeader> headerQuery = query.get().getHeader();
       pivotHeaderFuture =
           FutureUtils.exceptionallyCompose(headerQuery, (error) -> executePivotQuery(blockNumber));
     } else {

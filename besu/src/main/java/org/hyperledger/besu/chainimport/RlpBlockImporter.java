@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
@@ -89,7 +89,7 @@ public class RlpBlockImporter implements Closeable {
                 BlockHeader.readFrom(
                     rlp, ScheduleBasedBlockHeaderFunctions.create(protocolSchedule)))) {
       BlockHeader previousHeader = null;
-      CompletableFuture<Void> previousBlockFuture = null;
+      SafeFuture<Void> previousBlockFuture = null;
       while (iterator.hasNext()) {
         final Block block = iterator.next();
         final BlockHeader header = block.getHeader();
@@ -111,19 +111,19 @@ public class RlpBlockImporter implements Closeable {
         final ProtocolSpec protocolSpec = protocolSchedule.getByBlockNumber(blockNumber);
         final BlockHeader lastHeader = previousHeader;
 
-        final CompletableFuture<Void> validationFuture =
-            CompletableFuture.runAsync(
+        final SafeFuture<Void> validationFuture =
+            SafeFuture.runAsync(
                 () -> validateBlock(protocolSpec, context, lastHeader, header, skipPowValidation),
                 validationExecutor);
 
-        final CompletableFuture<Void> extractingFuture =
-            CompletableFuture.runAsync(() -> extractSignatures(block));
+        final SafeFuture<Void> extractingFuture =
+            SafeFuture.runAsync(() -> extractSignatures(block));
 
-        final CompletableFuture<Void> calculationFutures;
+        final SafeFuture<Void> calculationFutures;
         if (previousBlockFuture == null) {
           calculationFutures = extractingFuture;
         } else {
-          calculationFutures = CompletableFuture.allOf(extractingFuture, previousBlockFuture);
+          calculationFutures = SafeFuture.allOf(extractingFuture, previousBlockFuture);
         }
 
         try {
@@ -150,12 +150,12 @@ public class RlpBlockImporter implements Closeable {
   }
 
   private void extractSignatures(final Block block) {
-    final List<CompletableFuture<Void>> futures =
+    final List<SafeFuture<Void>> futures =
         new ArrayList<>(block.getBody().getTransactions().size());
     for (final Transaction tx : block.getBody().getTransactions()) {
-      futures.add(CompletableFuture.runAsync(tx::getSender, validationExecutor));
+      futures.add(SafeFuture.runAsync(tx::getSender, validationExecutor));
     }
-    for (final CompletableFuture<Void> future : futures) {
+    for (final SafeFuture<Void> future : futures) {
       future.join();
     }
   }

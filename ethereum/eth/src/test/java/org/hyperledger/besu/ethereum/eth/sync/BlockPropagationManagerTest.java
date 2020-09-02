@@ -56,7 +56,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.testutil.TestClock;
 
 import java.util.Collections;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.function.Supplier;
 
 import org.apache.tuweni.bytes.Bytes;
@@ -604,8 +604,7 @@ public class BlockPropagationManagerTest {
   @Test
   public void shouldNotImportBlocksThatAreAlreadyBeingImported() {
     final EthScheduler ethScheduler = mock(EthScheduler.class);
-    when(ethScheduler.scheduleSyncWorkerTask(any(Supplier.class)))
-        .thenReturn(new CompletableFuture<>());
+    when(ethScheduler.scheduleSyncWorkerTask(any(Supplier.class))).thenReturn(new SafeFuture<>());
     final EthContext ethContext =
         new EthContext(
             new EthPeers("eth", TestClock.fixed(), metricsSystem), new EthMessages(), ethScheduler);

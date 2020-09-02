@@ -22,7 +22,7 @@ import org.hyperledger.besu.util.Subscribers;
 
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -40,16 +40,16 @@ public class EthHashSolver {
   public static class EthHashSolverJob {
 
     private final EthHashSolverInputs inputs;
-    private final CompletableFuture<EthHashSolution> nonceFuture;
+    private final SafeFuture<EthHashSolution> nonceFuture;
 
     EthHashSolverJob(
-        final EthHashSolverInputs inputs, final CompletableFuture<EthHashSolution> nonceFuture) {
+        final EthHashSolverInputs inputs, final SafeFuture<EthHashSolution> nonceFuture) {
       this.inputs = inputs;
       this.nonceFuture = nonceFuture;
     }
 
     public static EthHashSolverJob createFromInputs(final EthHashSolverInputs inputs) {
-      return new EthHashSolverJob(inputs, new CompletableFuture<>());
+      return new EthHashSolverJob(inputs, new SafeFuture<>());
     }
 
     EthHashSolverInputs getInputs() {

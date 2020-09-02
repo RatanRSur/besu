@@ -33,7 +33,7 @@ import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -80,7 +80,7 @@ public class DownloadHeadersStepTest {
   @Test
   public void shouldRetrieveHeadersForCheckpointRange() {
     final RespondingEthPeer peer = EthProtocolManagerTestUtil.createPeer(ethProtocolManager, 1000);
-    final CompletableFuture<CheckpointRangeHeaders> result = downloader.apply(checkpointRange);
+    final SafeFuture<CheckpointRangeHeaders> result = downloader.apply(checkpointRange);
 
     peer.respond(blockchainResponder(blockchain));
 
@@ -93,7 +93,7 @@ public class DownloadHeadersStepTest {
   public void shouldCancelRequestToPeerWhenReturnedFutureIsCancelled() {
     final RespondingEthPeer peer = EthProtocolManagerTestUtil.createPeer(ethProtocolManager, 1000);
 
-    final CompletableFuture<CheckpointRangeHeaders> result = this.downloader.apply(checkpointRange);
+    final SafeFuture<CheckpointRangeHeaders> result = this.downloader.apply(checkpointRange);
 
     result.cancel(true);
 
@@ -110,7 +110,7 @@ public class DownloadHeadersStepTest {
         new CheckpointRange(
             syncTarget, blockchain.getBlockHeader(3).get(), blockchain.getBlockHeader(4).get());
 
-    final CompletableFuture<CheckpointRangeHeaders> result = this.downloader.apply(checkpointRange);
+    final SafeFuture<CheckpointRangeHeaders> result = this.downloader.apply(checkpointRange);
 
     assertThat(result)
         .isCompletedWithValue(new CheckpointRangeHeaders(checkpointRange, headersFromChain(4, 4)));
@@ -122,7 +122,7 @@ public class DownloadHeadersStepTest {
     final CheckpointRange checkpointRange =
         new CheckpointRange(peer.getEthPeer(), blockchain.getBlockHeader(3).get());
 
-    final CompletableFuture<CheckpointRangeHeaders> result = this.downloader.apply(checkpointRange);
+    final SafeFuture<CheckpointRangeHeaders> result = this.downloader.apply(checkpointRange);
 
     peer.respond(blockchainResponder(blockchain));
 

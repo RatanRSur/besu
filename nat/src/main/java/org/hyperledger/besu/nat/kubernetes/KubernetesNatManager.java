@@ -28,7 +28,7 @@ import org.hyperledger.besu.nat.kubernetes.service.LoadBalancerBasedDetector;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -137,13 +137,13 @@ public class KubernetesNatManager extends AbstractNatManager {
   }
 
   @Override
-  protected CompletableFuture<String> retrieveExternalIPAddress() {
-    return CompletableFuture.completedFuture(internalAdvertisedHost);
+  protected SafeFuture<String> retrieveExternalIPAddress() {
+    return SafeFuture.completedFuture(internalAdvertisedHost);
   }
 
   @Override
-  public CompletableFuture<List<NatPortMapping>> getPortMappings() {
-    return CompletableFuture.completedFuture(forwardedPorts);
+  public SafeFuture<List<NatPortMapping>> getPortMappings() {
+    return SafeFuture.completedFuture(forwardedPorts);
   }
 
   private IpDetector getIpDetector(final V1Service v1Service) throws NatInitializationException {

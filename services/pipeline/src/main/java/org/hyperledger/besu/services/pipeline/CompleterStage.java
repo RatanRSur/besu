@@ -14,14 +14,14 @@
  */
 package org.hyperledger.besu.services.pipeline;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.function.Consumer;
 
 class CompleterStage<T> implements Stage {
   private final ReadPipe<T> input;
   private final Consumer<T> completer;
   private final String name;
-  private final CompletableFuture<?> future = new CompletableFuture<>();
+  private final SafeFuture<?> future = new SafeFuture<>();
 
   CompleterStage(final String name, final ReadPipe<T> input, final Consumer<T> completer) {
     this.input = input;
@@ -40,7 +40,7 @@ class CompleterStage<T> implements Stage {
     future.complete(null);
   }
 
-  public CompletableFuture<?> getFuture() {
+  public SafeFuture<?> getFuture() {
     return future;
   }
 

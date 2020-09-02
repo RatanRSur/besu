@@ -32,7 +32,7 @@ import org.hyperledger.besu.ethereum.eth.messages.EthPV62;
 import org.hyperledger.besu.ethereum.eth.messages.GetBlockHeadersMessage;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -54,7 +54,7 @@ public abstract class AbstractPeerBlockValidatorTest {
     final RespondingEthPeer peer =
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, blockNumber);
 
-    final CompletableFuture<Boolean> result =
+    final SafeFuture<Boolean> result =
         validator.validatePeer(ethProtocolManager.ethContext(), peer.getEthPeer());
 
     // Request should timeout immediately
@@ -80,7 +80,7 @@ public abstract class AbstractPeerBlockValidatorTest {
     final RespondingEthPeer targetPeer =
         EthProtocolManagerTestUtil.createPeer(ethProtocolManager, blockNumber);
 
-    final CompletableFuture<Boolean> result =
+    final SafeFuture<Boolean> result =
         validator.validatePeer(ethProtocolManager.ethContext(), targetPeer.getEthPeer());
 
     assertThat(result).isNotDone();

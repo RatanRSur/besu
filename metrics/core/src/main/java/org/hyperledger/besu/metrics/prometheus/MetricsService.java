@@ -17,7 +17,7 @@ package org.hyperledger.besu.metrics.prometheus;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 
 import io.vertx.core.Vertx;
 
@@ -41,14 +41,14 @@ public interface MetricsService {
    *
    * @return completion state
    */
-  CompletableFuture<?> start();
+  SafeFuture<?> start();
 
   /**
    * Stops the Metrics Service and performs needed cleanup.
    *
    * @return completion state
    */
-  CompletableFuture<?> stop();
+  SafeFuture<?> stop();
 
   /**
    * If serving to a port on the client, what the port number is.

@@ -25,7 +25,7 @@ import org.hyperledger.besu.util.ExceptionUtils;
 
 import java.time.Duration;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 
@@ -33,7 +33,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * A task that will retry a fixed number of times before completing the associated CompletableFuture
+ * A task that will retry a fixed number of times before completing the associated SafeFuture
  * exceptionally with a new {@link MaxRetriesReachedException}. If the future returned from {@link
  * #executePeerTask(Optional)} is complete with a non-empty list the retry counter is reset.
  *
@@ -98,7 +98,7 @@ public abstract class AbstractRetryingPeerTask<T> extends AbstractEthTask<T> {
             });
   }
 
-  protected abstract CompletableFuture<T> executePeerTask(Optional<EthPeer> assignedPeer);
+  protected abstract SafeFuture<T> executePeerTask(Optional<EthPeer> assignedPeer);
 
   private void handleTaskError(final Throwable error) {
     final Throwable cause = ExceptionUtils.rootCause(error);
