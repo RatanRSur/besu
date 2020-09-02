@@ -39,8 +39,8 @@ import org.hyperledger.besu.services.pipeline.Pipeline;
 
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.SafeFuture;
 import java.util.function.Supplier;
 
 import org.junit.Before;

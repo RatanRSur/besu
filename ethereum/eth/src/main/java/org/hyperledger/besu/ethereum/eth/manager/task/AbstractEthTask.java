@@ -23,9 +23,9 @@ import org.hyperledger.besu.plugin.services.metrics.OperationTimer;
 
 import java.util.Collection;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;

@@ -22,8 +22,8 @@ import org.hyperledger.besu.ethereum.eth.manager.EthProtocolManagerTestUtil;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 
-import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.Before;

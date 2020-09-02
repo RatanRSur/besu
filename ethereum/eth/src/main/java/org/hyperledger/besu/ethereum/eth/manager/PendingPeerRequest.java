@@ -21,8 +21,8 @@ import org.hyperledger.besu.ethereum.p2p.rlpx.connections.PeerConnection.PeerNot
 
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.SafeFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.SafeFuture;
 import java.util.function.Consumer;
 
 public class PendingPeerRequest {

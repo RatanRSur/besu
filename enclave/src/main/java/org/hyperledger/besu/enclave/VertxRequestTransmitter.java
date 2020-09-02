@@ -15,8 +15,8 @@
 package org.hyperledger.besu.enclave;
 
 import java.util.Optional;
-import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.SafeFuture;
 
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientRequest;

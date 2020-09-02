@@ -33,8 +33,8 @@ import org.hyperledger.besu.util.ExceptionUtils;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.SafeFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.logging.log4j.LogManager;

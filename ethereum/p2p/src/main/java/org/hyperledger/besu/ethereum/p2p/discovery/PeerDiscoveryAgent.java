@@ -39,8 +39,8 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.SafeFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.SafeFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

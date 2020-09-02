@@ -24,8 +24,8 @@ import static org.mockito.Mockito.verify;
 import org.hyperledger.besu.testutil.MockExecutorService;
 
 import java.time.Duration;
-import java.util.concurrent.SafeFuture;
 import java.util.concurrent.Future;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 

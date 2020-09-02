@@ -26,8 +26,8 @@ import org.hyperledger.besu.ethereum.eth.manager.ethtaskutils.AbstractMessageTas
 import org.hyperledger.besu.ethereum.eth.manager.exceptions.EthTaskException;
 import org.hyperledger.besu.util.ExceptionUtils;
 
-import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.Test;

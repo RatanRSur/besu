@@ -24,8 +24,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.SafeFuture;
 
 import com.google.common.collect.Lists;
 import io.netty.handler.codec.http.HttpHeaderValues;

@@ -30,8 +30,8 @@ import org.hyperledger.besu.services.tasks.CachingTaskCollection;
 import org.hyperledger.besu.services.tasks.InMemoryTaskQueue;
 import org.hyperledger.besu.testutil.TestClock;
 
-import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.SafeFuture;
 import java.util.stream.Stream;
 
 import org.apache.tuweni.bytes.Bytes;

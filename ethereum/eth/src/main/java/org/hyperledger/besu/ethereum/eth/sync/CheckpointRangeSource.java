@@ -28,8 +28,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
-import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.SafeFuture;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.logging.log4j.LogManager;
