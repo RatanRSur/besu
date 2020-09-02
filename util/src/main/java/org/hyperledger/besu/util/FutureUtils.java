@@ -14,18 +14,17 @@
  */
 package org.hyperledger.besu.util;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import static java.util.concurrent.SafeFuture.completedFuture;
+import static org.hyperledger.besu.util.SafeFuture.completedFuture;
 
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.SafeFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class FutureUtils {
   private static final Logger LOG = LogManager.getLogger();

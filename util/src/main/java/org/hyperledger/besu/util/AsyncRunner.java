@@ -13,10 +13,11 @@
 
 package org.hyperledger.besu.util;
 
-import com.google.common.base.Preconditions;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import com.google.common.base.Preconditions;
 
 public interface AsyncRunner {
 
@@ -27,7 +28,7 @@ public interface AsyncRunner {
   <U> SafeFuture<U> runAsync(final Supplier<SafeFuture<U>> action);
 
   <U> SafeFuture<U> runAfterDelay(
-      Supplier<SafeFuture<U>> action, long delayAmount, TimeUnit delayUnit);
+      final Supplier<SafeFuture<U>> action, final long delayAmount, final TimeUnit delayUnit);
 
   void shutdown();
 
@@ -36,11 +37,11 @@ public interface AsyncRunner {
   }
 
   default SafeFuture<Void> runAfterDelay(
-      final ExceptionThrowingRunnable action, long delayAmount, TimeUnit delayUnit) {
+      final ExceptionThrowingRunnable action, final long delayAmount, final TimeUnit delayUnit) {
     return runAfterDelay(() -> SafeFuture.fromRunnable(action), delayAmount, delayUnit);
   }
 
-  default SafeFuture<Void> getDelayedFuture(long delayAmount, TimeUnit delayUnit) {
+  default SafeFuture<Void> getDelayedFuture(final long delayAmount, final TimeUnit delayUnit) {
     return runAfterDelay(() -> SafeFuture.COMPLETE, delayAmount, delayUnit);
   }
 
@@ -54,10 +55,10 @@ public interface AsyncRunner {
    * exceptionHandler} and the task recurring executions are not interrupted
    */
   default Cancellable runWithFixedDelay(
-      ExceptionThrowingRunnable runnable,
-      long delayAmount,
-      TimeUnit delayUnit,
-      Consumer<Throwable> exceptionHandler) {
+      final ExceptionThrowingRunnable runnable,
+      final long delayAmount,
+      final TimeUnit delayUnit,
+      final Consumer<Throwable> exceptionHandler) {
 
     Preconditions.checkNotNull(exceptionHandler);
 
