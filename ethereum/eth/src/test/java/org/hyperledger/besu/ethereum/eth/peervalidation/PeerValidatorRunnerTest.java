@@ -29,7 +29,7 @@ import org.hyperledger.besu.ethereum.eth.manager.EthProtocolManagerTestUtil;
 import org.hyperledger.besu.ethereum.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 
 import java.time.Duration;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 
 import org.junit.Test;
 

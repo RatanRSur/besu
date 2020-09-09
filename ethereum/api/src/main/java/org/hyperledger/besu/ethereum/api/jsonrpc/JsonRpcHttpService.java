@@ -60,7 +60,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.StringJoiner;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Splitter;

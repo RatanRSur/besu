@@ -28,7 +28,7 @@ import org.hyperledger.besu.util.FutureUtils;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 import java.util.function.Function;
 
 public class DownloadReceiptsStep

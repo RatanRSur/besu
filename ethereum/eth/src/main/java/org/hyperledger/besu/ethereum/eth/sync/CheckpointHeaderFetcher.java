@@ -16,7 +16,7 @@ package org.hyperledger.besu.ethereum.eth.sync;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static java.util.concurrent.SafeFuture.completedFuture;
+import static org.hyperledger.besu.util.SafeFuture.completedFuture;
 
 import org.hyperledger.besu.ethereum.core.BlockHeader;
 import org.hyperledger.besu.ethereum.eth.manager.EthContext;
@@ -28,7 +28,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

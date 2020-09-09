@@ -32,7 +32,7 @@ import org.hyperledger.besu.services.tasks.Task;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 import java.util.function.BiFunction;
 
 import com.google.common.collect.ImmutableMap;

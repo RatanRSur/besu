@@ -14,13 +14,13 @@
  */
 package org.hyperledger.besu.services.pipeline;
 
-import static java.util.concurrent.SafeFuture.completedFuture;
+import static org.hyperledger.besu.util.SafeFuture.completedFuture;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;

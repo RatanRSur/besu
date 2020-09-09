@@ -57,7 +57,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

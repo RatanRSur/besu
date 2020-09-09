@@ -25,7 +25,7 @@ import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 
 import com.google.common.collect.Lists;
 import io.netty.handler.codec.http.HttpHeaderValues;

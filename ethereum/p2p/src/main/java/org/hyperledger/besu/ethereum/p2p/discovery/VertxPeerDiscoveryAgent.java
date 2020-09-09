@@ -34,7 +34,7 @@ import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.Optional;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 import java.util.stream.StreamSupport;

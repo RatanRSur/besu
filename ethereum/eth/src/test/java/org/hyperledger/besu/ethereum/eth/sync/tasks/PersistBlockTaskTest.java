@@ -35,7 +35,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 
 import org.awaitility.Awaitility;
 import org.junit.Before;

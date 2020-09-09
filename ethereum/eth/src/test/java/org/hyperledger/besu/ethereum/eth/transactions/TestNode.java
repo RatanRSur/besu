@@ -65,7 +65,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 
 import io.vertx.core.Vertx;
 import org.apache.logging.log4j.LogManager;

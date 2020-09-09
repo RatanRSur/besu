@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.ethereum.eth.sync.fastsync;
 
-import static java.util.concurrent.SafeFuture.completedFuture;
+import static org.hyperledger.besu.util.SafeFuture.completedFuture;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -34,7 +34,7 @@ import org.hyperledger.besu.services.tasks.TaskCollection;
 
 import java.nio.file.Path;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 import java.util.function.Supplier;
 
 import org.assertj.core.api.Assertions;

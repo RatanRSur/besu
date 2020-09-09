@@ -16,7 +16,7 @@ package org.hyperledger.besu.services.pipeline;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.synchronizedList;
-import static java.util.concurrent.SafeFuture.completedFuture;
+import static org.hyperledger.besu.util.SafeFuture.completedFuture;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,7 +42,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;

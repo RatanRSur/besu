@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;

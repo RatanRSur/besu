@@ -22,7 +22,7 @@ import org.hyperledger.besu.ethereum.mainnet.ProtocolSchedule;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.List;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 import java.util.function.Function;
 
 public class DownloadBodiesStep implements Function<List<BlockHeader>, SafeFuture<List<Block>>> {

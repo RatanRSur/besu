@@ -40,7 +40,7 @@ import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 
 import java.net.InetAddress;
 import java.util.Arrays;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.TimeUnit;
 
 import io.vertx.core.Vertx;

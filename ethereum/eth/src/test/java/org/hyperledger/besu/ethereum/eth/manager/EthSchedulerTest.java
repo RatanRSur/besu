@@ -25,7 +25,7 @@ import org.hyperledger.besu.testutil.MockExecutorService;
 
 import java.time.Duration;
 import java.util.concurrent.Future;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 

@@ -16,7 +16,7 @@ package org.hyperledger.besu.ethereum.p2p.discovery.internal;
 
 import org.hyperledger.besu.ethereum.p2p.discovery.internal.PeerDiscoveryController.AsyncExecutor;
 
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 import java.util.function.Supplier;
 
 public class BlockingAsyncExecutor implements AsyncExecutor {

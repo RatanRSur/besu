@@ -24,7 +24,7 @@ import org.hyperledger.besu.services.tasks.CachingTaskCollection;
 
 import java.time.Clock;
 import java.util.Optional;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.IntSupplier;

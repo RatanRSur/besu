@@ -16,7 +16,7 @@ package org.hyperledger.besu.ethereum.eth.sync.tasks;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Collections.emptyList;
-import static java.util.concurrent.SafeFuture.completedFuture;
+import static org.hyperledger.besu.util.SafeFuture.completedFuture;
 import static java.util.stream.Collectors.toMap;
 
 import org.hyperledger.besu.ethereum.core.Block;
@@ -35,7 +35,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;

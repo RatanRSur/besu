@@ -21,7 +21,7 @@ import org.hyperledger.besu.util.Subscribers;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MockConnectionInitializer implements ConnectionInitializer {

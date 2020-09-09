@@ -21,13 +21,13 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.Executors;
-import java.util.concurrent.SafeFuture;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import io.prometheus.client.exporter.PushGateway;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hyperledger.besu.util.SafeFuture;
 
 class MetricsPushGatewayService implements MetricsService {
   private static final Logger LOG = LogManager.getLogger();

@@ -25,7 +25,7 @@ import org.hyperledger.besu.util.ExceptionUtils;
 
 import java.time.Duration;
 import java.util.Optional;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 

@@ -53,7 +53,7 @@ import org.hyperledger.besu.nat.upnp.UpnpNatManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

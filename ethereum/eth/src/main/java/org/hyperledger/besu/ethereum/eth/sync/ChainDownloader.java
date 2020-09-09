@@ -16,7 +16,7 @@ package org.hyperledger.besu.ethereum.eth.sync;
 
 import org.hyperledger.besu.util.SafeFuture;
 
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 
 public interface ChainDownloader {
 

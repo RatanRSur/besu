@@ -14,6 +14,7 @@
 package org.hyperledger.besu.util;
 
 import java.util.Arrays;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
@@ -297,6 +298,26 @@ public class SafeFuture<T> extends CompletableFuture<T> {
           }
         });
     return result;
+  }
+
+  /**
+   * Propagates cancellation, and only cancellation, from one future to another.
+   *
+   * <p>When <code>from</code> is completed with a {@link
+   * java.util.concurrent.CancellationException} {@link java.util.concurrent.Future#cancel(boolean)}
+   * will be called on <code>to</code>, allowing interruption if the future is currently running.
+   *
+   * @param to the SafeFuture to propagate cancellation to
+   */
+  @SuppressWarnings("FutureReturnValueIgnored")
+  public void propagateCancellation(final SafeFuture<?> to) {
+    exceptionally(
+        error -> {
+          if (error instanceof CancellationException) {
+            to.cancel(true);
+          }
+          return null;
+        });
   }
 
   /**

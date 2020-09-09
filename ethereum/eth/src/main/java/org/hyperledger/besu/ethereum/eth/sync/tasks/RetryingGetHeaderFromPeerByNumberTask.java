@@ -26,7 +26,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 
 public class RetryingGetHeaderFromPeerByNumberTask
     extends AbstractRetryingPeerTask<List<BlockHeader>> {

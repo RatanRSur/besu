@@ -27,7 +27,7 @@ import org.hyperledger.besu.ethereum.p2p.rlpx.wire.Capability;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 import java.util.stream.Stream;
 
 public class NoopP2PNetwork implements P2PNetwork {

@@ -14,6 +14,8 @@
  */
 package org.hyperledger.besu.testutil;
 
+import org.hyperledger.besu.util.SafeFuture;
+
 import static org.mockito.Mockito.spy;
 
 import java.util.ArrayList;
@@ -24,7 +26,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.SafeFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;

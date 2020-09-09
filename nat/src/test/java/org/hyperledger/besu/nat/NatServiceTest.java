@@ -31,7 +31,7 @@ import org.hyperledger.besu.nat.core.exception.NatInitializationException;
 import org.hyperledger.besu.nat.upnp.UpnpNatManager;
 
 import java.util.Optional;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

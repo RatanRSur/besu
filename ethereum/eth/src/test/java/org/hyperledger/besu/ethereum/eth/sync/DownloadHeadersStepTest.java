@@ -33,7 +33,7 @@ import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 
 import org.junit.Before;
 import org.junit.BeforeClass;

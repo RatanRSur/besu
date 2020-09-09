@@ -16,13 +16,13 @@ package org.hyperledger.besu.enclave;
 
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.SafeFuture;
 
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientRequest;
 import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
+import org.hyperledger.besu.util.SafeFuture;
 
 public class VertxRequestTransmitter implements RequestTransmitter {
 

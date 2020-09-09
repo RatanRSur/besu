@@ -27,7 +27,7 @@ import org.hyperledger.besu.testutil.MockExecutorService;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 

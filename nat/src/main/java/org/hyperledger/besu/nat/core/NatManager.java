@@ -22,7 +22,6 @@ import org.hyperledger.besu.nat.core.exception.NatInitializationException;
 import org.hyperledger.besu.util.SafeFuture;
 
 import java.util.List;
-import java.util.concurrent.SafeFuture;
 
 /**
  * This class describes the behaviour of any supported NAT manager. Internal API to support Network

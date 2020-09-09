@@ -15,7 +15,7 @@
 package org.hyperledger.besu.ethereum.eth.sync;
 
 import static java.util.Collections.emptyList;
-import static java.util.concurrent.SafeFuture.completedFuture;
+import static org.hyperledger.besu.util.SafeFuture.completedFuture;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import org.hyperledger.besu.ethereum.core.BlockHeader;
@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.logging.log4j.LogManager;

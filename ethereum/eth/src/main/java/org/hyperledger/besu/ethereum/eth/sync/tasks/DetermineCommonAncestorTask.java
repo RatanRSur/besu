@@ -27,7 +27,7 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.List;
 import java.util.OptionalInt;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 
 import com.google.common.annotations.VisibleForTesting;
 import org.apache.logging.log4j.LogManager;

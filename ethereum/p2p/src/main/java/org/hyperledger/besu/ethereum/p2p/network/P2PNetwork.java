@@ -27,7 +27,7 @@ import org.hyperledger.besu.ethereum.p2p.rlpx.wire.Message;
 import java.io.Closeable;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.concurrent.SafeFuture;
+import org.hyperledger.besu.util.SafeFuture;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
