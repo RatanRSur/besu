@@ -17,6 +17,7 @@ package org.hyperledger.besu.util;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hyperledger.besu.util.SafeFutureAssert.assertThatSafeFuture;
 
 import java.util.Optional;
 

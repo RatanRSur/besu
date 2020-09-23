@@ -15,8 +15,12 @@
 
 package org.hyperledger.besu.util;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.Optional;
 import java.util.concurrent.CompletionException;
+import org.assertj.core.api.AbstractCompletableFutureAssert;
+import org.assertj.core.api.Assertions;
 
 public class SafeFutureAssert<T> extends AbstractCompletableFutureAssert<SafeFutureAssert<T>, T> {
 

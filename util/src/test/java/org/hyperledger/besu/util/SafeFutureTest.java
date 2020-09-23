@@ -18,6 +18,7 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hyperledger.besu.util.SafeFutureAssert.assertThatSafeFuture;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -73,14 +74,8 @@ public class SafeFutureTest {
     }
   }
 
-  @AfterEach
-  public void tearDown() {
-    // Reset the thread uncaught exception handler
-    Thread.currentThread().setUncaughtExceptionHandler(null);
-  }
-
   @Test
-  void of_successfullyCompletedFuture() {
+  public void of_successfullyCompletedFuture() {
     final CompletableFuture<String> completableFuture = new CompletableFuture<>();
     final SafeFuture<String> safeFuture = SafeFuture.of(completableFuture);
 
@@ -91,7 +86,7 @@ public class SafeFutureTest {
   }
 
   @Test
-  void of_exceptionallyCompletedFuture() {
+  public void of_exceptionallyCompletedFuture() {
     final CompletableFuture<String> completableFuture = new CompletableFuture<>();
     final SafeFuture<String> safeFuture = SafeFuture.of(completableFuture);
 
@@ -209,12 +204,12 @@ public class SafeFutureTest {
   }
 
   @Test
-  void completedFuture_isCompletedWithValue() {
+  public void completedFuture_isCompletedWithValue() {
     assertThat(SafeFuture.completedFuture("Yay")).isCompletedWithValue("Yay");
   }
 
   @Test
-  void failedFuture_isExceptionallyCompleted() {
+  public void failedFuture_isExceptionallyCompleted() {
     final RuntimeException exception = new RuntimeException("Oh no");
     final SafeFuture<String> safeFuture = SafeFuture.failedFuture(exception);
 
@@ -574,7 +569,7 @@ public class SafeFutureTest {
     assertThat(result).isCompleted();
   }
 
-  private static boolean hasDependents(CompletableFuture<?> fut) {
+  private static boolean hasDependents(final CompletableFuture<?> fut) {
     return fut.getNumberOfDependents() > 0;
   }
 
@@ -638,7 +633,7 @@ public class SafeFutureTest {
   @Test
   public void orInterrupt_simpleCompleteWithoutInterruption() throws Exception {
     SafeFuture<Integer> interruptorFut = new SafeFuture<>();
-    Interruptor interruptor =
+    SafeFuture.Interruptor interruptor =
         SafeFuture.createInterruptor(interruptorFut, IllegalStateException::new);
     SafeFuture<Integer> fut0 = new SafeFuture<>();
 
@@ -661,9 +656,9 @@ public class SafeFutureTest {
   public void orInterrupt_triggerOneOfTwoInterruptors() {
     SafeFuture<Integer> interruptorFut1 = new SafeFuture<>();
     SafeFuture<Integer> interruptorFut2 = new SafeFuture<>();
-    Interruptor interruptor1 =
+    SafeFuture.Interruptor interruptor1 =
         SafeFuture.createInterruptor(interruptorFut1, IllegalStateException::new);
-    Interruptor interruptor2 =
+    SafeFuture.Interruptor interruptor2 =
         SafeFuture.createInterruptor(interruptorFut2, IllegalStateException::new);
     SafeFuture<Integer> fut0 = new SafeFuture<>();
 
@@ -731,7 +726,7 @@ public class SafeFutureTest {
   @Test
   public void notInterrupted_shouldThrowIfInterrupted() {
     SafeFuture<Void> interruptorFut = new SafeFuture<>();
-    Interruptor interruptor =
+    SafeFuture.Interruptor interruptor =
         SafeFuture.createInterruptor(interruptorFut, () -> new RuntimeException("test"));
     interruptorFut.complete(null);
     SafeFuture<String> future = SafeFuture.notInterrupted(interruptor).thenApply(__ -> "aaa");
@@ -740,7 +735,7 @@ public class SafeFutureTest {
   }
 
   @Test
-  void alwaysRun_shouldRunWhenFutureCompletesSuccessfully() {
+  public void alwaysRun_shouldRunWhenFutureCompletesSuccessfully() {
     final Runnable action = mock(Runnable.class);
     SafeFuture<String> source = new SafeFuture<>();
 
@@ -754,7 +749,7 @@ public class SafeFutureTest {
   }
 
   @Test
-  void alwaysRun_shouldRunWhenFutureCompletesExceptionally() {
+  public void alwaysRun_shouldRunWhenFutureCompletesExceptionally() {
     final Runnable action = mock(Runnable.class);
     SafeFuture<String> source = new SafeFuture<>();
 
@@ -769,7 +764,7 @@ public class SafeFutureTest {
   }
 
   @Test
-  void alwaysRun_shouldReturnFailedFutureWhenRunnableThrows() {
+  public void alwaysRun_shouldReturnFailedFutureWhenRunnableThrows() {
     final Runnable action = mock(Runnable.class);
     final RuntimeException exception = new RuntimeException("Oops");
     doThrow(exception).when(action).run();

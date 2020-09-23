@@ -91,6 +91,7 @@ def bintrayPackage = bintray.pkg {
 
 allprojects {
   apply plugin: 'java-library'
+  apply plugin: 'java-test-fixtures'
   apply plugin: 'io.spring.dependency-management'
   apply plugin: 'jacoco'
   apply plugin: 'net.ltgt.errorprone'
