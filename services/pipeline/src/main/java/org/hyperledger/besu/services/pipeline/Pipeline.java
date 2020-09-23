@@ -96,14 +96,17 @@ public class Pipeline<I> {
                   overallFuture.complete(null);
                 }
               }
-            });
-    overallFuture.exceptionally(
-        error -> {
-          if (ExceptionUtils.rootCause(error) instanceof CancellationException) {
-            abort();
-          }
-          return null;
-        });
+            })
+        .reportExceptions();
+    overallFuture
+        .exceptionally(
+            error -> {
+              if (ExceptionUtils.rootCause(error) instanceof CancellationException) {
+                abort();
+              }
+              return null;
+            })
+        .reportExceptions();
     return overallFuture;
   }
 

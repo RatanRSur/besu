@@ -262,7 +262,8 @@ public class UpnpNatManager extends AbstractNatManager {
                     }
                   };
               upnpService.getControlPoint().execute(callback);
-            });
+            })
+        .reportExceptions();
   }
 
   /**
@@ -283,15 +284,16 @@ public class UpnpNatManager extends AbstractNatManager {
     checkState(isStarted(), "Cannot call requestPortForward() when in stopped state");
     checkArgument(port != 0, "Cannot map to internal port zero.");
     this.requestPortForward(
-        new PortMapping(
-            true,
-            new UnsignedIntegerFourBytes(0),
-            null,
-            new UnsignedIntegerTwoBytes(port),
-            new UnsignedIntegerTwoBytes(port),
-            null,
-            toJupnpProtocol(protocol),
-            serviceType.getValue()));
+            new PortMapping(
+                true,
+                new UnsignedIntegerFourBytes(0),
+                null,
+                new UnsignedIntegerTwoBytes(port),
+                new UnsignedIntegerTwoBytes(port),
+                null,
+                toJupnpProtocol(protocol),
+                serviceType.getValue()))
+        .reportExceptions();
   }
 
   /**

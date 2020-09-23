@@ -82,7 +82,8 @@ public class MetricsHttpServiceTest {
     service
         .start()
         .whenComplete(
-            (unused, exception) -> assertThat(exception).isInstanceOf(IllegalStateException.class));
+            (unused, exception) -> assertThat(exception).isInstanceOf(IllegalStateException.class))
+        .reportExceptions();
   }
 
   @Test
