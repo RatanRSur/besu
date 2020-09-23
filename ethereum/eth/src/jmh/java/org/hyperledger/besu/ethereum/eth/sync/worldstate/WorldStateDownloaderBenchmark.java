@@ -45,6 +45,7 @@ import org.hyperledger.besu.plugin.services.storage.rocksdb.configuration.RocksD
 import org.hyperledger.besu.services.BesuConfigurationImpl;
 import org.hyperledger.besu.services.tasks.CachingTaskCollection;
 import org.hyperledger.besu.services.tasks.FlatFileTaskCollection;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.nio.file.Path;
 import java.time.Clock;
@@ -52,7 +53,6 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Optional;
-import org.hyperledger.besu.util.SafeFuture;
 
 import com.google.common.io.Files;
 import com.google.common.io.MoreFiles;

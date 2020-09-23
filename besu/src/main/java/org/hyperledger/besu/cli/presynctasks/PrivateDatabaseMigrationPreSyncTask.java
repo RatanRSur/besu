@@ -17,7 +17,7 @@ package org.hyperledger.besu.cli.presynctasks;
 import org.hyperledger.besu.controller.BesuController;
 import org.hyperledger.besu.ethereum.core.PrivacyParameters;
 import org.hyperledger.besu.ethereum.privacy.storage.migration.PrivateStorageMigrationService;
-import org.hyperledger.besu.util.PrivateStorageMigrationBuilder;
+import org.hyperledger.besu.infrastructure.PrivateStorageMigrationBuilder;
 
 public class PrivateDatabaseMigrationPreSyncTask implements PreSynchronizationTask {
 

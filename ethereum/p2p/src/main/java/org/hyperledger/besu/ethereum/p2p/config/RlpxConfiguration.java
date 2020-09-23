@@ -17,7 +17,7 @@ package org.hyperledger.besu.ethereum.p2p.config;
 import static com.google.common.base.Preconditions.checkState;
 
 import org.hyperledger.besu.ethereum.p2p.rlpx.wire.SubProtocol;
-import org.hyperledger.besu.util.NetworkUtility;
+import org.hyperledger.besu.infrastructure.NetworkUtility;
 
 import java.util.Arrays;
 import java.util.Collections;

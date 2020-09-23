@@ -22,10 +22,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import org.hyperledger.besu.testutil.MockExecutorService;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.time.Duration;
 import java.util.concurrent.Future;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 

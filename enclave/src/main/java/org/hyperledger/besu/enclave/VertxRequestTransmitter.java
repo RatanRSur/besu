@@ -14,6 +14,8 @@
  */
 package org.hyperledger.besu.enclave;
 
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
+
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
@@ -22,7 +24,6 @@ import io.vertx.core.http.HttpClientRequest;
 import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
-import org.hyperledger.besu.util.SafeFuture;
 
 public class VertxRequestTransmitter implements RequestTransmitter {
 

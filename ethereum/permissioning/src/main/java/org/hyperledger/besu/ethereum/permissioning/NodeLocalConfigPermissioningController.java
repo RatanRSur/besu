@@ -18,10 +18,10 @@ import org.hyperledger.besu.ethereum.p2p.peers.EnodeURL;
 import org.hyperledger.besu.ethereum.permissioning.AllowlistPersistor.ALLOWLIST_TYPE;
 import org.hyperledger.besu.ethereum.permissioning.node.NodeAllowlistUpdatedEvent;
 import org.hyperledger.besu.ethereum.permissioning.node.NodePermissioningProvider;
-import org.hyperledger.besu.metrics.BesuMetricCategory;
+import org.hyperledger.besu.infrastructure.metrics.BesuMetricCategory;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.plugin.services.metrics.Counter;
-import org.hyperledger.besu.util.Subscribers;
+import org.hyperledger.besu.infrastructure.Subscribers;
 
 import java.io.IOException;
 import java.util.ArrayList;

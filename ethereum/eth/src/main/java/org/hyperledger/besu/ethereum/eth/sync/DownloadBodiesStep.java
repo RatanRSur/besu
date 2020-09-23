@@ -20,9 +20,9 @@ import org.hyperledger.besu.ethereum.eth.manager.EthContext;
 import org.hyperledger.besu.ethereum.eth.sync.tasks.CompleteBlocksTask;
 import org.hyperledger.besu.ethereum.mainnet.ProtocolSchedule;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.List;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.function.Function;
 
 public class DownloadBodiesStep implements Function<List<BlockHeader>, SafeFuture<List<Block>>> {

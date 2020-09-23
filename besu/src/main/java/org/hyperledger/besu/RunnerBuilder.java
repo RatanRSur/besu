@@ -106,7 +106,7 @@ import org.hyperledger.besu.nat.kubernetes.KubernetesNatManager;
 import org.hyperledger.besu.nat.upnp.UpnpNatManager;
 import org.hyperledger.besu.plugin.BesuPlugin;
 import org.hyperledger.besu.services.BesuPluginContextImpl;
-import org.hyperledger.besu.util.NetworkUtility;
+import org.hyperledger.besu.infrastructure.NetworkUtility;
 
 import java.io.IOException;
 import java.nio.file.Path;

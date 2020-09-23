@@ -17,7 +17,7 @@ package org.hyperledger.besu.ethereum.p2p.peers;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
-import org.hyperledger.besu.util.NetworkUtility;
+import org.hyperledger.besu.infrastructure.NetworkUtility;
 
 import java.net.InetAddress;
 import java.net.URI;

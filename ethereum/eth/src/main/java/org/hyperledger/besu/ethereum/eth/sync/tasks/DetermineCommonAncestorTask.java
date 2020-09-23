@@ -24,10 +24,10 @@ import org.hyperledger.besu.ethereum.eth.manager.task.GetHeadersFromPeerByNumber
 import org.hyperledger.besu.ethereum.mainnet.ProtocolSchedule;
 import org.hyperledger.besu.ethereum.util.BlockchainUtil;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.List;
 import java.util.OptionalInt;
-import org.hyperledger.besu.util.SafeFuture;
 
 import com.google.common.annotations.VisibleForTesting;
 import org.apache.logging.log4j.LogManager;

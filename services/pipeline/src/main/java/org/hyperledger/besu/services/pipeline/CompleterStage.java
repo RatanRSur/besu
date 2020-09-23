@@ -14,7 +14,8 @@
  */
 package org.hyperledger.besu.services.pipeline;
 
-import org.hyperledger.besu.util.SafeFuture;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
+
 import java.util.function.Consumer;
 
 class CompleterStage<T> implements Stage {

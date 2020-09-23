@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.ethereum.eth.sync;
 
-import static org.hyperledger.besu.util.SafeFuture.completedFuture;
+import static org.hyperledger.besu.infrastructure.async.SafeFuture.completedFuture;
 
 import org.hyperledger.besu.ethereum.ProtocolContext;
 import org.hyperledger.besu.ethereum.eth.manager.EthContext;
@@ -24,10 +24,10 @@ import org.hyperledger.besu.ethereum.eth.sync.state.SyncTarget;
 import org.hyperledger.besu.ethereum.eth.sync.tasks.DetermineCommonAncestorTask;
 import org.hyperledger.besu.ethereum.mainnet.ProtocolSchedule;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.time.Duration;
 import java.util.Optional;
-import org.hyperledger.besu.util.SafeFuture;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

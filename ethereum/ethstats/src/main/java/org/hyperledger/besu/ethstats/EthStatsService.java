@@ -56,7 +56,7 @@ import org.hyperledger.besu.ethstats.report.PendingTransactionsReport;
 import org.hyperledger.besu.ethstats.request.EthStatsRequest;
 import org.hyperledger.besu.ethstats.util.NetstatsUrl;
 import org.hyperledger.besu.ethstats.util.PrimusHeartBeatsHelper;
-import org.hyperledger.besu.util.platform.PlatformDetector;
+import org.hyperledger.besu.infrastructure.platform.PlatformDetector;
 
 import java.math.BigInteger;
 import java.time.Duration;

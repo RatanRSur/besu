@@ -14,12 +14,13 @@
  */
 package org.hyperledger.besu.ethereum.eth.manager;
 
-import static org.hyperledger.besu.util.FutureUtils.propagateResult;
+import static org.hyperledger.besu.infrastructure.async.FutureUtils.propagateResult;
 
 import org.hyperledger.besu.ethereum.eth.manager.task.EthTask;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.services.pipeline.Pipeline;
-import org.hyperledger.besu.util.ExceptionUtils;
+import org.hyperledger.besu.infrastructure.ExceptionUtils;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.time.Duration;
 import java.util.Collection;
@@ -39,7 +40,6 @@ import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hyperledger.besu.util.SafeFuture;
 
 public class EthScheduler {
   private static final Logger LOG = LogManager.getLogger();

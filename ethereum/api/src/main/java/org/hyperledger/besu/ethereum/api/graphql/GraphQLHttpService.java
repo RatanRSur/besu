@@ -28,7 +28,8 @@ import org.hyperledger.besu.ethereum.api.handlers.IsAliveHandler;
 import org.hyperledger.besu.ethereum.api.handlers.TimeoutHandler;
 import org.hyperledger.besu.ethereum.api.handlers.TimeoutOptions;
 import org.hyperledger.besu.ethereum.eth.manager.EthScheduler;
-import org.hyperledger.besu.util.NetworkUtility;
+import org.hyperledger.besu.infrastructure.NetworkUtility;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.net.InetSocketAddress;
 import java.net.SocketException;
@@ -39,7 +40,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.StringJoiner;
-import org.hyperledger.besu.util.SafeFuture;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.annotations.VisibleForTesting;

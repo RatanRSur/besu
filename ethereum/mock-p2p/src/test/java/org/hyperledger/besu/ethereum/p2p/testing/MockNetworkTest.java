@@ -24,10 +24,10 @@ import org.hyperledger.besu.ethereum.p2p.rlpx.wire.Message;
 import org.hyperledger.besu.ethereum.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.ethereum.p2p.rlpx.wire.RawMessage;
 import org.hyperledger.besu.ethereum.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.Arrays;
 import java.util.Optional;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 

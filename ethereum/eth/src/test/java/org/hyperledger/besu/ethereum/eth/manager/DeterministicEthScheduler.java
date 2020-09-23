@@ -15,12 +15,12 @@
 package org.hyperledger.besu.ethereum.eth.manager;
 
 import org.hyperledger.besu.testutil.MockExecutorService;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;

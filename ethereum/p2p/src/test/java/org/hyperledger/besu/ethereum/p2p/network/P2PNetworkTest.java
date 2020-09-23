@@ -37,10 +37,10 @@ import org.hyperledger.besu.ethereum.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.ethereum.p2p.rlpx.wire.SubProtocol;
 import org.hyperledger.besu.ethereum.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.net.InetAddress;
 import java.util.Arrays;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.TimeUnit;
 
 import io.vertx.core.Vertx;

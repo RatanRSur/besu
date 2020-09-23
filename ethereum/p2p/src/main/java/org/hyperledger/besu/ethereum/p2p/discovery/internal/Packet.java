@@ -16,7 +16,7 @@ package org.hyperledger.besu.ethereum.p2p.discovery.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.hyperledger.besu.crypto.Hash.keccak256;
-import static org.hyperledger.besu.util.Preconditions.checkGuard;
+import static org.hyperledger.besu.infrastructure.Preconditions.checkGuard;
 
 import org.hyperledger.besu.crypto.NodeKey;
 import org.hyperledger.besu.crypto.SECP256K1;

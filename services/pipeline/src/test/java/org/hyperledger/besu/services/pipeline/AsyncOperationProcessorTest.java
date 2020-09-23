@@ -14,16 +14,17 @@
  */
 package org.hyperledger.besu.services.pipeline;
 
-import static org.hyperledger.besu.util.SafeFuture.completedFuture;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hyperledger.besu.infrastructure.async.SafeFuture.completedFuture;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import org.hyperledger.besu.util.SafeFuture;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
+
 import java.util.function.Function;
 
 import org.junit.Test;

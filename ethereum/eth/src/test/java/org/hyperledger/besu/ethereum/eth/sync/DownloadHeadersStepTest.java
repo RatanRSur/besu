@@ -29,11 +29,11 @@ import org.hyperledger.besu.ethereum.eth.manager.RespondingEthPeer;
 import org.hyperledger.besu.ethereum.mainnet.HeaderValidationMode;
 import org.hyperledger.besu.ethereum.mainnet.ProtocolSchedule;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.hyperledger.besu.util.SafeFuture;
 
 import org.junit.Before;
 import org.junit.BeforeClass;

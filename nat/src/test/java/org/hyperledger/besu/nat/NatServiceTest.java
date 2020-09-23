@@ -29,9 +29,9 @@ import org.hyperledger.besu.nat.core.domain.NatServiceType;
 import org.hyperledger.besu.nat.core.domain.NetworkProtocol;
 import org.hyperledger.besu.nat.core.exception.NatInitializationException;
 import org.hyperledger.besu.nat.upnp.UpnpNatManager;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.Optional;
-import org.hyperledger.besu.util.SafeFuture;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -27,12 +27,12 @@ import org.hyperledger.besu.ethereum.eth.manager.task.AbstractPeerTask.PeerTaskR
 import org.hyperledger.besu.ethereum.eth.manager.task.AbstractRetryingPeerTask;
 import org.hyperledger.besu.ethereum.eth.manager.task.GetReceiptsFromPeerTask;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;

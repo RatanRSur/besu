@@ -22,13 +22,12 @@ import static org.mockito.Mockito.verify;
 import org.hyperledger.besu.nat.NatMethod;
 import org.hyperledger.besu.nat.core.domain.NatPortMapping;
 import org.hyperledger.besu.nat.core.exception.NatInitializationException;
-import org.hyperledger.besu.util.SafeFuture;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import org.hyperledger.besu.util.SafeFuture;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

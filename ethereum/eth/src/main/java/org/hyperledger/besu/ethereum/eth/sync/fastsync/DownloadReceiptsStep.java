@@ -24,11 +24,11 @@ import org.hyperledger.besu.ethereum.core.TransactionReceipt;
 import org.hyperledger.besu.ethereum.eth.manager.EthContext;
 import org.hyperledger.besu.ethereum.eth.sync.tasks.GetReceiptsForHeadersTask;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.util.FutureUtils;
+import org.hyperledger.besu.infrastructure.async.FutureUtils;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.List;
 import java.util.Map;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.function.Function;
 
 public class DownloadReceiptsStep

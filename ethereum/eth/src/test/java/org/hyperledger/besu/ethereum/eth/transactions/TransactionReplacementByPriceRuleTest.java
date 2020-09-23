@@ -24,7 +24,7 @@ import org.hyperledger.besu.config.experimental.ExperimentalEIPs;
 import org.hyperledger.besu.ethereum.core.Transaction;
 import org.hyperledger.besu.ethereum.core.Wei;
 import org.hyperledger.besu.ethereum.eth.transactions.PendingTransactions.TransactionInfo;
-import org.hyperledger.besu.util.number.Percentage;
+import org.hyperledger.besu.infrastructure.number.Percentage;
 
 import java.util.Collection;
 import java.util.Optional;

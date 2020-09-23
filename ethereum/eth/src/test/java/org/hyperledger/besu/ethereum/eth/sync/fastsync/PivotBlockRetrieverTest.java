@@ -36,10 +36,10 @@ import org.hyperledger.besu.ethereum.eth.transactions.TransactionPool;
 import org.hyperledger.besu.ethereum.mainnet.ProtocolSchedule;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.util.ExceptionUtils;
+import org.hyperledger.besu.infrastructure.ExceptionUtils;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.Optional;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.tuweni.bytes.Bytes;

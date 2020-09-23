@@ -45,12 +45,12 @@ dependencies {
   implementation 'io.vertx:vertx-core'
   implementation 'io.vertx:vertx-web'
   implementation 'org.apache.logging.log4j:log4j-api'
-  implementation project(':util')
+  implementation project(':infrastructure')
 
   runtimeOnly 'org.apache.logging.log4j:log4j-core'
 
   // test dependencies.
-  testImplementation project(':util')
+  testImplementation project(':infrastructure')
 
   testImplementation 'com.squareup.okhttp3:okhttp'
   testImplementation 'junit:junit'

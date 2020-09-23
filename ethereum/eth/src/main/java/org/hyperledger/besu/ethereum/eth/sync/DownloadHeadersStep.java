@@ -15,7 +15,7 @@
 package org.hyperledger.besu.ethereum.eth.sync;
 
 import static java.util.Collections.emptyList;
-import static org.hyperledger.besu.util.SafeFuture.completedFuture;
+import static org.hyperledger.besu.infrastructure.async.SafeFuture.completedFuture;
 
 import org.hyperledger.besu.ethereum.ProtocolContext;
 import org.hyperledger.besu.ethereum.core.BlockHeader;
@@ -25,7 +25,8 @@ import org.hyperledger.besu.ethereum.eth.manager.task.GetHeadersFromPeerByHashTa
 import org.hyperledger.besu.ethereum.eth.sync.tasks.DownloadHeaderSequenceTask;
 import org.hyperledger.besu.ethereum.mainnet.ProtocolSchedule;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.util.FutureUtils;
+import org.hyperledger.besu.infrastructure.async.FutureUtils;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,6 @@ import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hyperledger.besu.util.SafeFuture;
 
 public class DownloadHeadersStep
     implements Function<CheckpointRange, SafeFuture<CheckpointRangeHeaders>> {

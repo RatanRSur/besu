@@ -17,7 +17,7 @@ package org.hyperledger.besu.cli.options.unstable;
 import org.hyperledger.besu.cli.options.CLIOptions;
 import org.hyperledger.besu.cli.options.OptionParser;
 import org.hyperledger.besu.ethereum.eth.EthProtocolConfiguration;
-import org.hyperledger.besu.util.number.PositiveNumber;
+import org.hyperledger.besu.infrastructure.number.PositiveNumber;
 
 import java.util.Arrays;
 import java.util.List;

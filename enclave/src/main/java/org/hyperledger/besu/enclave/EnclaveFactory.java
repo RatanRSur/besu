@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.enclave;
 
-import org.hyperledger.besu.util.InvalidConfigurationException;
+import org.hyperledger.besu.infrastructure.InvalidConfigurationException;
 
 import java.io.IOException;
 import java.net.URI;

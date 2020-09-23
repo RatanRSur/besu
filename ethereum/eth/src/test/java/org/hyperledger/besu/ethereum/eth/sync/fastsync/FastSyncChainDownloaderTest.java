@@ -36,8 +36,8 @@ import org.hyperledger.besu.ethereum.eth.sync.SynchronizerConfiguration;
 import org.hyperledger.besu.ethereum.eth.sync.state.SyncState;
 import org.hyperledger.besu.ethereum.mainnet.ProtocolSchedule;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.locks.LockSupport;
 
 import org.junit.After;

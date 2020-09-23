@@ -18,11 +18,11 @@ import org.hyperledger.besu.ethereum.core.BlockHeader;
 import org.hyperledger.besu.ethereum.eth.manager.EthContext;
 import org.hyperledger.besu.ethereum.mainnet.ProtocolSchedule;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.util.ExceptionUtils;
+import org.hyperledger.besu.infrastructure.ExceptionUtils;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 

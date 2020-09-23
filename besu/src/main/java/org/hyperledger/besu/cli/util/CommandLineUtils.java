@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.cli.util;
 
-import org.hyperledger.besu.util.StringUtils;
+import org.hyperledger.besu.infrastructure.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;

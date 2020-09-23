@@ -19,7 +19,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 
 import org.hyperledger.besu.cli.options.unstable.EthProtocolOptions;
 import org.hyperledger.besu.ethereum.eth.EthProtocolConfiguration;
-import org.hyperledger.besu.util.number.PositiveNumber;
+import org.hyperledger.besu.infrastructure.number.PositiveNumber;
 
 import org.junit.Test;
 

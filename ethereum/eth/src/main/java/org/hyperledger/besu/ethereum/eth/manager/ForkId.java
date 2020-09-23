@@ -17,7 +17,7 @@ package org.hyperledger.besu.ethereum.eth.manager;
 import org.hyperledger.besu.ethereum.rlp.BytesValueRLPOutput;
 import org.hyperledger.besu.ethereum.rlp.RLPInput;
 import org.hyperledger.besu.ethereum.rlp.RLPOutput;
-import org.hyperledger.besu.util.EndianUtils;
+import org.hyperledger.besu.infrastructure.EndianUtils;
 
 import java.util.ArrayList;
 import java.util.List;

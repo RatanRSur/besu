@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu;
 
-import org.hyperledger.besu.util.platform.PlatformDetector;
+import org.hyperledger.besu.infrastructure.platform.PlatformDetector;
 
 import java.util.Optional;
 

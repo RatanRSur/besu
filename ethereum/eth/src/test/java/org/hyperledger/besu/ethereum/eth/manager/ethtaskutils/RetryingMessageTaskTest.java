@@ -22,9 +22,9 @@ import org.hyperledger.besu.ethereum.eth.manager.EthProtocolManagerTestUtil;
 import org.hyperledger.besu.ethereum.eth.manager.RespondingEthPeer;
 import org.hyperledger.besu.ethereum.eth.manager.exceptions.MaxRetriesReachedException;
 import org.hyperledger.besu.ethereum.eth.manager.task.EthTask;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.concurrent.ExecutionException;
-import org.hyperledger.besu.util.SafeFuture;
 
 import org.junit.Test;
 

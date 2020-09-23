@@ -28,11 +28,11 @@ import org.hyperledger.besu.ethereum.eth.manager.PeerRequest;
 import org.hyperledger.besu.ethereum.eth.manager.ethtaskutils.RetryingMessageTaskTest;
 import org.hyperledger.besu.ethereum.eth.manager.task.EthTask;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.stream.Collectors;
 
 import org.junit.Test;

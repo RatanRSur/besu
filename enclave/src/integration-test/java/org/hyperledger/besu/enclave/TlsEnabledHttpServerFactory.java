@@ -17,6 +17,8 @@ package org.hyperledger.besu.enclave;
 
 import static org.hyperledger.besu.enclave.TlsHelpers.populateFingerprintFile;
 
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.security.KeyStoreException;
@@ -25,7 +27,6 @@ import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import org.hyperledger.besu.util.SafeFuture;
 
 import com.google.common.collect.Lists;
 import io.netty.handler.codec.http.HttpHeaderValues;

@@ -16,6 +16,7 @@ package org.hyperledger.besu.metrics.prometheus;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.io.IOException;
@@ -27,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import io.prometheus.client.exporter.PushGateway;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hyperledger.besu.util.SafeFuture;
 
 class MetricsPushGatewayService implements MetricsService {
   private static final Logger LOG = LogManager.getLogger();
@@ -56,6 +56,7 @@ class MetricsPushGatewayService implements MetricsService {
         "Push Gateway requires a Prometheus Metrics System.");
   }
 
+  @SuppressWarnings("FutureReturnValueIgnored") // ScheduledFuture doe
   @Override
   public SafeFuture<?> start() {
     LOG.info(

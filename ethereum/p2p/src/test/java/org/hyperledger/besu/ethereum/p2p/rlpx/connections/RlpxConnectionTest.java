@@ -23,8 +23,7 @@ import static org.mockito.Mockito.verify;
 import org.hyperledger.besu.ethereum.p2p.peers.Peer;
 import org.hyperledger.besu.ethereum.p2p.rlpx.connections.RlpxConnection.ConnectionNotEstablishedException;
 import org.hyperledger.besu.ethereum.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
-
-import org.hyperledger.besu.util.SafeFuture;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import org.junit.Test;
 

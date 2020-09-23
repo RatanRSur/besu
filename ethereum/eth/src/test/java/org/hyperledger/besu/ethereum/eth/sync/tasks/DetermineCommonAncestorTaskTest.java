@@ -50,10 +50,10 @@ import org.hyperledger.besu.ethereum.p2p.rlpx.wire.messages.DisconnectMessage.Di
 import org.hyperledger.besu.ethereum.worldstate.WorldStateArchive;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.util.ExceptionUtils;
+import org.hyperledger.besu.infrastructure.ExceptionUtils;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.List;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.assertj.core.api.Assertions;

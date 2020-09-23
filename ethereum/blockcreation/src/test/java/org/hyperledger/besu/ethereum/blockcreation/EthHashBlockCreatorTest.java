@@ -37,7 +37,7 @@ import org.hyperledger.besu.ethereum.mainnet.ValidationTestUtils;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.testutil.TestClock;
-import org.hyperledger.besu.util.Subscribers;
+import org.hyperledger.besu.infrastructure.Subscribers;
 
 import java.io.IOException;
 import java.math.BigInteger;

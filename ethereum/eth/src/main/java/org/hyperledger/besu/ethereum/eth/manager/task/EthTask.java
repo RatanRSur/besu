@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.ethereum.eth.manager.task;
 
-import org.hyperledger.besu.util.SafeFuture;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.concurrent.ExecutorService;
 

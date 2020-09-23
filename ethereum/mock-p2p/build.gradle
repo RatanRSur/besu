@@ -32,7 +32,7 @@ dependencies {
 
   implementation project(':ethereum:p2p')
   implementation project(':ethereum:permissioning')
-  implementation project(':util')
+  implementation project(':infrastructure')
 
   implementation 'io.vertx:vertx-core'
   implementation 'org.apache.tuweni:tuweni-bytes'

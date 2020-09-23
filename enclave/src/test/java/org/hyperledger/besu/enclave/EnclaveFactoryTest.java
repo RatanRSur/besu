@@ -17,7 +17,7 @@ package org.hyperledger.besu.enclave;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import org.hyperledger.besu.util.InvalidConfigurationException;
+import org.hyperledger.besu.infrastructure.InvalidConfigurationException;
 
 import java.io.File;
 import java.io.IOException;

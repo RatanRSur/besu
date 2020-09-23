@@ -32,15 +32,15 @@ import org.hyperledger.besu.ethereum.p2p.peers.PeerId;
 import org.hyperledger.besu.ethereum.p2p.permissions.PeerPermissions;
 import org.hyperledger.besu.nat.NatService;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.util.NetworkUtility;
-import org.hyperledger.besu.util.Subscribers;
+import org.hyperledger.besu.infrastructure.NetworkUtility;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
+import org.hyperledger.besu.infrastructure.Subscribers;
 
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

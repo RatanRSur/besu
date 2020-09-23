@@ -17,7 +17,7 @@ package org.hyperledger.besu.metrics.noop;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import org.hyperledger.besu.metrics.StandardMetricCategory;
+import org.hyperledger.besu.infrastructure.metrics.StandardMetricCategory;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.plugin.services.metrics.Counter;
 import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;

@@ -32,7 +32,7 @@ import org.hyperledger.besu.ethereum.mainnet.HeaderValidationMode;
 import org.hyperledger.besu.ethereum.mainnet.MutableProtocolSchedule;
 import org.hyperledger.besu.ethereum.mainnet.ProtocolSchedule;
 import org.hyperledger.besu.ethereum.mainnet.ProtocolSpec;
-import org.hyperledger.besu.util.Subscribers;
+import org.hyperledger.besu.infrastructure.Subscribers;
 
 import java.math.BigInteger;
 import java.util.Optional;

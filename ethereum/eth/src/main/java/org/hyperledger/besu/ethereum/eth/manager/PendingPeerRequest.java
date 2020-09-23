@@ -18,11 +18,11 @@ import org.hyperledger.besu.ethereum.eth.manager.RequestManager.ResponseStream;
 import org.hyperledger.besu.ethereum.eth.manager.exceptions.NoAvailablePeersException;
 import org.hyperledger.besu.ethereum.eth.manager.exceptions.PeerDisconnectedException;
 import org.hyperledger.besu.ethereum.p2p.rlpx.connections.PeerConnection.PeerNotConnected;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletionException;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.function.Consumer;
 
 public class PendingPeerRequest {

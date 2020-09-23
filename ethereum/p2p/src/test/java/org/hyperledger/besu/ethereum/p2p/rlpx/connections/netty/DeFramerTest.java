@@ -49,6 +49,7 @@ import org.hyperledger.besu.ethereum.p2p.rlpx.wire.messages.PingMessage;
 import org.hyperledger.besu.ethereum.p2p.rlpx.wire.messages.WireMessageCodes;
 import org.hyperledger.besu.ethereum.rlp.RLPException;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -57,7 +58,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import org.hyperledger.besu.util.SafeFuture;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

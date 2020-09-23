@@ -16,9 +16,9 @@ package org.hyperledger.besu.ethereum.p2p.rlpx.connections;
 
 import org.hyperledger.besu.ethereum.p2p.peers.Peer;
 import org.hyperledger.besu.ethereum.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.Objects;
-import org.hyperledger.besu.util.SafeFuture;
 
 import org.apache.tuweni.bytes.Bytes;
 

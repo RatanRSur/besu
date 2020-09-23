@@ -43,7 +43,7 @@ dependencies {
   implementation project(':metrics:core')
   implementation project(':plugins:rocksdb')
   implementation project(':services:kvstore')
-  implementation project(':util')
+  implementation project(':infrastructure')
 
   implementation 'com.fasterxml.jackson.core:jackson-databind'
   implementation 'com.google.dagger:dagger'

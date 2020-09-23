@@ -18,7 +18,7 @@ dependencies {
   implementation project(':ethereum:core')
   implementation project(':ethereum:eth')
   implementation project(':services:kvstore')
-  implementation project(':util')
+  implementation project(':infrastructure')
 
   implementation 'com.google.guava:guava'
   implementation 'io.vertx:vertx-core'

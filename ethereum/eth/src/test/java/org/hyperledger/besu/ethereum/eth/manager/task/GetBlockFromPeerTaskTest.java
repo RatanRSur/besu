@@ -24,10 +24,10 @@ import org.hyperledger.besu.ethereum.eth.manager.EthProtocolManagerTestUtil;
 import org.hyperledger.besu.ethereum.eth.manager.RespondingEthPeer;
 import org.hyperledger.besu.ethereum.eth.manager.ethtaskutils.AbstractMessageTaskTest;
 import org.hyperledger.besu.ethereum.eth.manager.exceptions.EthTaskException;
-import org.hyperledger.besu.util.ExceptionUtils;
+import org.hyperledger.besu.infrastructure.ExceptionUtils;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.concurrent.ExecutionException;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.Test;

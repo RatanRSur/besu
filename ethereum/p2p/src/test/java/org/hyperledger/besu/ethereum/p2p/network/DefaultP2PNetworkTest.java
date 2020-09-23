@@ -49,11 +49,11 @@ import org.hyperledger.besu.nat.NatMethod;
 import org.hyperledger.besu.nat.NatService;
 import org.hyperledger.besu.nat.core.domain.NetworkProtocol;
 import org.hyperledger.besu.nat.upnp.UpnpNatManager;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

@@ -15,8 +15,8 @@
 package org.hyperledger.besu.ethereum.p2p.permissions;
 
 import org.hyperledger.besu.ethereum.p2p.peers.Peer;
-import org.hyperledger.besu.util.LimitedSet;
-import org.hyperledger.besu.util.LimitedSet.Mode;
+import org.hyperledger.besu.infrastructure.LimitedSet;
+import org.hyperledger.besu.infrastructure.LimitedSet.Mode;
 
 import java.util.Collections;
 import java.util.Optional;

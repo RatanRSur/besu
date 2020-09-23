@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.plugin.services.storage.rocksdb;
 
-import org.hyperledger.besu.util.InvalidConfigurationException;
+import org.hyperledger.besu.infrastructure.InvalidConfigurationException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

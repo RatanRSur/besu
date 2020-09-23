@@ -14,8 +14,6 @@
  */
 package org.hyperledger.besu.metrics.rocksdb;
 
-import static org.hyperledger.besu.metrics.BesuMetricCategory.KVSTORE_ROCKSDB_STATS;
-
 import org.hyperledger.besu.metrics.prometheus.PrometheusMetricsSystem;
 import org.hyperledger.besu.plugin.services.metrics.MetricCategory;
 
@@ -28,6 +26,8 @@ import org.rocksdb.HistogramData;
 import org.rocksdb.HistogramType;
 import org.rocksdb.Statistics;
 import org.rocksdb.TickerType;
+
+import static org.hyperledger.besu.infrastructure.metrics.BesuMetricCategory.KVSTORE_ROCKSDB_STATS;
 
 public class RocksDBStats {
 

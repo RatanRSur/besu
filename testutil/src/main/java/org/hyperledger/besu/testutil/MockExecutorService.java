@@ -14,9 +14,9 @@
  */
 package org.hyperledger.besu.testutil;
 
-import org.hyperledger.besu.util.SafeFuture;
-
 import static org.mockito.Mockito.spy;
+
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.ArrayList;
 import java.util.Collection;

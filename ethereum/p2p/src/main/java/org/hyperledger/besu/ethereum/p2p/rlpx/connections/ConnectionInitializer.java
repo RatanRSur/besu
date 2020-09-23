@@ -16,9 +16,9 @@ package org.hyperledger.besu.ethereum.p2p.rlpx.connections;
 
 import org.hyperledger.besu.ethereum.p2p.peers.Peer;
 import org.hyperledger.besu.ethereum.p2p.rlpx.ConnectCallback;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.net.InetSocketAddress;
-import org.hyperledger.besu.util.SafeFuture;
 
 public interface ConnectionInitializer {
 

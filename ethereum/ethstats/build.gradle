@@ -38,7 +38,7 @@ dependencies {
 
   implementation project(':consensus:clique')
   implementation project(':config')
-  implementation project(':util')
+  implementation project(':infrastructure')
   implementation project(':ethereum:api')
   implementation project(':ethereum:blockcreation')
   implementation project(':ethereum:core')

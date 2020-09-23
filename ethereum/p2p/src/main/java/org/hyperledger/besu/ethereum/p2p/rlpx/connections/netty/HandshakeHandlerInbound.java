@@ -21,10 +21,10 @@ import org.hyperledger.besu.ethereum.p2p.rlpx.connections.PeerConnectionEventDis
 import org.hyperledger.besu.ethereum.p2p.rlpx.handshake.Handshaker;
 import org.hyperledger.besu.ethereum.p2p.rlpx.wire.SubProtocol;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.List;
 import java.util.Optional;
-import org.hyperledger.besu.util.SafeFuture;
 
 import io.netty.buffer.ByteBuf;
 

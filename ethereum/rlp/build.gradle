@@ -31,14 +31,14 @@ dependencies {
   annotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess'
 
   api project(':plugin-api')
-  api project(':util')
+  api project(':infrastructure')
 
   implementation 'com.google.guava:guava'
   implementation 'io.vertx:vertx-core'
   implementation 'org.apache.tuweni:tuweni-bytes'
   implementation 'org.apache.tuweni:tuweni-units'
 
-  jmh project(':util')
+  jmh project(':infrastructure')
 
   testImplementation project(path: ':ethereum:referencetests', configuration: 'testOutput')
   testImplementation project(':testutil')

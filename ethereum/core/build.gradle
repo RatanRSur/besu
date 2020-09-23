@@ -92,7 +92,7 @@ dependencies {
   jmhImplementation project(':plugin-api')
   jmhImplementation project(':plugins:rocksdb')
   jmhImplementation project(':services:kvstore')
-  jmhImplementation project(':util')
+  jmhImplementation project(':infrastructure')
 
   jmhImplementation 'com.google.guava:guava'
 }

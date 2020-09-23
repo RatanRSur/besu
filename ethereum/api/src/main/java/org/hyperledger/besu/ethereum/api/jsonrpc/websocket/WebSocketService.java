@@ -19,10 +19,10 @@ import static com.google.common.collect.Streams.stream;
 import org.hyperledger.besu.ethereum.api.jsonrpc.authentication.AuthenticationService;
 import org.hyperledger.besu.ethereum.api.jsonrpc.authentication.AuthenticationUtils;
 import org.hyperledger.besu.ethereum.api.jsonrpc.websocket.subscription.SubscriptionManager;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.net.InetSocketAddress;
 import java.util.Optional;
-import org.hyperledger.besu.util.SafeFuture;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Splitter;

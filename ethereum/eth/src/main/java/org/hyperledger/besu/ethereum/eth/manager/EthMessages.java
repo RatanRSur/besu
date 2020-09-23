@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.ethereum.eth.manager;
 
-import org.hyperledger.besu.util.Subscribers;
+import org.hyperledger.besu.infrastructure.Subscribers;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

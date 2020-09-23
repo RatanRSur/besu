@@ -64,11 +64,11 @@ import org.hyperledger.besu.ethereum.permissioning.LocalPermissioningConfigurati
 import org.hyperledger.besu.ethereum.permissioning.PermissioningConfiguration;
 import org.hyperledger.besu.ethereum.permissioning.SmartContractPermissioningConfiguration;
 import org.hyperledger.besu.ethereum.worldstate.PrunerConfiguration;
-import org.hyperledger.besu.metrics.StandardMetricCategory;
+import org.hyperledger.besu.infrastructure.metrics.StandardMetricCategory;
 import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
 import org.hyperledger.besu.nat.NatMethod;
-import org.hyperledger.besu.util.number.Fraction;
-import org.hyperledger.besu.util.number.Percentage;
+import org.hyperledger.besu.infrastructure.number.Fraction;
+import org.hyperledger.besu.infrastructure.number.Percentage;
 
 import java.io.File;
 import java.io.IOException;

@@ -15,12 +15,13 @@
 package org.hyperledger.besu.ethereum.eth.sync;
 
 import static java.util.Collections.emptyList;
-import static org.hyperledger.besu.util.SafeFuture.completedFuture;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.hyperledger.besu.infrastructure.async.SafeFuture.completedFuture;
 
 import org.hyperledger.besu.ethereum.core.BlockHeader;
 import org.hyperledger.besu.ethereum.eth.manager.EthPeer;
 import org.hyperledger.besu.ethereum.eth.manager.EthScheduler;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.time.Duration;
 import java.util.ArrayDeque;
@@ -29,7 +30,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.logging.log4j.LogManager;

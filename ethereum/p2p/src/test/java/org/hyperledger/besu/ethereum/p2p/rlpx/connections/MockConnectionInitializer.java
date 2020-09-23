@@ -16,12 +16,12 @@ package org.hyperledger.besu.ethereum.p2p.rlpx.connections;
 
 import org.hyperledger.besu.ethereum.p2p.peers.Peer;
 import org.hyperledger.besu.ethereum.p2p.rlpx.ConnectCallback;
-import org.hyperledger.besu.util.Subscribers;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
+import org.hyperledger.besu.infrastructure.Subscribers;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MockConnectionInitializer implements ConnectionInitializer {

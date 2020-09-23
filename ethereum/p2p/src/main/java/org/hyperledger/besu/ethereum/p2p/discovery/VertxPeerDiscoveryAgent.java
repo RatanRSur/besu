@@ -24,17 +24,17 @@ import org.hyperledger.besu.ethereum.p2p.discovery.internal.PeerDiscoveryControl
 import org.hyperledger.besu.ethereum.p2p.discovery.internal.TimerUtil;
 import org.hyperledger.besu.ethereum.p2p.discovery.internal.VertxTimerUtil;
 import org.hyperledger.besu.ethereum.p2p.permissions.PeerPermissions;
-import org.hyperledger.besu.metrics.BesuMetricCategory;
+import org.hyperledger.besu.infrastructure.metrics.BesuMetricCategory;
 import org.hyperledger.besu.nat.NatService;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.util.NetworkUtility;
+import org.hyperledger.besu.infrastructure.NetworkUtility;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.io.IOException;
 import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.Optional;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 import java.util.stream.StreamSupport;

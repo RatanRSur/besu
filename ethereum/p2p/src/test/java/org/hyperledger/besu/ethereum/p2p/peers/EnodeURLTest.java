@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
-import org.hyperledger.besu.util.IllegalPortException;
+import org.hyperledger.besu.infrastructure.IllegalPortException;
 
 import java.net.URI;
 import java.util.Optional;

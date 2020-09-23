@@ -57,6 +57,7 @@ import org.hyperledger.besu.ethereum.worldstate.WorldStateArchive;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.testutil.TestClock;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -65,7 +66,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.hyperledger.besu.util.SafeFuture;
 
 import io.vertx.core.Vertx;
 import org.apache.logging.log4j.LogManager;

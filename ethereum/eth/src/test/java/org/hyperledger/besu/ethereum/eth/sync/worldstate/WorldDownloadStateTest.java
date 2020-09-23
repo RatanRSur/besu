@@ -29,9 +29,9 @@ import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 import org.hyperledger.besu.services.tasks.CachingTaskCollection;
 import org.hyperledger.besu.services.tasks.InMemoryTaskQueue;
 import org.hyperledger.besu.testutil.TestClock;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.concurrent.ExecutionException;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.stream.Stream;
 
 import org.apache.tuweni.bytes.Bytes;

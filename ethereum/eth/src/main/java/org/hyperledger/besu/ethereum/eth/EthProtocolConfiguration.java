@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.ethereum.eth;
 
-import org.hyperledger.besu.util.number.PositiveNumber;
+import org.hyperledger.besu.infrastructure.number.PositiveNumber;
 
 import java.util.Objects;
 

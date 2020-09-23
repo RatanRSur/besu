@@ -15,7 +15,7 @@
 package org.hyperledger.besu.cli.converter;
 
 import org.hyperledger.besu.cli.converter.exception.FractionConversionException;
-import org.hyperledger.besu.util.number.Fraction;
+import org.hyperledger.besu.infrastructure.number.Fraction;
 
 import picocli.CommandLine;
 

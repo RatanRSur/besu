@@ -13,7 +13,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-rootProject.name='besu'
+rootProject.name = 'besu'
 include 'acceptance-tests:dsl'
 include 'acceptance-tests:tests'
 include 'besu'
@@ -49,4 +49,4 @@ include 'services:kvstore'
 include 'services:pipeline'
 include 'services:tasks'
 include 'testutil'
-include 'util'
+include 'infrastructure'

@@ -17,9 +17,9 @@ package org.hyperledger.besu.ethereum.eth.peervalidation;
 import org.hyperledger.besu.ethereum.eth.manager.EthContext;
 import org.hyperledger.besu.ethereum.eth.manager.EthPeer;
 import org.hyperledger.besu.ethereum.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.time.Duration;
-import org.hyperledger.besu.util.SafeFuture;
 
 public interface PeerValidator {
 

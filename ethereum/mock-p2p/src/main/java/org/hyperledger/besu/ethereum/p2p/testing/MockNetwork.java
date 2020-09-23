@@ -28,7 +28,8 @@ import org.hyperledger.besu.ethereum.p2p.rlpx.wire.Message;
 import org.hyperledger.besu.ethereum.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.ethereum.p2p.rlpx.wire.PeerInfo;
 import org.hyperledger.besu.ethereum.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
-import org.hyperledger.besu.util.Subscribers;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
+import org.hyperledger.besu.infrastructure.Subscribers;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -40,7 +41,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.stream.Stream;
 
 /**

@@ -33,7 +33,7 @@ dependencies {
   implementation project(':crypto')
   implementation project(':ethereum:api')
   implementation project(':ethereum:core')
-  implementation project(':util')
+  implementation project(':infrastructure')
 
   implementation 'com.fasterxml.jackson.core:jackson-databind'
   implementation 'com.google.guava:guava'

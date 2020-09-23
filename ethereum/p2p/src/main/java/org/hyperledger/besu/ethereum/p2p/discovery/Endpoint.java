@@ -15,13 +15,13 @@
 package org.hyperledger.besu.ethereum.p2p.discovery;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.hyperledger.besu.util.NetworkUtility.checkPort;
-import static org.hyperledger.besu.util.Preconditions.checkGuard;
+import static org.hyperledger.besu.infrastructure.NetworkUtility.checkPort;
+import static org.hyperledger.besu.infrastructure.Preconditions.checkGuard;
 
 import org.hyperledger.besu.ethereum.p2p.peers.EnodeURL;
 import org.hyperledger.besu.ethereum.rlp.RLPInput;
 import org.hyperledger.besu.ethereum.rlp.RLPOutput;
-import org.hyperledger.besu.util.IllegalPortException;
+import org.hyperledger.besu.infrastructure.IllegalPortException;
 
 import java.net.InetAddress;
 import java.util.Objects;

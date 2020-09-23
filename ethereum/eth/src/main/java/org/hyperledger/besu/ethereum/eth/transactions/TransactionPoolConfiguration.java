@@ -15,7 +15,7 @@
 package org.hyperledger.besu.ethereum.eth.transactions;
 
 import org.hyperledger.besu.ethereum.core.Wei;
-import org.hyperledger.besu.util.number.Percentage;
+import org.hyperledger.besu.infrastructure.number.Percentage;
 
 import java.util.Objects;
 

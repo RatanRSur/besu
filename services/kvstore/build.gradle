@@ -29,7 +29,7 @@ jar {
 
 dependencies {
   api project(':plugin-api')
-  api project(':util')
+  api project(':infrastructure')
 
   implementation project(':metrics:core')
   implementation project(':metrics:rocksdb')

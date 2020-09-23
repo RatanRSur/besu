@@ -18,12 +18,12 @@ import static org.apache.logging.log4j.LogManager.getLogger;
 
 import org.hyperledger.besu.ethereum.chain.EthHashObserver;
 import org.hyperledger.besu.ethereum.core.Hash;
-import org.hyperledger.besu.util.Subscribers;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
+import org.hyperledger.besu.infrastructure.Subscribers;
 
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 

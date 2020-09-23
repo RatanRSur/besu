@@ -16,7 +16,7 @@ package org.hyperledger.besu.metrics.prometheus;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hyperledger.besu.util.NetworkUtility.urlForSocketAddress;
+import static org.hyperledger.besu.infrastructure.NetworkUtility.urlForSocketAddress;
 
 import java.net.InetSocketAddress;
 import java.util.Properties;

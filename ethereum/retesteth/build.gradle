@@ -37,7 +37,7 @@ dependencies {
   implementation project(':metrics:core')
   implementation project(':nat')
   implementation project(':services:kvstore')
-  implementation project(':util')
+  implementation project(':infrastructure')
 
   implementation 'com.google.guava:guava'
   implementation 'io.vertx:vertx-core'

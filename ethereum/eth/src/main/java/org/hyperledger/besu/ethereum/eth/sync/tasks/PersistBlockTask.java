@@ -26,11 +26,11 @@ import org.hyperledger.besu.ethereum.mainnet.HeaderValidationMode;
 import org.hyperledger.besu.ethereum.mainnet.ProtocolSchedule;
 import org.hyperledger.besu.ethereum.mainnet.ProtocolSpec;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.infrastructure.async.SafeFuture;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.hyperledger.besu.util.SafeFuture;
 import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;

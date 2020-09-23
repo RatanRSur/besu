@@ -1,5 +1,5 @@
 dependencies {
-  api project(':util')
+  api project(':infrastructure')
   api project(':crypto')
 
   implementation 'com.fasterxml.jackson.core:jackson-databind'
