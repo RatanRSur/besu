@@ -208,6 +208,7 @@ public class UpnpNatManager extends AbstractNatManager {
    * <p>Note that this is not synchronized, as it is expected to be called within an
    * already-synchronized context ({@link #start()}).
    */
+  @SuppressWarnings("FutureReturnValueIgnored")
   private void initiateExternalIpQuery() {
     discoverService(SERVICE_TYPE_WAN_IP_CONNECTION)
         .thenAccept(
@@ -302,6 +303,7 @@ public class UpnpNatManager extends AbstractNatManager {
    * @param portMapping is a portMapping object describing the desired port mapping parameters.
    * @return A SafeFuture that can be used to query the result (or error).
    */
+  @SuppressWarnings("FutureReturnValueIgnored")
   private SafeFuture<Void> requestPortForward(final PortMapping portMapping) {
 
     SafeFuture<Void> upnpQueryFuture = new SafeFuture<>();
@@ -391,6 +393,7 @@ public class UpnpNatManager extends AbstractNatManager {
    *
    * @return A SafeFuture that will complete when all port forward requests have been made
    */
+  @SuppressWarnings("FutureReturnValueIgnored")
   private SafeFuture<Void> releaseAllPortForwards() {
     // if we haven't observed the WANIPConnection service yet, we should have no port forwards to
     // release
