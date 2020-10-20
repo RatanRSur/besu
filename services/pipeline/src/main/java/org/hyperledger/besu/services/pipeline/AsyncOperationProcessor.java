@@ -58,7 +58,7 @@ class AsyncOperationProcessor<I, O> implements Processor<I, O> {
         final Thread stageThread = Thread.currentThread();
         inProgress.add(future);
         updateNextOutputAvailableFuture();
-        future.whenComplete((result, error) -> stageThread.interrupt());
+        future.whenComplete((result, error) -> stageThread.interrupt()).reportExceptions();
       }
       outputCompletedTasks(outputPipe);
     } else {
