@@ -14,6 +14,7 @@
  */
 package org.hyperledger.besu.ethereum.trie;
 
+import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.hyperledger.besu.crypto.Hash.keccak256;
 
 import org.hyperledger.besu.ethereum.rlp.RLP;
@@ -23,6 +24,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes32;
@@ -91,7 +93,24 @@ public interface MerklePatriciaTrie<K, V> {
 
   void visitAll(Consumer<Node<V>> nodeConsumer);
 
-  CompletableFuture<Void> visitAll(Consumer<Node<V>> nodeConsumer, ExecutorService executorService);
+  default CompletableFuture<Void> visitAll(
+      final Consumer<Node<V>> nodeConsumer, final ExecutorService executorService) {
+    return CompletableFuture.allOf(
+        Stream.concat(
+                Stream.of(
+                    CompletableFuture.runAsync(
+                        () -> nodeConsumer.accept(getRoot()), executorService)),
+                getRoot().getChildren().stream()
+                    .map(
+                        rootChild ->
+                            CompletableFuture.runAsync(
+                                () -> rootChild.accept(new AllNodesVisitor<>(nodeConsumer)),
+                                executorService)))
+            .collect(toUnmodifiableList())
+            .toArray(CompletableFuture[]::new));
+  }
+
+  Node<V> getRoot();
 
   void visitLeafs(final TrieIterator.LeafHandler<V> handler);
 }
