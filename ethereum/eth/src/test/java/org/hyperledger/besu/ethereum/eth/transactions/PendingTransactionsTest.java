@@ -700,6 +700,14 @@ public class PendingTransactionsTest {
   }
 
   @Test
+  public void assertGapIsFound() {
+    assertThat(transactions.getNextNonceForSender(transaction1.getSender())).isEmpty();
+    final List<Transaction> addedTransactions = addLocalTransactions(1, 3, Long.MAX_VALUE);
+    transactions.removeTransaction(addedTransactions.get(0));
+    assertThat(transactions.getNextNonceForSender(transaction1.getSender())).hasValue(2);
+  }
+
+  @Test
   public void assertThatCorrectNonceIsReturnedWithRepeatedTXes() {
     assertThat(transactions.getNextNonceForSender(transaction1.getSender())).isEmpty();
     addLocalTransactions(1, 2, 4, 4, 4, 4, 4, 4, 4, 4);
@@ -709,10 +717,14 @@ public class PendingTransactionsTest {
     addLocalTransactions(3);
   }
 
-  private void addLocalTransactions(final long... nonces) {
+  private List<Transaction> addLocalTransactions(final long... nonces) {
+    final List<Transaction> addedTransactions = new ArrayList<>();
     for (final long nonce : nonces) {
-      transactions.addLocalTransaction(createTransaction(nonce));
+      final Transaction transaction = createTransaction(nonce);
+      transactions.addLocalTransaction(transaction);
+      addedTransactions.add(transaction);
     }
+    return addedTransactions;
   }
 
   private static BlockHeader mockBlockHeader() {
