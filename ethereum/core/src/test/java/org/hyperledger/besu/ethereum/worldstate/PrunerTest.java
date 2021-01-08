@@ -19,6 +19,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.ethereum.chain.Blockchain;
 import org.hyperledger.besu.ethereum.chain.BlockchainStorage;
@@ -36,6 +37,7 @@ import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 import org.hyperledger.besu.testutil.MockExecutorService;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 
@@ -126,6 +128,8 @@ public class PrunerTest {
        O <--- the common ancestor when the reorg happens
     */
     final Block initiallyCanonicalBlock = appendBlockWithParent(blockchain, genesisBlock);
+    when(markSweepPruner.mark(initiallyCanonicalBlock.getHeader().getStateRoot()))
+        .thenReturn(CompletableFuture.completedFuture(null));
     appendBlockWithParent(blockchain, initiallyCanonicalBlock);
     final Block forkBlock = appendBlockWithParent(blockchain, genesisBlock);
     /*

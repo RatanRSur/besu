@@ -17,6 +17,8 @@ package org.hyperledger.besu.ethereum.trie;
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.hyperledger.besu.crypto.Hash.keccak256;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hyperledger.besu.ethereum.rlp.RLP;
 
 import java.util.Map;
@@ -95,6 +97,7 @@ public interface MerklePatriciaTrie<K, V> {
 
   default CompletableFuture<Void> visitAll(
       final Consumer<Node<V>> nodeConsumer, final ExecutorService executorService) {
+    LogManager.getLogger().info("-> {} ", getRoot().getHash());
     return CompletableFuture.allOf(
         Stream.concat(
                 Stream.of(

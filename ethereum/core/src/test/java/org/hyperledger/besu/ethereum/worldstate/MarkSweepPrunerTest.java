@@ -83,35 +83,39 @@ public class MarkSweepPrunerTest {
     assertThat(hashValueStore.size()).isGreaterThan(expectedNodes.size()); // Sanity check
 
     // Mark and sweep
-    pruner.mark(markBlock.getStateRoot());
-    pruner.sweepBefore(markBlock.getNumber());
+    pruner
+        .mark(markBlock.getStateRoot())
+        .thenRun(
+            () -> {
+              pruner.sweepBefore(markBlock.getNumber());
+              // Assert that the block we marked is still present and all accounts are accessible
+              assertThat(worldStateArchive.get(markBlock.getStateRoot())).isPresent();
+              final WorldState markedState = worldStateArchive.get(markBlock.getStateRoot()).get();
+              // Traverse accounts and make sure all are accessible
+              final int expectedAccounts = numAccounts * markBlockNumber;
+              final long accounts =
+                  markedState.streamAccounts(Bytes32.ZERO, expectedAccounts * 2).count();
+              assertThat(accounts).isEqualTo(expectedAccounts);
+              // Traverse storage to ensure that all storage is accessible
+              markedState
+                  .streamAccounts(Bytes32.ZERO, expectedAccounts * 2)
+                  .forEach(a -> a.storageEntriesFrom(Bytes32.ZERO, 1000));
 
-    // Assert that the block we marked is still present and all accounts are accessible
-    assertThat(worldStateArchive.get(markBlock.getStateRoot())).isPresent();
-    final WorldState markedState = worldStateArchive.get(markBlock.getStateRoot()).get();
-    // Traverse accounts and make sure all are accessible
-    final int expectedAccounts = numAccounts * markBlockNumber;
-    final long accounts = markedState.streamAccounts(Bytes32.ZERO, expectedAccounts * 2).count();
-    assertThat(accounts).isEqualTo(expectedAccounts);
-    // Traverse storage to ensure that all storage is accessible
-    markedState
-        .streamAccounts(Bytes32.ZERO, expectedAccounts * 2)
-        .forEach(a -> a.storageEntriesFrom(Bytes32.ZERO, 1000));
+              // All other state roots should have been removed
+              for (int i = 0; i < numBlocks; i++) {
+                final BlockHeader curHeader = blockchain.getBlockHeader(i + 1L).get();
+                if (curHeader.getNumber() == markBlock.getNumber()) {
+                  continue;
+                }
+                assertThat(worldStateArchive.get(curHeader.getStateRoot())).isEmpty();
+              }
 
-    // All other state roots should have been removed
-    for (int i = 0; i < numBlocks; i++) {
-      final BlockHeader curHeader = blockchain.getBlockHeader(i + 1L).get();
-      if (curHeader.getNumber() == markBlock.getNumber()) {
-        continue;
-      }
-      assertThat(worldStateArchive.get(curHeader.getStateRoot())).isEmpty();
-    }
-
-    // Check that storage contains only the values we expect
-    assertThat(hashValueStore.size()).isEqualTo(expectedNodes.size());
-    assertThat(hashValueStore.values())
-        .containsExactlyInAnyOrderElementsOf(
-            expectedNodes.stream().map(Bytes::toArrayUnsafe).collect(Collectors.toSet()));
+              // Check that storage contains only the values we expect
+              assertThat(hashValueStore.size()).isEqualTo(expectedNodes.size());
+              assertThat(hashValueStore.values())
+                  .containsExactlyInAnyOrderElementsOf(
+                      expectedNodes.stream().map(Bytes::toArrayUnsafe).collect(Collectors.toSet()));
+            });
   }
 
   @Test
@@ -134,17 +138,21 @@ public class MarkSweepPrunerTest {
     }
 
     // Mark and sweep
-    pruner.mark(markBlock.getStateRoot());
-    pruner.sweepBefore(markBlock.getNumber());
-
-    // we use individual inOrders because we only want to make sure we remove a state root before
-    // the full prune but without enforcing an ordering between the state root removals
-    stateRoots.forEach(
-        stateRoot -> {
-          final InOrder thisRootsOrdering = inOrder(hashValueStore, worldStateStorage);
-          thisRootsOrdering.verify(hashValueStore).remove(stateRoot);
-          thisRootsOrdering.verify(worldStateStorage).prune(any());
-        });
+    pruner
+        .mark(markBlock.getStateRoot())
+        .thenRun(
+            () -> {
+              pruner.sweepBefore(markBlock.getNumber());
+              // we use individual inOrders because we only want to make sure we remove a state root
+              // before
+              // the full prune but without enforcing an ordering between the state root removals
+              stateRoots.forEach(
+                  stateRoot -> {
+                    final InOrder thisRootsOrdering = inOrder(hashValueStore, worldStateStorage);
+                    thisRootsOrdering.verify(hashValueStore).remove(stateRoot);
+                    thisRootsOrdering.verify(worldStateStorage).prune(any());
+                  });
+            });
   }
 
   @Test
@@ -167,23 +175,28 @@ public class MarkSweepPrunerTest {
     }
 
     // Mark
-    pruner.mark(markBlock.getStateRoot());
-    // Mark an extra state root
-    Hash markedRoot = Hash.wrap(stateRoots.remove(stateRoots.size() / 2));
-    pruner.markNode(markedRoot);
-    // Sweep
-    pruner.sweepBefore(markBlock.getNumber());
+    pruner
+        .mark(markBlock.getStateRoot())
+        .thenRun(
+            () -> {
+              // Mark an extra state root
+              Hash markedRoot = Hash.wrap(stateRoots.remove(stateRoots.size() / 2));
+              pruner.markNode(markedRoot);
+              // Sweep
+              pruner.sweepBefore(markBlock.getNumber());
 
-    // we use individual inOrders because we only want to make sure we remove a state root before
-    // the full prune but without enforcing an ordering between the state root removals
-    stateRoots.forEach(
-        stateRoot -> {
-          final InOrder thisRootsOrdering = inOrder(hashValueStore, worldStateStorage);
-          thisRootsOrdering.verify(hashValueStore).remove(stateRoot);
-          thisRootsOrdering.verify(worldStateStorage).prune(any());
-        });
+              // we use individual inOrders because we only want to make sure we remove a state root
+              // before
+              // the full prune but without enforcing an ordering between the state root removals
+              stateRoots.forEach(
+                  stateRoot -> {
+                    final InOrder thisRootsOrdering = inOrder(hashValueStore, worldStateStorage);
+                    thisRootsOrdering.verify(hashValueStore).remove(stateRoot);
+                    thisRootsOrdering.verify(worldStateStorage).prune(any());
+                  });
 
-    assertThat(stateStorage.containsKey(markedRoot.toArray())).isTrue();
+              assertThat(stateStorage.containsKey(markedRoot.toArray())).isTrue();
+            });
   }
 
   private void generateBlockchainData(final int numBlocks, final int numAccounts) {

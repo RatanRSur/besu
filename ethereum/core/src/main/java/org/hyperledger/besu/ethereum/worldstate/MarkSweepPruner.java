@@ -27,6 +27,7 @@ import org.hyperledger.besu.plugin.services.storage.KeyValueStorageTransaction;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,6 +36,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Function;
@@ -173,15 +175,18 @@ public class MarkSweepPruner {
             node -> {
               markNode(node.getHash());
               node.getValue()
-                  .ifPresent(value -> processAccountState(value, markingExecutorService).join());
+                  .ifPresent(value -> processAccountState(value, markingExecutorService));
             },
             markingExecutorService)
         .thenRun(
             () -> {
+              LOG.info("shutting down");
               markingExecutorService.shutdown();
               try {
+                LOG.info("awaiting termination");
                 // This ensures that the marking tasks complete.
                 markingExecutorService.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+                LOG.info("terminated");
               } catch (InterruptedException e) {
                 LOG.info("Interrupted while marking", e);
               }
@@ -267,6 +272,7 @@ public class MarkSweepPruner {
 
   @VisibleForTesting
   void markNode(final Bytes32 hash) {
+    LOG.info("marking {}", hash);
     markThenMaybeFlush(() -> pendingMarks.add(hash), 1);
   }
 
